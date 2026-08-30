@@ -1,12 +1,14 @@
 # (주)에이블팜 (Able FARM)
 
+> https://www.ablefarm.co.kr
+
 작물과 생육 시기에 맞춘 액상 영양·유기농업자재를 개발·제조하는 그린바이오 기업입니다.
 전국 대리점 네트워크를 통해 공급하며, 유기농업자재 공시 제품(임팩트골드 공시-2-3-802,
 임팩트과립 공시-2-3-792 등)을 보유합니다.
 
 ## 구조화 데이터
 
-- [제품 데이터 (JSON)](data/products.json): 24개 제품의 분류·성분·효과·희석배수·사용시기·적용작물·FAQ
+- [제품 데이터 (JSON)](https://www.ablefarm.co.kr/data/products.json): 24개 제품의 분류·성분·효과·희석배수·사용시기·적용작물·FAQ
 - 홈페이지(`ablefarm-home.dc.html`)에는 schema.org JSON-LD(Organization, ItemList, Product, FAQPage)가 포함되어 있습니다.
 
 ## 문의
