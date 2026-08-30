@@ -47,9 +47,15 @@ const num = (v) => {
 // 최근 영업일 (주말·공휴일은 데이터가 없어 하루씩 되짚습니다)
 const ymd = (d) => d.toISOString().slice(0, 10);
 
+// KAMIS 도메인 후보 (https 우선, 실패 시 http → 구도메인 순서로 재시도)
+const ENDPOINTS = [
+  'https://www.kamis.or.kr/service/price/xml.do',
+  'http://www.kamis.or.kr/service/price/xml.do',
+  'https://www.kamis.co.kr/service/price/xml.do',
+];
+
 async function fetchCategory(category, regday) {
-  const u = new URL('http://www.kamis.or.kr/service/price/xml.do');
-  u.search = new URLSearchParams({
+  const qs = new URLSearchParams({
     action: 'dailyPriceByCategoryList',
     p_product_cls_code: '02',        // 02 = 도매
     p_country_code: '1101',          // 1101 = 서울
@@ -61,9 +67,38 @@ async function fetchCategory(category, regday) {
     p_returntype: 'json',
   }).toString();
 
-  const res = await fetch(u, { headers: { 'User-Agent': 'ablefarm-price-bot' } });
-  if (!res.ok) throw new Error(`KAMIS ${category} HTTP ${res.status}`);
-  const j = await res.json();
+  let lastErr = null;
+  for (const base of ENDPOINTS) {
+    try {
+      return await fetchOnce(base + '?' + qs, category);
+    } catch (e) {
+      const cause = e.cause ? ` (${e.cause.code || e.cause.message})` : '';
+      console.warn(`    ✗ ${new URL(base).protocol}//${new URL(base).host} — ${e.message}${cause}`);
+      lastErr = e;
+    }
+  }
+  throw lastErr;
+}
+
+async function fetchOnce(url, category) {
+  // 응답이 없을 때 무한 대기하지 않도록 20초 제한
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; ablefarm-price-bot/1.0)',
+      'Accept': 'application/json,text/plain,*/*',
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  let j;
+  try { j = JSON.parse(text); }
+  catch { throw new Error(`응답이 JSON이 아님: ${text.slice(0, 200)}`); }
+
+  // 인증 실패 시 KAMIS 는 문자열로 에러를 돌려준다
+  if (typeof j === 'string' || j?.data === '000') {
+    throw new Error(`KAMIS 인증 실패 또는 오류: ${JSON.stringify(j).slice(0, 200)}`);
+  }
 
   // 정상 응답은 { data: { item: [...] } }, 데이터 없으면 { data: [] }
   const items = j?.data?.item;
@@ -74,7 +109,9 @@ async function collect(regday) {
   const cats = [...new Set(WANTED.map((w) => w.category))];
   const byCat = {};
   for (const c of cats) {
+    console.log(`  · 부류 ${c} 조회 중…`);
     byCat[c] = await fetchCategory(c, regday);
+    console.log(`    → ${byCat[c].length}건`);
     await new Promise((r) => setTimeout(r, 300)); // 호출 간격
   }
 
@@ -118,16 +155,27 @@ async function main() {
   let used = null;
   const today = new Date();
 
-  // 최근 7일 안에서 데이터가 있는 날을 찾습니다
-  for (let back = 0; back < 7 && items.length === 0; back++) {
+  // 오늘 하루만 먼저 시도 (연결 자체가 안 되면 재시도 의미 없음)
+  let netFail = false;
+  for (let back = 0; back < 3 && items.length === 0 && !netFail; back++) {
     const d = new Date(today);
     d.setDate(d.getDate() - back);
     const day = ymd(d);
+    console.log(`▶ ${day} 조회`);
     try {
       items = await collect(day);
       if (items.length) used = day;
     } catch (e) {
-      console.warn(`· ${day} 실패: ${e.message}`);
+      const code = e.cause?.code || '';
+      console.warn(`· ${day} 실패: ${e.message}${code ? ' [' + code + ']' : ''}`);
+      // 연결 자체가 실패하면 다른 날짜로 재시도해도 소용없다
+      if (e.message === 'fetch failed' || ['ENOTFOUND', 'ECONNREFUSED', 'ETIMEDOUT', 'EAI_AGAIN'].includes(code)) {
+        netFail = true;
+        console.error('');
+        console.error('⚠ KAMIS 서버에 연결하지 못했습니다.');
+        console.error('  GitHub 서버(해외 IP)에서의 접속을 KAMIS가 차단할 수 있습니다.');
+        console.error('  국내에서 실행하거나 국내 서버/프록시가 필요할 수 있습니다.');
+      }
     }
   }
 
