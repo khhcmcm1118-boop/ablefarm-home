@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>(주)에이블팜 | 작물별 액상 영양·유기농업자재</title>
+<meta name="description" content="고온·가뭄·병해·도복까지, 작물과 생육 시기에 맞춘 Able FARM 액상 영양제. 전국 대리점 공급. 사용 상담 02-858-6229.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="(주)에이블팜 | 작물별 액상 영양·유기농업자재">
+<meta property="og:description" content="고온·가뭄·병해·도복까지, 작물과 생육 시기에 맞춘 Able FARM 액상 영양제. 전국 대리점 공급. 사용 상담 02-858-6229.">
+<meta property="og:image" content="assets/logo.png">
+<link rel="alternate" type="application/json" href="data/products.json" title="(주)에이블팜 제품 데이터">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#faf7ef;font-family:"Pretendard",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#16241a}
+  a{color:#4a7c59;text-decoration:none}
+  a:hover{color:#16271c}
+  @keyframes af-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes af-pop{0%{opacity:0;transform:scale(.86) translateY(14px)}60%{opacity:1;transform:scale(1.04) translateY(-4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes af-float{0%,100%{transform:translateY(0) rotate(-.4deg)}50%{transform:translateY(-10px) rotate(.4deg)}}
+  .af-hero-img{animation:af-pop .72s cubic-bezier(.22,1,.36,1) both}
+  .af-hero-img>img{animation:af-float 5.5s ease-in-out .72s infinite;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+  .af-hero-img:hover>img{transform:scale(1.07)}
+  @keyframes af-up{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+  .af-wall{position:relative;height:540px;overflow:hidden;mask-image:linear-gradient(180deg,transparent,#000 60px,#000 calc(100% - 60px),transparent)}
+  .af-wall-col{position:absolute;top:0;width:100%}
+  .af-wall-half{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+  .af-wall:hover .af-wall-col{animation-play-state:paused}
+  .af-wall-shot{position:relative;border-radius:14px;overflow:hidden;background:#dae3c9;flex:none}
+  .af-wall-shot>img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+  .af-wall-shot:hover>img{transform:scale(1.06)}
+  .af-wall-cap{position:absolute;inset:auto 0 0 0;padding:26px 14px 11px;background:linear-gradient(180deg,rgba(15,28,20,0),rgba(15,28,20,.82));color:#fff;font-size:12px;font-weight:700;letter-spacing:-.01em}
+  @keyframes af-swap{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .af-swap{animation:af-swap .5s cubic-bezier(.22,1,.36,1) both}
+  @keyframes af-ticker{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+  .af-ticker-wrap{position:relative;flex:1;min-height:300px;overflow:hidden;mask-image:linear-gradient(180deg,transparent,#000 26px,#000 calc(100% - 26px),transparent)}
+  .af-ticker-track{position:absolute;inset:0 0 auto 0;animation:af-ticker 34s linear infinite}
+  .af-ticker-wrap:hover .af-ticker-track{animation-play-state:paused}
+  @keyframes af-flash{0%{background:rgba(169,209,138,.42)}100%{background:transparent}}
+  .af-flash{animation:af-flash 1.1s ease-out}
+  @keyframes af-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+  @keyframes af-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .af-rise{animation:af-rise .6s cubic-bezier(.22,1,.36,1) .12s both}
+  .af-marquee-track{display:flex;gap:22px;width:max-content;animation:af-marquee 40s linear infinite}
+  .af-marquee-wrap:hover .af-marquee-track{animation-play-state:paused}
+  .af-btn{cursor:pointer;transition:transform .12s ease,filter .12s ease}
+  .af-btn:hover{filter:brightness(1.06)}
+  .af-btn:active{transform:translateY(1px)}
+  details{overflow:hidden}
+  summary{cursor:pointer;list-style:none}
+  summary::-webkit-details-marker{display:none}
+</style>
+</helmet>
+
+<!-- ===== NAV (공통) ===== -->
+
+
+<!-- ================= HOME ================= -->
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div>
+
+  <!-- HERO (배경 영상) -->
+  <div style="position:relative;min-height:600px;display:flex;align-items:center;overflow:hidden;background:#0f2016">
+    <div style="position:absolute;inset:0;overflow:hidden">
+      <video autoplay="" muted="" playsinline="" ref="{{ videoRef }}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;pointer-events:none">
+        <source src="assets/video/hero-1.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(11,24,16,.94) 0%,rgba(14,30,20,.78) 44%,rgba(18,38,26,.32) 100%)"><div style="display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:#faf7ef;border-bottom:1px solid #dcd8c7;font-size:13.5px;color:#1c241c;position:sticky;top:0;z-index:20">
+  <div style="display:flex;align-items:center;gap:44px">
+    <div class="af-btn" onClick="{{ goHome }}" title="메인으로" style="display:flex;align-items:center;gap:9px">
+      <img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:46px;width:auto;display:block;mix-blend-mode:multiply">
+    </div>
+    <div style="display:flex;gap:26px;color:#4c554a;font-weight:600">
+      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
+    </div>
+  </div>
+  <span class="af-btn" onClick="{{ goQna }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px">문의하기 →</span>
+</div></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg,rgba(11,24,16,.15),rgba(11,24,16,.5)); left: 0px; top: 14px"></div>
+    
+  <div style="position:relative;padding:72px 40px;max-width:720px">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 15px;background:rgba(214,228,192,.14);border:1px solid rgba(169,209,138,.42);border-radius:100px;font-size:12.5px;font-weight:700;color:#c7e3a8;margin-bottom:24px">🌱 식물 유래 액상 영양·유기농업자재</div>
+      <h1 style="margin:0 0 22px;font-weight:800;font-size:66px;line-height:1.06;letter-spacing:-.03em;color:#fff">기후가 바뀌어도,<br><span style="color:#a9d18a">수확은 지킵니다.</span></h1>
+      <p style="margin:0 0 32px;max-width:470px;font-size:16px;line-height:1.7;color:#dce6d3">고온·가뭄·침수·병해·도복까지 — 작물과 생육 시기에 맞춘 처방으로 대응하는 Able FARM 액상 영양제입니다.</p>
+      <div style="display:flex;gap:12px;margin-bottom:30px">
+        <span class="af-btn" onClick="{{ goProducts }}" style="padding:15px 28px;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">제품 보기 →</span>
+        <span class="af-btn" onClick="{{ goBuy }}" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.38);color:#fff;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px)">지역별 상담 →</span>
+      </div>
+      
+    </div></div>
+
+  <!-- FEATURE -->
+  
+
+  <!-- 농업정보 (날씨·강수·시세) -->
+  
+
+  <!-- 회사소개 -->
+  <div style="padding:60px 40px;background:#faf7ef">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:34px 40px;background:#eee9db">
+    <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🧪</div><div style="font-weight: 700; font-size: 16px; color: #16241a">공시 유기농업자재</div><div style="font-size: 14px; color: #6b7465">임팩트골드·임팩트과립 등 공시 취득 제품 보유</div></div>
+    <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🚁</div><div style="font-weight: 700; font-size: 16px; color: #16241a">관주·엽면·드론방제</div><div style="font-size: 14px; color: #6b7465">현장 살포 방식에 맞춰 사용</div></div>
+    <div style="background: #e9efdd; border-radius: 20px; padding: 20px"><div style="font-size:22px;margin-bottom:8px">🌡</div><div style="font-weight: 700; font-size: 16px; color: #16241a">기후피해 대응</div><div style="font-size: 14px; color: #6b7465">고온·가뭄·침수·냉해 스트레스 관리</div></div>
+    <div style="background: #e9efdd; border-radius: 20px; padding: 20px"><div style="font-size:22px;margin-bottom:8px">🤝</div><div style="font-weight: 700; font-size: 16px; color: #16241a">전국 대리점 공급망</div><div style="font-size: 14px; color: #6b7465">가까운 대리점에서 상담·구입</div></div>
+  </div><div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;gap:20px;flex-wrap:wrap">
+      <div>
+        <div style="font-size: 20px; font-weight: 700; letter-spacing: .1em; color: #4a7c59; margin-bottom: 10px">AGRI INFO · 농업정보</div>
+        <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">오늘 날씨 · 강수 · 농산물 시세</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid #dcd8c7;border-radius:100px;background:#fff;font-size:13px;font-weight:700;color:#54604f">
+        <span>📍</span><span>{{ wxRegionLabel }}</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.15fr);gap:18px;align-items:stretch">
+
+      <!-- 오늘 날씨 -->
+      <div style="background:#16271c;color:#eaf1e2;border-radius:18px;padding:28px 30px;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#a9d18a;margin-bottom:14px">TODAY · {{ wxRegion }}</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+          <span style="font-size:48px;line-height:1">{{ wxIcon }}</span>
+          <div>
+            <div style="font-weight:800;font-size:44px;letter-spacing:-.03em;line-height:1">{{ wxTemp }}</div>
+            <div style="font-size:13.5px;color:#a9d18a;font-weight:700">{{ wxDesc }}</div>
+          </div>
+        </div>
+        <div style="margin-top:auto;padding-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px 14px"><div style="font-size:11.5px;color:#9db894">최고 / 최저</div><div style="font-weight:800;font-size:15px;margin-top:3px">{{ wxHi }} / {{ wxLo }}</div></div>
+          <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px 14px"><div style="font-size:11.5px;color:#9db894">강수확률</div><div style="font-weight:800;font-size:15px;margin-top:3px">{{ wxPop }}</div></div>
+          <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px 14px"><div style="font-size:11.5px;color:#9db894">강수량</div><div style="font-weight:800;font-size:15px;margin-top:3px">{{ wxRain }}</div></div>
+          <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px 14px"><div style="font-size:11.5px;color:#9db894">풍속</div><div style="font-weight:800;font-size:15px;margin-top:3px">{{ wxWind }}</div></div>
+        </div>
+      </div>
+
+      <!-- 주간 강수·기후 -->
+      <div style="background:#fff;border:1px solid #dcd8c7;border-radius:18px;padding:26px 28px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-weight:800;font-size:16px;color:#16241a">주간 강수·기후</div>
+          <span style="font-size:11.5px;color:#9aa393">7일 강수확률</span>
+        </div>
+        <div style="font-size: 15px; color: #6b7465; margin-bottom: 18px">{{ wxAdvice }}</div>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex:1;min-height:130px">
+          <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px">
+              <div style="font-size: 15px; font-weight: 700; color: #4a7c59">{{ d.mm }}</div>
+              <div style="width:100%;background:#cfe0c0;border-radius:6px 6px 0 0;height:{{ d.h }}"></div>
+              <div style="font-size:11.5px;color:#54604f;font-weight:600">{{ d.hi }}</div>
+              <div style="font-size: 15px; color: #54604f; font-weight: 700">{{ d.day }}</div>
+              <div style="font-size: 13px; color: #9aa393; margin-top: -4px">{{ d.date }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 농산물 시세 -->
+      <div style="background:#fff;border:1px solid #dcd8c7;border-radius:18px;padding:26px 28px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="font-weight:800;font-size:16px;color:#16241a">농산물 도매시세</div>
+            <span style="flex:none;white-space:nowrap;padding:3px 9px;border-radius:100px;background:#f3ece0;color:#a08050;font-size:10.5px;font-weight:800">표시 예시</span>
+          </div>
+          <span style="flex:none;white-space:nowrap;font-size:11.5px;color:#9aa393">{{ priceDate }} 기준</span>
+        </div>
+        <div class="af-ticker-wrap">
+          <div class="af-ticker-track">
+            <sc-for list="{{ pricesLoop }}" as="p" hint-placeholder-count="12">
+              <div class="{{ p.flash }}" style="display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid #efe9da;border-radius:6px">
+                <span style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1px;overflow:hidden">
+                  <span style="font-size:13.5px;font-weight:700;color:#2f3a2b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                  <span style="font-size:11px;color:#9aa393;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.unit }}</span>
+                </span>
+                <span style="flex:none;min-width:72px;white-space:nowrap;text-align:right;font-size:13px;font-weight:800;color:#16241a">{{ p.price }}</span>
+                <span style="flex:none;min-width:44px;white-space:nowrap;text-align:right;font-size:12px;font-weight:700;color:{{ p.color }}">{{ p.diff }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top:14px;font-size:11.5px;color:#9aa393;line-height:1.6">※ 현재 값은 화면 구성 예시입니다. 실제 시세 연동 시 이 자리에 실시간 값이 표시됩니다. (마우스를 올리면 정지)</div>
+      </div>
+    </div>
+  </div><div id="about" style="padding:74px 40px;background:#faf7ef;scroll-margin-top:80px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center">
+      <div>
+        <div style="font-size: 20px; font-weight: 700; letter-spacing: .1em; color: #4a7c59; margin-bottom: 12px">ABOUT Able FARM · 회사소개</div>
+        <h2 style="margin:0 0 20px;font-weight:800;font-size:38px;line-height:1.2;letter-spacing:-.02em;color:#16241a">건강한 흙에서<br>건강한 작물이 자랍니다</h2>
+        <p style="margin:0 0 16px;max-width:460px;font-size:15px;line-height:1.85;color:#54604f">(주)에이블팜은 식물 영양 연구와 제조에 집중하는 그린바이오 기업입니다. 실험실이 아니라 밭에서 검증한 배합을, 누구나 현장에서 쉽게 쓸 수 있는 액상·입제 제형으로 완성합니다.</p>
+        <p style="margin:0 0 26px;max-width:460px;font-size:15px;line-height:1.85;color:#54604f">육묘·정식부터 수확기 마무리까지, 작물과 생육 시기에 맞춘 처방으로 기후변화 속에서도 안정적인 수량과 품질을 돕는 것이 우리의 일입니다.</p>
+        <div style="display:flex;gap:26px">
+          
+          
+          <div style="border-left:1px solid #ddd8c8;padding-left:26px"></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #dcd8c7;border-radius:20px;padding:34px 36px">
+        <div style="font-weight:800;font-size:16px;color:#16241a;margin-bottom:20px">회사 정보</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #efe9da"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">회사명</span><span style="font-size:14px;color:#2f3a2b;font-weight:600">(주)에이블팜 (Able FARM)</span></div>
+          <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #efe9da"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">사업 분야</span><span style="font-size:14px;color:#2f3a2b">식물 영양제 · 액상 비료 제조/판매</span></div>
+          <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #efe9da"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">소재지</span><span style="font-size:14px;line-height:1.6;color:#2f3a2b">서울특별시 금천구 디지털로10길 37<br>가산아스크타워 15층 1541호</span></div>
+          <div style="display:flex;gap:16px;padding:14px 0"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">고객센터</span><span style="font-size:14px;color:#2f3a2b">02-858-6229 · 팩스 02-6442-6229</span></div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- 제품 세부설명 (대표 제품 하이라이트) -->
+  <div id="detail" style="padding:64px 40px;background:#e6ecd6;scroll-margin-top:80px">
+    <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center">
+      <div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="font-size:20px;font-weight:700;letter-spacing:.1em;color:#4a7c59">PRODUCT DETAIL</div>
+          <div style="display:flex;gap:7px">
+            <sc-for list="{{ hiTabs }}" as="t" hint-placeholder-count="5">
+              <span class="af-btn" onClick="{{ t.onClick }}" style="flex:none;white-space:nowrap;padding:7px 14px;border-radius:100px;font-size:12.5px;font-weight:700;border:1px solid #cbd7bb;background:{{ t.bg }};color:{{ t.fg }}">{{ t.name }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div class="af-swap" key="{{ hiKey }}">
+          <h2 style="margin:0 0 8px;font-weight:800;font-size:38px;line-height:1.15;letter-spacing:-.02em;color:#16241a;white-space:pre-line">{{ hiHeadline }}</h2>
+          <div style="font-size:13.5px;font-weight:700;color:#7fa06a;margin-bottom:16px">{{ hiName }} · {{ hiType }}</div>
+          <p style="margin:0 0 26px;max-width:470px;font-size:15px;line-height:1.75;color:#54604f;text-wrap:pretty">{{ hiSummary }}</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px">
+            <sc-for list="{{ hiStats }}" as="s" hint-placeholder-count="3">
+              <div style="background:#fff;border-radius:14px;padding:18px;text-align:center">
+                <div style="font-weight:800;font-size:20px;color:#4a7c59;line-height:1.2">{{ s.v }}</div>
+                <div style="font-size:12px;color:#6b7465;margin-top:5px;line-height:1.4">{{ s.l }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:10px">
+            <sc-for list="{{ hiSteps }}" as="st" hint-placeholder-count="3">
+              <div style="flex:1;background:#fff;border-radius:12px;padding:14px 16px">
+                <div style="font-weight:800;color:#4a7c59;font-size:13px">{{ st.n }}</div>
+                <div style="font-size:13px;color:#54604f;margin-top:4px;line-height:1.5">{{ st.t }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;height:440px;border-radius:20px;overflow:hidden;background:#16271c">
+        <video id="hi-video" key="{{ hiKey }}" ref="{{ hiVideoRef }}" preload="metadata" muted="" loop="" playsinline="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"></video>
+        <div style="position:absolute;inset:auto 0 0 0;padding:26px 28px;background:linear-gradient(180deg,rgba(15,28,20,0) 0%,rgba(15,28,20,.88) 62%)">
+          <div style="font-size:11.5px;font-weight:700;letter-spacing:.12em;color:#a9d18a;margin-bottom:6px">FIELD PROVEN</div>
+          <div style="font-size:19px;font-weight:800;color:#fff;line-height:1.35;text-wrap:pretty">{{ hiQuote }}</div>
+        </div>
+        <span class="af-btn" onClick="{{ hiNext }}" title="다음 제품" style="position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.22);backdrop-filter:blur(6px);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 제품소개 (흐르는 갤러리 · 클릭 시 상세) -->
+  <div id="products" style="padding:64px 0 68px;background:#fff;overflow:hidden;scroll-margin-top:80px">
+    <div style="padding:0 40px;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px">
+      <div>
+        <div style="font-size: 20px; font-weight: 700; letter-spacing: .1em; color: #4a7c59; margin-bottom: 10px">PRODUCTS</div>
+        <h2 style="margin:0;font-weight:800;font-size:38px;letter-spacing:-.02em;color:#16241a">제품 소개</h2>
+        <p style="margin:10px 0 0;font-size:14px;color:#6b7465">카드를 누르면 제품 상세페이지로 이동합니다. 사진·설명은 이후 채워집니다.</p>
+      </div>
+      <span style="font-size:13px;color:#9aa393">← 올리면 멈춤 →</span>
+    </div>
+    <div class="af-marquee-wrap">
+      <div class="af-marquee-track">
+        <sc-for list="{{ products }}" as="item" hint-placeholder-count="6">
+          <div class="af-btn" onClick="{{ item.onClick }}" style="flex:none;width:250px;background:#fff;border:1px solid #e2ddce;border-radius:18px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:230px;position:relative;background:#fff;display:flex;align-items:center;justify-content:center"><img loading="lazy" decoding="async" src="{{ item.img }}" alt="{{ item.name }}" style="max-width:82%;max-height:88%;object-fit:contain;mix-blend-mode:multiply"></div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="font-size:11px;letter-spacing:.12em;color:#7fa06a;font-weight:700">NO.{{ item.num }} · {{ item.size }}</div>
+                <div style="font-weight:800;font-size:17px;color:#16241a;margin-top:4px">{{ item.name }}</div>
+                <div style="margin-top:6px;font-size:12.5px;line-height:1.5;color:#6b7465">{{ item.tag }}</div>
+              </div>
+              <span style="text-align:center;padding:11px 0;background:#16271c;color:#fff;border-radius:10px;font-weight:700;font-size:13px">상세 보기 →</span>
+            </div>
+          </div>
+        </sc-for>
+        <sc-for list="{{ products }}" as="item" hint-placeholder-count="6">
+          <div aria-hidden="true" class="af-btn" onClick="{{ item.onClick }}" style="flex:none;width:250px;background:#fff;border:1px solid #e2ddce;border-radius:18px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:230px;position:relative;background:#fff;display:flex;align-items:center;justify-content:center"><img loading="lazy" decoding="async" src="{{ item.img }}" alt="{{ item.name }}" style="max-width:82%;max-height:88%;object-fit:contain;mix-blend-mode:multiply"></div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="font-size:11px;letter-spacing:.12em;color:#7fa06a;font-weight:700">NO.{{ item.num }} · {{ item.size }}</div>
+                <div style="font-weight:800;font-size:17px;color:#16241a;margin-top:4px">{{ item.name }}</div>
+                <div style="margin-top:6px;font-size:12.5px;line-height:1.5;color:#6b7465">{{ item.tag }}</div>
+              </div>
+              <span style="text-align:center;padding:11px 0;background:#16271c;color:#fff;border-radius:10px;font-weight:700;font-size:13px">상세 보기 →</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- 현장 앨범 · 브랜드 스토리 (통합) -->
+  <div style="display:grid;grid-template-columns:.86fr 1.14fr;gap:52px;align-items:center;padding:78px 40px;background:#faf7ef">
+    <div>
+      <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:12px">TRUSTED BY GROWERS · OUR STORY</div>
+      <h2 style="margin:0 0 20px;font-weight:800;font-size:38px;line-height:1.2;letter-spacing:-.02em;color:#16241a">토양에서 시작해,<br>토양에서 증명한 영양</h2>
+      <p style="margin:0 0 16px;max-width:460px;font-size:15px;line-height:1.85;color:#54604f;text-wrap:pretty">(주)에이블팜의 배합은 실험실이 아니라 논밭에서 시작합니다. 작물과 생육 시기, 재배 환경을 확인한 뒤에야 제형이 됩니다.</p>
+      <p style="margin:0 0 28px;max-width:460px;font-size:15px;line-height:1.85;color:#54604f;text-wrap:pretty">농가의 한 해 수확과 수익이 곧 우리 제품의 평가 기준입니다 — 옆의 사진들은 실제 사용 포장과 재배 현장의 모습입니다.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;max-width:460px">
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#faf7ef;border-radius:14px;padding:16px 18px">
+          <span style="flex:none;font-weight:800;font-size:15px;color:#4a7c59;min-width:104px">전국 대리점</span>
+          <span style="font-size:14px;line-height:1.7;color:#54604f">전국 대리점 네트워크를 통해 제품 공급과 작물별 사용 상담을 제공합니다.</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#faf7ef;border-radius:14px;padding:16px 18px">
+          <span style="flex:none;font-weight:800;font-size:15px;color:#4a7c59;min-width:104px">공시 자재</span>
+          <span style="font-size:14px;line-height:1.7;color:#54604f">임팩트골드(공시-2-3-802)·임팩트과립(공시-2-3-792) 등 유기농업자재 공시 제품을 보유합니다.</span>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;background:#faf7ef;border-radius:14px;padding:16px 18px">
+          <span style="flex:none;font-weight:800;font-size:15px;color:#4a7c59;min-width:104px">현장 검증</span>
+          <span style="font-size:14px;line-height:1.7;color:#54604f">밭에서 검증한 처방을 현장에서 바로 쓸 수 있는 제형으로 완성합니다.</span>
+        </div>
+      </div>
+      <span class="af-btn" onClick="{{ goQna }}" style="display:inline-block;padding:14px 28px;background:#16271c;color:#fff;border-radius:12px;font-weight:700;font-size:14px">사용 사례 문의하기 →</span>
+    </div>
+
+    <div class="af-wall">
+      <div class="af-wall-col" style="left:0;width:calc((100% - 28px)/3);animation:af-up 58s linear infinite">
+        <div class="af-wall-half">
+          <div class="af-wall-shot" style="height:255px"><img loading="lazy" decoding="async" src="assets/album/web/field-01.jpg" alt="보리 포장에 임팩트원 사용"><span class="af-wall-cap">보리 · 임팩트원</span></div>
+          <div class="af-wall-shot" style="height:205px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice.jpg" alt="벼 재배 현장"></div>
+          <div class="af-wall-shot" style="height:240px"><img loading="lazy" decoding="async" src="assets/album/web/field-04.jpg" alt="벼 생육 확인"></div>
+          <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-cuke.jpg" alt="오이 재배 현장"></div>
+          <div class="af-wall-shot" style="height:230px"><img loading="lazy" decoding="async" src="assets/album/web/field-07.jpg" alt="벼 육묘 비교"></div>
+        </div>
+        <div class="af-wall-half" aria-hidden="true">
+          <div class="af-wall-shot" style="height:255px"><img loading="lazy" decoding="async" src="assets/album/web/field-01.jpg" alt=""><span class="af-wall-cap">보리 · 임팩트원</span></div>
+          <div class="af-wall-shot" style="height:205px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:240px"><img loading="lazy" decoding="async" src="assets/album/web/field-04.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-cuke.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:230px"><img loading="lazy" decoding="async" src="assets/album/web/field-07.jpg" alt=""></div>
+        </div>
+      </div>
+      <div class="af-wall-col" style="left:calc((100% - 28px)/3 + 14px);width:calc((100% - 28px)/3);animation:af-up 66s linear infinite;animation-delay:-11s">
+        <div class="af-wall-half">
+          <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-03.jpg" alt="벼 사용 포장 시험구"><span class="af-wall-cap">벼 사용 포장 · 임팩트과립 &amp; 임팩트원</span></div>
+          <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/field-06.jpg" alt="마늘 포장에 임팩트과립 사용"><span class="af-wall-cap">마늘 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/crop-apple.jpg" alt="사과 재배 현장"></div>
+          <div class="af-wall-shot" style="height:265px"><img loading="lazy" decoding="async" src="assets/album/web/crop-melon.jpg" alt="수박 재배 현장"></div>
+          <div class="af-wall-shot" style="height:225px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice2.jpg" alt="벼 출수기 현장"></div>
+        </div>
+        <div class="af-wall-half" aria-hidden="true">
+          <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-03.jpg" alt=""><span class="af-wall-cap">벼 사용 포장 · 임팩트과립 &amp; 임팩트원</span></div>
+          <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/field-06.jpg" alt=""><span class="af-wall-cap">마늘 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/crop-apple.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:265px"><img loading="lazy" decoding="async" src="assets/album/web/crop-melon.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:225px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice2.jpg" alt=""></div>
+        </div>
+      </div>
+      <div class="af-wall-col" style="left:calc(((100% - 28px)/3 + 14px) * 2);width:calc((100% - 28px)/3);animation:af-up 62s linear infinite;animation-delay:-27s">
+        <div class="af-wall-half">
+          <div class="af-wall-shot" style="height:245px"><img loading="lazy" decoding="async" src="assets/album/web/field-02.jpg" alt="못자리에 임팩트과립 사용"><span class="af-wall-cap">못자리 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:215px"><img loading="lazy" decoding="async" src="assets/album/web/field-05.jpg" alt="벼 이삭 생육 확인"></div>
+          <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-seedling.jpg" alt="모종 육묘 현장"></div>
+          <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean1.jpg" alt="콩 재배 현장"></div>
+          <div class="af-wall-shot" style="height:220px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean2.jpg" alt="재배 현장"></div>
+        </div>
+        <div class="af-wall-half" aria-hidden="true">
+          <div class="af-wall-shot" style="height:245px"><img loading="lazy" decoding="async" src="assets/album/web/field-02.jpg" alt=""><span class="af-wall-cap">못자리 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:215px"><img loading="lazy" decoding="async" src="assets/album/web/field-05.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-seedling.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean1.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:220px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean2.jpg" alt=""></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div style="padding:66px 40px;background:#eee9db">
+    <div style="text-align:center;margin-bottom:38px"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:10px">FAQ</div><h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">자주 묻는 질문</h2></div>
+    <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px">
+      <details style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:20px 24px" open=""><summary style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px;color:#16241a">관주로도 사용할 수 있나요?<span style="color:#4a7c59">＋</span></summary><p style="margin:14px 0 0;font-size:14px;line-height:1.7;color:#54604f">제품에 따라 엽면살포와 관주 모두 사용 가능합니다. 품목별 희석 배수와 300평당 관주량은 각 제품 상세페이지에 안내되어 있습니다.</p></details>
+      <details style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:20px 24px"><summary style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px;color:#16241a">드론(항공) 방제에 사용 가능한가요?<span style="color:#4a7c59">＋</span></summary><p style="margin:14px 0 0;font-size:14px;line-height:1.7;color:#54604f">임팩트규산·임팩트규산골드 등 항공방제에 사용 가능한 제품이 있습니다. 사용 방식과 희석 배수는 제품별로 다르니 상세페이지 또는 고객센터에서 확인해 주세요.</p></details>
+      <details style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:20px 24px"><summary style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px;color:#16241a">유기농업자재 공시 제품인가요?<span style="color:#4a7c59">＋</span></summary><p style="margin:14px 0 0;font-size:14px;line-height:1.7;color:#54604f">임팩트골드(공시-2-3-802), 임팩트과립(공시-2-3-792) 등 공시를 취득한 제품을 보유하고 있습니다. 제품별 공시 여부는 상세페이지에서 확인하실 수 있습니다.</p></details>
+      <details id="buy" style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:20px 24px;scroll-margin-top:90px"><summary style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px;color:#16241a">제품 구입 문의와 사용방법 상담은 어디로 연락하나요?<span style="color:#4a7c59">＋</span></summary><p style="margin:14px 0 0;font-size:14px;line-height:1.7;color:#54604f">전국 지역 대리점 및 농자재 판매처를 통해 공급됩니다. 담당 지역으로 직접 연락 주시면 가까운 구입처와 작물별 사용법을 안내해 드립니다.</p><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px"><div style="background:#faf7ef;border:1px solid #e2ddce;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:7px"><div style="font-size:11.5px;font-weight:800;letter-spacing:.04em;color:#4a7c59">충청 · 경기</div><div style="font-weight:800;font-size:15px;color:#16241a">이준희 팀장</div><a href="tel:01092831393" style="font-weight:800;font-size:16px;color:#16271c;letter-spacing:-.01em">010-9283-1393</a></div><div style="background:#faf7ef;border:1px solid #e2ddce;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:7px"><div style="font-size:11.5px;font-weight:800;letter-spacing:.04em;color:#4a7c59">영남</div><div style="font-weight:800;font-size:15px;color:#16241a">박태진 팀장</div><a href="tel:01081319840" style="font-weight:800;font-size:16px;color:#16271c;letter-spacing:-.01em">010-8131-9840</a></div><div style="background:#faf7ef;border:1px solid #e2ddce;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:7px"><div style="font-size:11.5px;font-weight:800;letter-spacing:.04em;color:#4a7c59">강원 · 호남 <span style="font-weight:600;color:#8a9280">(경북 청송·봉화)</span></div><div style="font-weight:800;font-size:15px;color:#16241a">박정호 부장</div><a href="tel:01091580404" style="font-weight:800;font-size:16px;color:#16271c;letter-spacing:-.01em">010-9158-0404</a></div></div><p style="margin:14px 0 0;font-size:13px;color:#8a9280">고객센터 02-858-6229 (평일 09:00–17:00)</p></details>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="padding:56px 40px;background:#16271c;color:#fff;text-align:center">
+    <h2 style="margin:0 0 12px;font-weight:800;font-size:34px;letter-spacing:-.02em">작물에 맞는 처방이 궁금하세요?</h2>
+    <p style="margin:0 0 26px;font-size:15px;color:#a9d18a">작물·재배 환경에 맞는 제품과 사용법을 전문가가 안내해 드립니다</p>
+    <span class="af-btn" onClick="{{ goBuy }}" style="display:inline-block;white-space:nowrap;padding:15px 32px;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">문의하기 →</span>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ================= 제품 상세페이지 ================= -->
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+<div>
+  <div style="max-width:1100px;margin:0 auto;padding:26px 40px 0">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8a9280;margin-bottom:22px">
+      <span class="af-btn" onClick="{{ goHome }}" style="font-weight:700;color:#4a7c59">← 목록으로</span>
+      <span>·</span><span>제품</span><span>/</span><span style="color:#16241a;font-weight:600">제품 NO.{{ pnum }}</span>
+    </div>
+  </div>
+
+  <!-- 상세 상단 -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 40px 20px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start">
+      <div class="af-hero-img" style="height:500px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center"><img loading="lazy" decoding="async" src="{{ pimg }}" alt="{{ pname }}" style="max-width:72%;max-height:94%;object-fit:contain;mix-blend-mode:multiply;will-change:transform"></div>
+      <div class="af-rise" style="padding-top:6px">
+        <div style="font-size:12.5px;font-weight:700;letter-spacing:.12em;color:#7fa06a">NO.{{ pnum }} · Able FARM · {{ psize }}</div>
+        <h1 style="margin:8px 0 14px;font-weight:800;font-size:40px;letter-spacing:-.02em;color:#16241a">{{ pname }}</h1>
+        <p style="margin:0 0 22px;font-size:15px;line-height:1.75;color:#54604f">{{ pdesc }}</p>
+        <div style="display:flex;align-items:center;gap:10px;background:#eef1e6;border-radius:14px;padding:18px 22px;margin-bottom:22px">
+          <span style="font-size:22px">📞</span>
+          <div><div style="font-weight:800;font-size:18px;color:#16241a">제품·사용 상담 02-858-6229</div><div style="font-size:12.5px;color:#6b7465">작물과 재배 환경에 맞는 사용법을 안내해 드립니다</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px">
+          <sc-for list="{{ pchips }}" as="c" hint-placeholder-count="3">
+            <div style="background:#eef1e6;border-radius:12px;padding:16px;text-align:center"><div style="font-weight:800;font-size:17px;color:#4a7c59">{{ c.v }}</div><div style="font-size:11.5px;color:#6b7465;margin-top:3px">{{ c.l }}</div></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px">
+          <span class="af-btn" onClick="{{ goFaq }}" style="flex:1;text-align:center;padding:16px 0;background:#16271c;color:#fff;border-radius:12px;font-weight:800;font-size:15px">사용 상담 문의</span>
+          <span class="af-btn" onClick="{{ goProducts }}" style="flex:1;text-align:center;padding:16px 0;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">전체 제품 보기</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 설명 본문 -->
+  <div style="background:#e6ecd6;margin-top:36px;padding:64px 40px">
+    <div style="max-width:1000px;margin:0 auto">
+      <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:12px">PRODUCT DETAIL · {{ pname }}</div>
+      <h2 style="margin:0 0 20px;font-weight:800;font-size:32px;letter-spacing:-.02em;color:#16241a">{{ ptag }}</h2>
+
+      <!-- 한 줄 요약 + 기본정보 -->
+      <sc-if value="{{ hasRich }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;margin-bottom:20px">
+        <div style="display:flex;flex-direction:column;justify-content:center;background:#16271c;color:#eaf1e2;border-radius:18px;padding:30px 32px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#a9d18a;margin-bottom:10px">한 줄 요약</div>
+          <p style="margin:0;font-size:16px;line-height:1.8">{{ rSummary }}</p>
+        </div>
+        <div style="background:#fff;border-radius:18px;padding:26px 30px;border:1px solid #e2ddce">
+          <div style="font-weight:800;font-size:15px;color:#16241a;margin-bottom:14px">제품 기본 정보</div>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid #efe9da"><span style="width:78px;flex:none;font-size:13px;color:#8a9280;font-weight:600">종류·명칭</span><span style="font-size:14px;color:#2f3a2b">{{ rType }}</span></div>
+            <sc-if value="{{ rHasGongsi }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid #efe9da"><span style="width:78px;flex:none;font-size:13px;color:#8a9280;font-weight:600">공시번호</span><span style="font-size:14px;color:#2f3a2b">{{ rGongsi }}</span></div>
+            </sc-if>
+            <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid #efe9da"><span style="width:78px;flex:none;font-size:13px;color:#8a9280;font-weight:600">포장단위</span><span style="font-size:14px;color:#2f3a2b">{{ psize }}</span></div>
+            <div style="display:flex;gap:14px;padding:11px 0"><span style="width:78px;flex:none;font-size:13px;color:#8a9280;font-weight:600">제조·판매</span><span style="font-size:14px;color:#2f3a2b">(주)에이블팜 / Able FARM</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 성분과 작용 -->
+      <div style="background:#fff;border-radius:18px;padding:28px 30px;border:1px solid #e2ddce;margin-bottom:20px">
+        <div style="font-weight:800;font-size:17px;color:#16241a;margin-bottom:16px">⚗ 주요 성분과 작용</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <sc-for list="{{ rIngredients }}" as="c" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:170px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #f0ece0"><span style="font-weight:700;color:#3c6b49;font-size:14px">{{ c.n }}</span><span style="font-size:14px;line-height:1.65;color:#54604f">{{ c.a }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 주요 효과 + 사용 방법 -->
+      <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:20px;margin-bottom:20px">
+        <div style="background:#fff;border-radius:18px;padding:28px 30px;border:1px solid #e2ddce">
+          <div style="font-weight:800;font-size:17px;color:#16241a;margin-bottom:16px">◎ 주요 효과</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ rEffects }}" as="e" hint-placeholder-count="4">
+              <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:none;width:8px;height:8px;border-radius:50%;background:#4a7c59;margin-top:7px"></span><div><span style="font-weight:700;color:#16241a;font-size:14.5px">{{ e.t }}</span><div style="font-size:13.5px;line-height:1.6;color:#54604f;margin-top:2px">{{ e.d }}</div></div></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#e6ecd6;border-radius:18px;padding:28px 30px">
+          <div style="font-weight:800;font-size:17px;color:#16241a;margin-bottom:16px">✎ 사용 방법</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div><div style="font-size:12px;font-weight:700;color:#4a7c59;letter-spacing:.04em">희석 배수</div><div style="font-size:14.5px;color:#2f3a2b;margin-top:3px">{{ rDilute }}</div></div>
+            <div><div style="font-size:12px;font-weight:700;color:#4a7c59;letter-spacing:.04em">사용 시기</div><div style="font-size:14.5px;color:#2f3a2b;margin-top:3px">{{ rTiming }}</div></div>
+            <div><div style="font-size:12px;font-weight:700;color:#4a7c59;letter-spacing:.04em">사용 횟수·방법</div><div style="font-size:14.5px;color:#2f3a2b;margin-top:3px">{{ rCount }}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 작물 -->
+      <div style="background:#16271c;color:#eaf1e2;border-radius:18px;padding:26px 30px;margin-bottom:20px">
+        <div style="font-weight:800;font-size:15px;color:#a9d18a;margin-bottom:8px">✿ 이런 작물에 사용하세요</div>
+        <p style="margin:0;font-size:15px;line-height:1.75">{{ rCrops }}</p>
+      </div>
+
+      <!-- FAQ -->
+      <div id="detail-faq" style="background:#fff;border-radius:18px;padding:28px 30px;border:1px solid #e2ddce;scroll-margin-top:90px">
+        <div style="font-weight:800;font-size:17px;color:#16241a;margin-bottom:16px">? 자주 묻는 질문</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ rFaq }}" as="f" hint-placeholder-count="3">
+            <details style="border:1px solid #e6e0d2;border-radius:12px;padding:16px 20px"><summary style="display:flex;justify-content:space-between;font-weight:700;font-size:14.5px;color:#16241a">{{ f.q }}<span style="color:#4a7c59">＋</span></summary><p style="margin:12px 0 0;font-size:13.5px;line-height:1.7;color:#54604f">{{ f.a }}</p></details>
+          </sc-for>
+        </div>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid #efe9da;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div style="font-size:13.5px;color:#6b7465">여기서 해결되지 않았나요? 담당자가 직접 답변드립니다.</div>
+          <span class="af-btn" onClick="{{ askMore }}" style="flex:none;white-space:nowrap;padding:13px 22px;background:#4a7c59;color:#fff;border-radius:11px;font-weight:800;font-size:14px">추가 질문하기 →</span>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- 상세 정보 미등록 제품 fallback -->
+      <sc-if value="{{ hasRichNot }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center;background:#fff;border-radius:18px;padding:28px;border:1px solid #e2ddce">
+        <div style="height:360px;border-radius:14px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center"><img loading="lazy" decoding="async" src="{{ pimg }}" alt="{{ pname }}" style="max-width:74%;max-height:92%;object-fit:contain;mix-blend-mode:multiply"></div>
+        <div>
+          <p style="margin:0 0 20px;font-size:15px;line-height:1.85;color:#3a4236">{{ pdesc }}</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ pchips }}" as="c" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px;background:#eef1e6;border-radius:12px;padding:14px 18px"><span style="font-weight:800;color:#4a7c59;font-size:14px;min-width:76px">{{ c.v }}</span><span style="font-size:13.5px;color:#54604f">{{ c.l }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <p style="margin:16px 0 0;font-size:13px;color:#8a9280">※ 상세 설명은 순차적으로 업데이트됩니다. 자세한 사용법은 02-858-6229로 문의해 주세요.</p>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- 다른 제품 -->
+  <div style="padding:56px 40px;background:#faf7ef">
+    <div style="max-width:1000px;margin:0 auto">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px"><h3 style="margin:0;font-weight:800;font-size:24px;color:#16241a">다른 제품 보기</h3><span class="af-btn" onClick="{{ goHome }}" style="font-size:13.5px;font-weight:700;color:#4a7c59">전체 제품 →</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <sc-for list="{{ related }}" as="item" hint-placeholder-count="4">
+          <div class="af-btn" onClick="{{ item.onClick }}" style="background:#fff;border:1px solid #e2ddce;border-radius:14px;overflow:hidden">
+            <div style="height:160px;background:#fff;display:flex;align-items:center;justify-content:center"><img loading="lazy" decoding="async" src="{{ item.img }}" alt="{{ item.name }}" style="max-width:78%;max-height:88%;object-fit:contain;mix-blend-mode:multiply"></div>
+            <div style="padding:14px"><div style="font-size:11px;color:#7fa06a;font-weight:700">NO.{{ item.num }} · {{ item.size }}</div><div style="font-weight:700;font-size:14px;color:#16241a;margin-top:2px">{{ item.name }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= 고객문의 서브화면 ================= -->
+<sc-if value="{{ isQna }}" hint-placeholder-val="{{ false }}">
+<div>
+  <div style="max-width:900px;margin:0 auto;padding:26px 40px 0">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8a9280">
+      <span class="af-btn" onClick="{{ goHome }}" style="font-weight: 700; color: #4a7c59; font-size: 17px">← 홈으로</span>
+      <span>·</span><span style="color:#16241a;font-weight:600">고객문의</span>
+    </div>
+  </div>
+  <!-- 고객 문의 게시판 (Q&A) -->
+  <div id="qna" style="padding:40px 40px 80px;background:#eee9db;min-height:70vh">
+    <div style="max-width:900px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:10px">Q&amp;A · 고객 문의</div>
+          <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">궁금한 점을 남겨주세요</h2>
+          <p style="margin:10px 0 0;font-size:14px;color:#6b7465">작물·재배 환경에 맞는 사용법을 담당자가 직접 답변해 드립니다.</p>
+        </div>
+        <span class="af-btn" onClick="{{ qToggleAdmin }}" style="flex:none;white-space:nowrap;padding:9px 16px;border-radius:100px;border:1px solid #dcd8c7;background:{{ qAdminBg }};color:{{ qAdminFg }};font-size:12.5px;font-weight:700">{{ qAdminLabel }}</span>
+      </div>
+
+      <!-- 질문 작성 -->
+      <div style="background:#fff;border:1px solid #dcd8c7;border-radius:18px;padding:26px 28px;margin-bottom:22px">
+        <div style="font-weight:800;font-size:16px;color:#16241a;margin-bottom:16px">문의 작성</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <input placeholder="이름 또는 농장명" value="{{ qName }}" onChange="{{ qSetName }}" style="padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
+          <input placeholder="작물 (예: 고추, 벼)" value="{{ qCrop }}" onChange="{{ qSetCrop }}" style="padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
+        </div>
+        <textarea placeholder="궁금한 내용을 적어주세요. 작물·생육 시기·증상을 함께 알려주시면 더 정확히 답변드립니다." value="{{ qBody }}" onChange="{{ qSetBody }}" style="width:100%;box-sizing:border-box;min-height:110px;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;line-height:1.7;background:#faf7ef;color:#16241a;outline:none;resize:vertical"></textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:560px">
+            <div style="font-size:12.5px;color:#8a9280">{{ qNotice }}</div>
+            <div style="font-size:13px;font-weight:700;line-height:1.65;color:#54604f;text-wrap:pretty">환경조건에 따라 다른 결과가 나타날 수 있으므로 정확한 조치는 농업기술센터나 가까운 기관에 문의하셔서 직접 상담을 통해 결정하시기 바랍니다.</div>
+          </div>
+          <span class="af-btn" onClick="{{ qSubmit }}" style="flex:none;white-space:nowrap;padding:14px 30px;background:#16271c;color:#fff;border-radius:11px;font-weight:800;font-size:14.5px">문의 등록</span>
+        </div>
+      </div>
+
+      <!-- 문의 목록 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px">
+        <div style="font-size:13px;font-weight:700;color:#54604f">전체 {{ qCount }}건</div>
+        <div style="font-size:12.5px;color:#8a9280">답변 완료 {{ qDone }}건</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ qList }}" as="q" hint-placeholder-count="2">
+          <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;overflow:hidden">
+            <div class="af-btn" onClick="{{ q.onToggle }}" style="display:flex;align-items:center;gap:12px;padding:18px 22px">
+              <span style="flex:none;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:800;background:{{ q.badgeBg }};color:{{ q.badgeFg }}">{{ q.badge }}</span>
+              <span style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#16241a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ q.title }}</span>
+              <span style="flex:none;font-size:12px;color:#9aa393">{{ q.meta }}</span>
+              <span style="flex:none;color:#4a7c59;font-weight:700">{{ q.caret }}</span>
+            </div>
+            <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 22px 22px">
+                <div style="background:#faf7ef;border-radius:12px;padding:18px 20px;font-size:14px;line-height:1.75;color:#3a4236;white-space:pre-wrap">{{ q.body }}</div>
+                <sc-if value="{{ q.hasAnswer }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:10px;background:#e9efdd;border-left:none;border-radius:12px;padding:18px 20px">
+                    <div style="font-size:12px;font-weight:800;color:#4a7c59;margin-bottom:7px">에이블팜 답변 · {{ q.answeredAt }}</div>
+                    <div style="font-size:14px;line-height:1.75;color:#2f3a2b;white-space:pre-wrap">{{ q.answer }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ q.canAnswer }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+                    <textarea placeholder="답변을 입력하세요" value="{{ q.draft }}" onChange="{{ q.onDraft }}" style="width:100%;box-sizing:border-box;min-height:90px;padding:13px 15px;border:1px solid #cfd6c4;border-radius:11px;font-size:14px;font-family:inherit;line-height:1.7;background:#fff;color:#16241a;outline:none;resize:vertical"></textarea>
+                    <div style="display:flex;gap:10px;justify-content:flex-end">
+                      <span class="af-btn" onClick="{{ q.onDelete }}" style="flex:none;white-space:nowrap;padding:11px 18px;border:1px solid #dcd8c7;border-radius:10px;font-size:13px;font-weight:700;color:#8a7060">문의 삭제</span>
+                      <span class="af-btn" onClick="{{ q.onSave }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#4a7c59;color:#fff;border-radius:10px;font-size:13px;font-weight:800">{{ q.saveLabel }}</span>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+</div>
+</sc-if>
+
+<!-- ===== FOOTER (공통) ===== -->
+<div style="padding:40px;background:#0f1c14;color:#8a9585;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;font-size:13px">
+  <div><div class="af-btn" onClick="{{ goHome }}" style="display:inline-block;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:14px"><img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:52px;width:auto;display:block;mix-blend-mode:multiply"></div><p style="margin:0;line-height:1.7;max-width:260px">작물과 생육 시기에 맞춘 액상 영양·유기농업자재 — (주)에이블팜 Able FARM.</p></div>
+  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">제품</div><div style="line-height:2">임팩트 라인업<br>규산·칼슘 영양제<br>토양개량제<br>작물별 처방</div></div>
+  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">회사</div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px"><span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개</span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span></div></div>
+  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">고객센터</div><div style="line-height:2">전화 02-858-6229<br>팩스 02-6442-6229<br>평일 09:00–17:00</div></div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'home', pidx: 1 };
+
+  componentDidMount() {
+    document.documentElement.lang = 'ko';
+    this.detectRegion();
+    this.qnaLoad();
+    this.loadPrices();
+    this.hiStart();
+    this.injectJsonLd();
+  }
+
+  // 검색엔진·AI 크롤러가 제품 정보를 구조적으로 읽도록 schema.org JSON-LD 주입
+  productGraph() {
+    const rich = this.richData();
+    const org = {
+      '@type': 'Organization',
+      '@id': '#ablefarm',
+      name: '(주)에이블팜',
+      alternateName: 'Able FARM',
+      description: '작물과 생육 시기에 맞춘 액상 영양·유기농업자재를 개발·제조하는 그린바이오 기업.',
+      telephone: '+82-2-858-6229',
+      faxNumber: '+82-2-6442-6229',
+      areaServed: 'KR',
+    };
+    const products = this.catalog().map((p) => {
+      const d = rich[p.name] || {};
+      const props = [];
+      (d.ingredients || []).forEach(([k, v]) => props.push({ '@type': 'PropertyValue', name: k, value: v }));
+      if (d.dilute) props.push({ '@type': 'PropertyValue', name: '희석 배수', value: d.dilute });
+      if (d.timing) props.push({ '@type': 'PropertyValue', name: '사용 시기', value: d.timing });
+      if (d.count) props.push({ '@type': 'PropertyValue', name: '사용 횟수·방법', value: d.count });
+      if (d.crops) props.push({ '@type': 'PropertyValue', name: '적용 작물', value: d.crops });
+      const item = {
+        '@type': 'Product',
+        name: p.name,
+        category: d.type || '액상비료',
+        description: d.summary || p.desc,
+        brand: { '@type': 'Brand', name: 'Able FARM' },
+        manufacturer: { '@id': '#ablefarm' },
+        image: 'assets/products/' + p.file,
+        size: p.size,
+        slogan: p.tag,
+      };
+      if (props.length) item.additionalProperty = props;
+      if (Array.isArray(d.effects) && d.effects.length) {
+        item.positiveNotes = { '@type': 'ItemList', itemListElement: d.effects.map(([t, x], i) => ({ '@type': 'ListItem', position: i + 1, name: t, description: x })) };
+      }
+      if (Array.isArray(d.faq) && d.faq.length) {
+        item.subjectOf = { '@type': 'FAQPage', mainEntity: d.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
+      }
+      return item;
+    });
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [org, {
+        '@type': 'ItemList',
+        name: '(주)에이블팜 제품 목록',
+        numberOfItems: products.length,
+        itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: p })),
+      }],
+    };
+  }
+
+  injectJsonLd() {
+    if (document.getElementById('af-jsonld')) return;
+    const el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.id = 'af-jsonld';
+    el.textContent = JSON.stringify(this.productGraph());
+    document.head.appendChild(el);
+  }
+
+  static PRICE_FALLBACK = {
+    '_출처': 'KAMIS 농산물유통정보 (가락시장 도매 상품 기준)',
+    '기준일': '2026-08-28',
+    '품목': [
+      { name: '쌀(20kg)', unit: '상품', price: 54800, prev: 54150 },
+      { name: '배추', unit: '10kg 망', price: 12400, prev: 12840 },
+      { name: '사과(후지)', unit: '10kg', price: 48600, prev: 47280 },
+      { name: '토마토', unit: '10kg', price: 26300, prev: 26590 },
+      { name: '양파', unit: '15kg', price: 19700, prev: 19580 },
+      { name: '건고추', unit: '600g', price: 14900, prev: 14900 },
+    ],
+  };
+
+  async loadPrices() {
+    try {
+      const r = await fetch('data/prices.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      if (j && Array.isArray(j['품목']) && j['품목'].length) { this.applyPrices(j); return; }
+      throw new Error('empty');
+    } catch (e) {
+      this.applyPrices(Component.PRICE_FALLBACK);
+    }
+  }
+
+  applyPrices(j) {
+    const live = j['품목'].map((it) => ({ ...it, base: it.price }));
+    this.setState({ priceData: j, live });
+    if (this._tick) clearInterval(this._tick);
+    this._tick = setInterval(() => this.tickPrices(), 3800);
+  }
+
+  componentWillUnmount() {
+    if (this._tick) clearInterval(this._tick);
+    if (this._hiTimer) clearInterval(this._hiTimer);
+    if (this._vidWatch) window.removeEventListener('scroll', this._vidWatch);
+  }
+
+  tickPrices() {
+    const live = this.state.live;
+    if (!live || !live.length) return;
+    const i = Math.floor(Math.random() * live.length);
+    const it = live[i];
+    // 기준가 ±2% 범위 안에서만 소폭 변동 (실제 도매시세의 일중 변동 수준)
+    const step = it.base * (Math.random() * 0.011 + 0.002) * (Math.random() < 0.5 ? -1 : 1);
+    let next = it.price + step;
+    const lo = it.base * 0.98, hi = it.base * 1.02;
+    if (next < lo) next = lo; if (next > hi) next = hi;
+    next = Math.round(next / 10) * 10;
+    const copy = live.slice();
+    copy[i] = { ...it, prev: it.price, price: next };
+    this.setState({ live: copy, flashName: it.name });
+  }
+
+  static QNA_KEY = 'af_qna_v1';
+  static QNA_PIN = 'ablefarm';
+
+  qnaSeed() {
+    return [
+      { id: 1, name: '김영수', crop: '고추', body: '장마 지나고 고추 잎이 노랗게 뜨고 세력이 죽었습니다. 어떤 제품을 쓰면 좋을까요?', at: '2026-08-12', answer: '과습으로 뿌리 기능이 떨어진 상태로 보입니다. 아미루트를 500~1,000배로 관주(300평당 1~1.5ℓ)해 뿌리 회복을 먼저 잡으신 뒤, 7~10일 후 토탈그로를 엽면살포해 수세를 올려주세요.', answeredAt: '2026-08-13' },
+      { id: 2, name: '해남 대성농장', crop: '벼', body: '태풍 오기 전에 도복 예방으로 쓸 만한 제품이 있나요? 드론 방제로 살포합니다.', at: '2026-08-20', answer: '', answeredAt: '' },
+    ];
+  }
+
+  qnaLoad() {
+    let list = null;
+    try { const raw = localStorage.getItem(Component.QNA_KEY); if (raw) list = JSON.parse(raw); } catch (e) {}
+    if (!Array.isArray(list)) list = this.qnaSeed();
+    this.setState({ qna: list });
+  }
+
+  qnaSave(list) {
+    this.setState({ qna: list });
+    try { localStorage.setItem(Component.QNA_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+
+  qnaVals() {
+    const s = this.state;
+    const list = s.qna || [];
+    const admin = !!s.qAdmin;
+    const drafts = s.qDrafts || {};
+    const today = new Date().toISOString().slice(0, 10);
+
+    const qList = list.slice().sort((a, b) => b.id - a.id).map((q) => {
+      const done = !!(q.answer && q.answer.trim());
+      const open = s.qOpen === q.id;
+      return {
+        open, body: q.body, answer: q.answer, answeredAt: q.answeredAt,
+        hasAnswer: done,
+        title: (q.crop ? '[' + q.crop + '] ' : '') + q.body.split('\n')[0],
+        meta: q.name + ' · ' + q.at,
+        badge: done ? '답변완료' : '답변대기',
+        badgeBg: done ? '#e9efdd' : '#f3ece0',
+        badgeFg: done ? '#4a7c59' : '#a08050',
+        caret: open ? '−' : '＋',
+        canAnswer: admin,
+        draft: drafts[q.id] !== undefined ? drafts[q.id] : (q.answer || ''),
+        saveLabel: done ? '답변 수정' : '답변 등록',
+        onToggle: () => this.setState({ qOpen: open ? null : q.id }),
+        onDraft: (e) => this.setState({ qDrafts: { ...drafts, [q.id]: e.target.value } }),
+        onSave: () => {
+          const text = (drafts[q.id] !== undefined ? drafts[q.id] : (q.answer || '')).trim();
+          this.qnaSave(list.map((x) => x.id === q.id ? { ...x, answer: text, answeredAt: text ? today : '' } : x));
+        },
+        onDelete: () => {
+          if (!window.confirm('이 문의를 삭제할까요?')) return;
+          this.qnaSave(list.filter((x) => x.id !== q.id));
+        },
+      };
+    });
+
+    return {
+      qList,
+      qCount: list.length,
+      qDone: list.filter((q) => q.answer && q.answer.trim()).length,
+      qName: s.qName || '', qCrop: s.qCrop || '', qBody: s.qBody || '',
+      qSetName: (e) => this.setState({ qName: e.target.value }),
+      qSetCrop: (e) => this.setState({ qCrop: e.target.value }),
+      qSetBody: (e) => this.setState({ qBody: e.target.value }),
+      qNotice: s.qMsg || '등록된 문의는 담당자 확인 후 이 페이지에 답변으로 게시됩니다.',
+      qSubmit: () => {
+        const body = (s.qBody || '').trim();
+        if (!body) { this.setState({ qMsg: '문의 내용을 입력해 주세요.' }); return; }
+        const item = {
+          id: Date.now(),
+          name: (s.qName || '').trim() || '익명',
+          crop: (s.qCrop || '').trim(),
+          body, at: today, answer: '', answeredAt: '',
+        };
+        this.qnaSave([...list, item]);
+        this.setState({ qName: '', qCrop: '', qBody: '', qOpen: item.id, qMsg: '문의가 등록되었습니다. 확인 후 답변드리겠습니다.' });
+      },
+      qAdminLabel: admin ? '🔓 관리자 모드 (해제)' : '🔒 관리자 로그인',
+      qAdminBg: admin ? '#16271c' : '#fff',
+      qAdminFg: admin ? '#fff' : '#54604f',
+      qToggleAdmin: () => {
+        if (admin) { this.setState({ qAdmin: false }); return; }
+        const pin = window.prompt('관리자 비밀번호를 입력하세요');
+        if (pin === null) return;
+        if (pin === Component.QNA_PIN) this.setState({ qAdmin: true });
+        else window.alert('비밀번호가 올바르지 않습니다.');
+      },
+    };
+  }
+
+  async detectRegion() {
+    let r = null;
+    try {
+      const ip = await (await fetch('https://ipapi.co/json/')).json();
+      if (ip && ip.latitude) r = { name: ip.city || ip.region || '현재 위치', lat: ip.latitude, lon: ip.longitude };
+    } catch (e) {}
+    if (!r) r = { name: '서울', lat: 37.5665, lon: 126.978 };
+    this.setState({ place: r }, () => this.loadWeather());
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        let name = this.state.place.name;
+        try {
+          const g = await (await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`)).json();
+          name = g.city || g.locality || g.principalSubdivision || name;
+        } catch (e) {}
+        this.setState({ place: { name, lat, lon }, wx: null }, () => this.loadWeather());
+      }, () => {}, { timeout: 8000, maximumAge: 600000 });
+    }
+  }
+
+  async loadWeather() {
+    const r = this.state.place;
+    if (!r) return;
+    try {
+      const u = `https://api.open-meteo.com/v1/forecast?latitude=${r.lat}&longitude=${r.lon}` +
+        `&current=temperature_2m,precipitation,weather_code,wind_speed_10m` +
+        `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max` +
+        `&timezone=Asia%2FSeoul&forecast_days=7`;
+      const wx = await (await fetch(u)).json();
+      this.setState({ wx });
+    } catch (e) { this.setState({ wxErr: true }); }
+  }
+
+  wxMeta(code) {
+    const m = {
+      0: ['☀️', '맑음'], 1: ['🌤', '대체로 맑음'], 2: ['⛅', '구름 조금'], 3: ['☁️', '흐림'],
+      45: ['🌫', '안개'], 48: ['🌫', '짙은 안개'],
+      51: ['🌦', '약한 이슬비'], 53: ['🌦', '이슬비'], 55: ['🌧', '강한 이슬비'],
+      61: ['🌦', '약한 비'], 63: ['🌧', '비'], 65: ['🌧', '강한 비'],
+      71: ['🌨', '약한 눈'], 73: ['🌨', '눈'], 75: ['❄️', '강한 눈'],
+      80: ['🌦', '소나기'], 81: ['🌧', '소나기'], 82: ['⛈', '강한 소나기'],
+      95: ['⛈', '뇌우'], 96: ['⛈', '우박 동반 뇌우'], 99: ['⛈', '우박 동반 뇌우'],
+    };
+    return m[code] || ['🌤', '—'];
+  }
+
+  open(i) {
+    this.setState({ view: 'detail', pidx: i });
+    try { if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo({ top: 0 }); } catch (e) {}
+  }
+
+  home() {
+    this.setState({ view: 'home' });
+  }
+
+  pad(n) { return ('0' + n).slice(-2); }
+
+  catalog() {
+    return [
+      { name: '구근짱', tag: 'T/R률 개선 · 구근 비대', size: '500ml', file: 'p01.jpg', accent: '#6b4f35',
+        chips: [['T/R률', '뿌리·잎 균형'], ['구근 비대', '크기 향상'], ['저장성', '상품성 UP'] ],
+        desc: '양파·마늘·감자 등 구근작물 전용. T/R률을 개선해 구근을 굵고 단단하게 키웁니다.' },
+      { name: '산소탱크', tag: '빠른 산소공급 · 뿌리 발근촉진', size: '500ml', file: 'p02.jpg', accent: '#2f6b57',
+        chips: [['침수피해', '회복 지원'], ['염류장해', '경감'], ['새뿌리', '발달 촉진'] ],
+        desc: '뿌리에 빠르게 산소를 공급해 침수·과습 피해를 줄이고 새뿌리 발근을 돕습니다.' },
+      { name: '속딴딴', tag: '세포벽 강화 · 무름 예방', size: '500ml', file: 'p03.jpg', accent: '#c99a1f',
+        chips: [['세포벽', '강화'], ['무름', '예방'], ['저장성', '향상'] ],
+        desc: '세포벽을 단단하게 만들어 무름 증상을 예방하고 작물의 저장성과 상품성을 높입니다.' },
+      { name: '아미닥터', tag: '저항성 증대 · 생리장해 경감', size: '500ml', file: 'p04.jpg', accent: '#5b3b7a',
+        chips: [['저항성', '증대'], ['새뿌리', '발달'], ['생리장해', '경감'] ],
+        desc: '세균성 병원체에 대한 저항성을 높이고 새뿌리 발달과 생리장해 경감을 돕는 아미노산 영양제.' },
+      { name: '아미루트', tag: '뿌리발달 · 복합생리활성 · 내병성', size: '500ml', file: 'p05.jpg', accent: '#4a5a2b',
+        chips: [['뿌리', '발달'], ['생리활성', '복합'], ['내병성', '향상'] ],
+        desc: 'L-form 유리아미노산 함유. 뿌리 발달과 복합 생리활성으로 작물 내병성을 끌어올립니다.' },
+      { name: '엔피씰', tag: '조직강화 · 수량증대 · 도복경감', size: '500ml', file: 'p06.jpg', accent: '#1f3a6b',
+        chips: [['조직', '강화'], ['수량', '증대'], ['도복', '경감'] ],
+        desc: '천연 생리활성물질(특허) 함유. 식물체 조직을 강화해 수량과 미질을 높이고 도복을 줄입니다. 드론 사용 가능.' },
+      { name: '엔피칼마', tag: '조직·잎기능 강화 · 무름 경감', size: '500ml', file: 'p07.jpg', accent: '#2f6b3a',
+        chips: [['Ca·Mg', '동시 흡수'], ['세포막', '생성'], ['무름', '경감'] ],
+        desc: '칼슘·마그네슘을 동시에 흡수시켜 세포막 생성과 뿌리 발육을 돕고 무름 증상을 줄입니다.' },
+      { name: '원팩트', tag: '토양 경운 처리 전용 입제', size: '10kg', file: 'p08.jpg', accent: '#c0272d',
+        chips: [['토양개량', '전용'], ['뿌리', '발달'], ['염류장해', '개선'] ],
+        desc: '노지 및 시설작물 토양 경운 처리 전용 입제. 토양개량·조기수확·저장성 향상·기후피해 경감까지 한 번에.' },
+      { name: '유니NK칼', tag: '15-0-15 +17CaO +붕소', size: '10kg', file: 'p09.jpg', accent: '#3a7d44',
+        chips: [['CaO 17', '고칼슘'], ['수용성', '100%'], ['붕소', '함유'] ],
+        desc: '100% 수용성 고칼슘 복합비료. 질소·칼륨에 칼슘·붕소를 더해 균형 잡힌 양분을 공급합니다.' },
+      { name: '유니NK칼마', tag: '13-0-10 +5Mg +12CaO', size: '10kg', file: 'p10.jpg', accent: '#1f7fb5',
+        chips: [['Ca·Mg', '고함량'], ['수용성', '100%'], ['균형', '양분'] ],
+        desc: '100% 수용성 칼슘·마그네슘 복합비료. 세포 강화와 균형 잡힌 미량요소 공급에 적합합니다.' },
+      { name: '임팩트규산', tag: '식물체 조직강화 · 뿌리발달', size: '500ml', file: 'p11.jpg', accent: '#1f4b8f',
+        chips: [['조직', '강화'], ['뿌리', '발달'], ['드론', '사용 가능'] ],
+        desc: '식물체 조직을 튼튼하게 하고 뿌리 발달을 촉진하는 규산 액제. 드론 방제에도 사용 가능합니다.' },
+      { name: '임팩트규산 골드', tag: '병해관리용 · 항공방제 · 유기농업자재', size: '500ml', file: 'p12.jpg', accent: '#1c63a8',
+        chips: [['병해', '관리용'], ['항공', '방제용'], ['공시', '2-4-241'] ],
+        desc: '병해 관리에 특화된 규산 골드. 항공방제(드론)용으로 사용 가능한 유기농업자재입니다.' },
+      { name: '일소가드', tag: '일소피해 경감 · 잎 기능 재생', size: '1L', file: 'p13.jpg', accent: '#e2611f',
+        chips: [['일소피해', '경감'], ['잎 기능', '재생'], ['보습', '천연 보호막'] ],
+        desc: '고온·강광으로 인한 일소(햇볕 데임) 피해를 경감하고, 천연 보호막과 보습으로 잎 기능 재생을 돕습니다.' },
+      { name: '임팩트', tag: '냉해 · 개화 · 수정 · 다수확', size: '500ml·3L', file: 'p14.jpg', accent: '#2f2a24',
+        chips: [['냉해', '대응'], ['개화·수정', '향상'], ['다수확', 'High Quality'] ],
+        desc: 'L-form 유리아미노 함유. 냉해 대응과 개화·수정·다수확을 돕는 공동방제 전용 아미노 액제(500ml·3L).' },
+      { name: '임팩트골드', tag: '토양개량 · 작물생육용 유기농업자재', size: '500ml·5L', file: 'p15.jpg', accent: '#6b5335',
+        chips: [['토양', '개량'], ['생육', '촉진'], ['공시', '2-3-802'] ],
+        desc: '혈액발효액·목초액·해조류추출물을 함유한 토양개량 및 작물생육용 유기농업자재(500ml·5L, 공시-2-3-802).' },
+      { name: '임팩트과립', tag: '토양개량 · 뿌리 튼튼 입제', size: '2·6·8kg', file: 'p16.jpg', accent: '#3a6b3a',
+        chips: [['토양', '입단구조'], ['뿌리', '튼튼'], ['공시', '2-3-792'] ],
+        desc: '다공질성 광물질(베이직슬래그) 함유로 토양의 입단구조를 개선하는 과립형 유기농업자재(2·6·8kg, 공시-2-3-792).' },
+      { name: '임팩트원', tag: '개화 · 수정 · 다수확 · 도복경감 · 냉해', size: '500ml·3L', file: 'p17.jpg', accent: '#2f2a24',
+        chips: [['개화·수정', '향상'], ['다수확', '도복경감'], ['특허', '천연 생리활성'] ],
+        desc: '특허 천연 생리활성물질 함유. 개화·수정·다수확과 도복경감·냉해 대응을 돕는 프리미엄 액제(500ml·3L).' },
+      { name: '칼슘탄', tag: '킬레이트 칼슘 · 세포막 강화', size: '500ml', file: 'p18.jpg', accent: '#2f6b3a',
+        chips: [['킬레이트', '칼슘'], ['세포막', '강화'], ['흡수', '고효율'] ],
+        desc: '흡수율이 높은 킬레이트 칼슘으로 세포막을 강화해 과실·잎의 조직을 튼튼하게 만듭니다.' },
+      { name: '토탈그로', tag: '균형 성장 · 종합 생리활성', size: '500ml', file: 'p19.jpg', accent: '#e08a1f',
+        chips: [['균형', '성장'], ['생리활성', '종합'], ['L-form', 'Free Amino'] ],
+        desc: 'L-form 유리아미노 함유. 작물의 균형 잡힌 성장과 종합 생리활성을 돕는 데일리 영양 액제.' },
+      { name: '파이널솔루션', tag: '과실크기 · 착색 · 경도 · 조기수확', size: '500ml', file: 'p20.jpg', accent: '#c0272d',
+        chips: [['과실', '크기·착색'], ['경도', '조기수확'], ['스트레스', '예방'] ],
+        desc: '수확기 마무리 전용. 과실 크기·착색·경도를 높이고 조기수확과 환경 스트레스 예방을 돕습니다.' },
+      { name: '하이그로퍼 골드', tag: '토양개량 · 작물생육용 유기농업자재', size: '20kg', file: 'p21.jpg', accent: '#2f6b3a',
+        chips: [['토양', '개량'], ['측조시비', '가능'], ['공시', '2-3-900'] ],
+        desc: '노지·시설 전반에 쓰는 토양개량 및 작물생육용 유기농업자재. 측조시비 가능(20kg, 공시-2-3-900).' },
+      { name: '하이슈거', tag: '당도 · 착색 및 활력 증진', size: '500ml', file: 'p22.jpg', accent: '#c0272d',
+        chips: [['당도', '증진'], ['착색', '향상'], ['특허', '천연 생리활성'] ],
+        desc: '특허 천연 생리활성물질 함유. 과실의 비대·성숙과 당도·착색을 높여 상품성을 끌어올립니다.' },
+      { name: '황실', tag: '병충해 저항성 증진 · 조직강화', size: '500ml', file: 'p23.jpg', accent: '#a51f26',
+        chips: [['유황·규산', '함유'], ['병충해', '저항성'], ['조직', '강화'] ],
+        desc: '유황과 규산을 함유해 병충해 저항성을 높이고 식물체 조직을 강화하는 특허 생리활성 액제.' },
+      { name: '히미업', tag: '생리장해 해결 · 엽록소 기능 강화', size: '500ml', file: 'p24.jpg', accent: '#2f6b3a',
+        chips: [['생리장해', '해결'], ['엽록소', '기능 강화'], ['생리활성', '복합'] ],
+        desc: 'L-form 유리아미노 함유. 생리장해를 해결하고 엽록소 기능 강화와 복합 생리활성을 돕습니다.' },
+    ].map((p, i) => ({ ...p, num: this.pad(i + 1), img: 'assets/products/' + p.file, onClick: () => this.open(i + 1) }));
+  }
+
+  static HILITE = [
+    { name: '임팩트원', headline: '개화·수정·다수확,\n한 병으로 잡는 생식생장',
+      video: 'assets/video/impact-one.mp4', poster: 'assets/products/p17.jpg',
+      quote: '"출수기에 한 번 더 쳐주면 등숙이 확실히 다릅니다."',
+      stats: [['7-4-1.0', '보증성분 P-K-Mg'], ['4종복합', '붕소·아연·망간 배합'], ['1,000배', '엽면살포 기준']],
+      steps: [['STEP 1', '엽면살포 1,000배 희석'], ['STEP 2', '벼 유수형성기·출수개화기 등 생육 단계별 살포'], ['STEP 3', '관주 시 1,000㎡당 1~1.5ℓ']] },
+    { name: '임팩트과립', headline: '흙을 바꾸면\n뿌리가 달라집니다',
+      video: 'assets/video/impact-granule.mp4', poster: 'assets/products/p16.jpg',
+      quote: '"밑거름으로 한 번 넣으니 뿌리가 확실히 잡혔어요."',
+      stats: [['공시-2-3-792', '유기농업자재 공시'], ['입단구조', '다공질 베이직슬래그'], ['2·6·8kg', '과립형 포장']],
+      steps: [['STEP 1', '정식·파종 전 밑거름으로 토양 전면 살포'], ['STEP 2', '경운으로 흙과 고르게 섞기'], ['STEP 3', '생육 중 추비로 추가 시용']] },
+    { name: '임팩트골드', headline: '토양개량과 생육을\n동시에 잡는 유기농업자재',
+      video: 'assets/video/impact-gold.mp4', poster: 'assets/products/p15.jpg',
+      quote: '"염류 낀 하우스에 관주하고 수세가 올라왔습니다."',
+      stats: [['공시-2-3-802', '유기농업자재 공시'], ['혈액발효액', '목초액·해조추출물'], ['500㎖·5ℓ', '액제 포장']],
+      steps: [['STEP 1', '토양개량은 관주, 수세 회복은 엽면살포'], ['STEP 2', '생육 단계에 맞춰 7~10일 간격 반복'], ['STEP 3', '염류·과습 피해 후 회복 처방으로 활용']] },
+    { name: '일소가드', headline: '폭염에 데인 잎,\n다시 일하게 만듭니다',
+      video: 'assets/video/ilsoguard.mp4', poster: 'assets/products/p13.jpg',
+      quote: '"장마 전에 한 번, 그 뒤로 흰 자국 걱정이 없어요."',
+      stats: [['500배', '물 20ℓ당 40㎖'], ['1~4회', '7~10일 간격'], ['미립자', '탄산칼슘·트레할로스']],
+      steps: [['STEP 1', '6월 중하순 장마 전 1회 예방 살포'], ['STEP 2', '7월 이후 폭염기 2~4회 반복'], ['STEP 3', '고온 시간대를 피해 서늘할 때 살포']] },
+    { name: '속딴딴', headline: '무름 없이,\n끝까지 단단하게',
+      video: 'assets/video/sokddanddan.mp4', poster: 'assets/products/p03.jpg',
+      quote: '"수확 후 저장성이 좋아져 상품률이 올랐습니다."',
+      stats: [['Ca·B', '질산태 칼슘·붕소'], ['세포벽', '펙틴산 결합 강화'], ['500㎖', '액제 포장']],
+      steps: [['STEP 1', '엽채·과채류에 엽면살포'], ['STEP 2', '비대기부터 7~10일 간격 반복'], ['STEP 3', '수확 전까지 조직·저장성 관리']] },
+  ];
+
+  static onScreen(el) {
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < (window.innerHeight || 0);
+  }
+
+  hiStart() {
+    if (this._hiTimer) clearInterval(this._hiTimer);
+    // 화면에 보일 때만 다음 제품으로 넘어간다 (보이지 않을 때 영상을 미리 받지 않도록)
+    this._hiTimer = setInterval(() => {
+      if (!Component.onScreen(document.getElementById('hi-video'))) return;
+      this.setState((s) => ({ hi: ((s.hi || 0) + 1) % Component.HILITE.length }));
+    }, 9000);
+    if (!this._vidWatch) {
+      this._vidWatch = () => {
+        if (this._vidRaf) return;
+        this._vidRaf = requestAnimationFrame(() => {
+          this._vidRaf = null;
+          document.querySelectorAll('video').forEach((v) => {
+            if (Component.onScreen(v)) { if (v.paused) v.play().catch(() => {}); }
+            else if (!v.paused) v.pause();
+          });
+        });
+      };
+      window.addEventListener('scroll', this._vidWatch, { passive: true });
+    }
+  }
+
+  hiGo(i) {
+    this.setState({ hi: i });
+    this.hiStart();
+  }
+
+  hiVals() {
+    const L = Component.HILITE;
+    const i = (this.state.hi || 0) % L.length;
+    const h = L[i];
+    const detail = this.richData()[h.name] || {};
+    return {
+      hiKey: 'hi' + i,
+      hiName: h.name,
+      hiType: detail.type || '',
+      hiHeadline: h.headline,
+      hiSummary: detail.summary || '',
+      hiQuote: h.quote,
+      // src/poster를 속성 홀로 두면 스트리밍 중 미해결 문자열로 요청이 나가므로 ref에서 직접 설정
+      hiVideoRef: (el) => {
+        if (!el) return;
+        const src = encodeURI(h.video);
+        if (el.__afSrc === src) return;
+        el.__afSrc = src;
+        el.poster = encodeURI(h.poster);
+        el.src = src;
+        el.muted = true;
+        el.load();
+        el.play().catch(() => {});
+      },
+      hiStats: h.stats.map((s) => ({ v: s[0], l: s[1] })),
+      hiSteps: h.steps.map((s) => ({ n: s[0], t: s[1] })),
+      hiNext: () => this.hiGo((i + 1) % L.length),
+      hiTabs: L.map((x, k) => ({
+        name: x.name,
+        bg: k === i ? '#16271c' : 'rgba(255,255,255,.72)',
+        fg: k === i ? '#fff' : '#54604f',
+        onClick: () => this.hiGo(k),
+      })),
+    };
+  }
+
+  richData() {
+    const mk = (o) => o;
+    return {
+      '구근짱': mk({
+        type: '제4종복합(엽면시비용) 액제',
+        summary: '고함량 인산·칼리와 아인산염이 지상부 양분을 지하부 구근으로 전류시켜, 뿌리채소의 구근 크기·과중 증대와 저장성을 높이는 구근 비대 전용 제품입니다.',
+        effects: [['구근 크기·과중 증대', '지상부 양분을 구근으로 전류시켜 구근을 키웁니다.'],['T/R율 개선', '웃자람을 억제해 양분이 구근으로 집중되게 합니다.'],['뿌리 발달·활착 증진', '뿌리 발육을 도와 흡수력을 높입니다.'],['저장성·품질 향상', '색깔·맛·경도와 저장성을 함께 높입니다.']],
+        ingredients: [['고함량 인산 (P)', '뿌리·구근 발달과 전분 축적을 도와 구근 비대의 핵심 역할.'],['칼리 (K)', '당·전분을 구근으로 이동·축적시켜 과중과 품질을 높임.'],['아인산염', '지상부 동화양분을 지하부 구근으로 보내는 전류를 촉진.'],['붕소·몰리브덴', '세포벽 형성과 대사를 도와 뿌리 발달·품질 보완.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '고구마·감자·생강·당근 수확 45일 전 / 마늘 쫑 전 / 양파 수확 50일 전 / 무·알타리 수확 30일 전', count: '비대 초기부터 · 관주 300평당 1~1.5ℓ',
+        crops: '고구마·감자·생강·당근·마늘·양파·무·알타리·우엉·마·도라지·더덕 등 구근·뿌리채소',
+        faq: [['희석 배수와 사용 시기는?', '500~1,000배(물 20ℓ당 40~20㎖)로 사용합니다. 고구마·감자·생강·당근은 수확 45일 전부터, 마늘은 쫑 나오기 전, 양파는 수확 50일 전, 무·알타리는 수확 30일 전, 기타는 비대 초기부터 살포합니다.'],['T/R율 개선이 무슨 뜻인가요?', 'T/R율은 지상부(줄기·잎)와 지하부(뿌리·구근)의 균형입니다. 웃자람을 억제하고 양분을 구근으로 몰아줘 구근이 더 굵고 실하게 자라도록 균형을 개선합니다.'],['사용 시 주의할 점은?', '고온기에는 아침·저녁 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 반드시 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '속딴딴': mk({
+        type: '미량요소복합 액제',
+        summary: '질산태 칼슘·붕소가 펙틴산과 결합해 세포벽을 강화하는 미량요소복합 액제로, 엽채·과채류의 무름 예방과 조직·상품성 향상이 핵심 용도입니다.',
+        effects: [['무름(물러짐) 예방', '세포벽을 튼튼하게 해 엽채·과채류 물러짐을 줄입니다.'],['조직·병해 저항력 강화', '조직을 강화해 병해 저항력을 높입니다.'],['저장·수송성 향상', '단단한 조직으로 저장성·수송성·상품성을 높입니다.'],['생리장해 예방', '스트레스에 의한 생리장해 예방·경감과 생육 촉진.']],
+        ingredients: [['칼슘 (질산태 함유)', '펙틴산과 결합해 세포막을 만들고 강화, 조직을 단단하게 해 무름을 줄임.'],['붕소 (B)', '세포벽 형성에 관여해 조직 강화와 무름 예방.'],['질소·칼리', '생육·품질을 뒷받침하고 칼슘·붕소 작용을 보완.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '7~10일 간격', count: '1~2회 · 관주 300평당 1~1.5ℓ',
+        crops: '배추·상추 등 엽채류, 고추·토마토·오이 등 과채류, 전작물',
+        faq: [['무름 예방에 왜 효과가 있나요?', '무름은 세포조직이 약해질 때 심해집니다. 질산태 칼슘·붕소가 펙틴산과 결합해 세포막을 만들고 강화하며 조직을 단단하게 해, 병원세균 증식을 억제하고 물러짐을 줄입니다.'],['어떤 작물에 쓸 수 있나요?', '배추·상추 등 엽채류, 고추·토마토·오이 등 과채류를 비롯한 전작물에 사용합니다. 특히 물러짐이 잦고 저장·수송성이 중요한 작물에 유용합니다.'],['사용 시 주의할 점은?', '고온기에는 아침·저녁 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '아미닥터': mk({
+        type: '제4종복합(엽면시비용) 액제',
+        summary: '아인산염과 L-form 복합유리아미노산을 조합한 복합 대사활성제로, 세균성 병원체 저항성 증대·새뿌리 발달·생리장해 경감이 핵심 용도입니다.',
+        effects: [['저항성 증대', '아인산염이 병원체 인산 대사를 경감하고 면역물질 생성을 도와 저항성을 강화.'],['새뿌리 발달', '발근을 촉진해 뿌리 활력을 높임.'],['생리장해 경감', '냉해·서리 피해 등 생리장해를 경감하고 웃자람을 억제.'],['과실 품질 향상', '과실 크기 증대와 착색·당도 증진.'],['수세 회복', '스트레스를 받은 작물의 수세 회복을 지원.']],
+        ingredients: [['아인산염', '역병·탄저·노균·흰가루병 등 예방에 효과가 보고된 성분으로 저항성을 강화.'],['L-아미노산(복합유리)', '바로 흡수되는 활력영양소로 새뿌리 발달·생리장해 회복·수세 회복.'],['고함량 인산·칼리', '발근·꽃눈분화와 과실 크기·착색·당도 증진의 바탕.'],['구연산·목초액 등', '흡수와 토양·식물체 환경을 도와 저항성·생육 보완.']],
+        dilute: '500~1,000배 (사과 역병 둥치피해 100배)', timing: '전생육기 (냉·서리 예방은 꽃 피기 전)', count: '1~5회 · 관주 300평당 1~1.5ℓ',
+        crops: '과수·과채·엽채·근채류 전반, 콩·참깨·들깨 등 두류·유지작물, 담배·인삼 등 약초류',
+        faq: [['아인산염은 어떤 역할을 하나요?', '농촌진흥청 연구에서 역병·탄저·노균·흰가루병 등 예방에 효과가 보고된 성분입니다. 병원체의 인산 대사를 경감하고 면역물질(파이토알렉신) 생성을 도와 저항성을 강화합니다.'],['희석 배수와 사용 시기는?', '500~1,000배로 전생육기 1~5회 살포합니다. 냉·서리피해 예방에는 꽃 피기 전, 사과 역병 둥치피해에는 100배로 사용합니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 병 발생 시에는 등록 약제와 방제 지침을 함께 따르세요.']],
+      }),
+      '아미루트': mk({
+        type: '미량요소복합 액제',
+        summary: '고농도 L-아미노산·킬레이트칼슘을 담은 뿌리 전문 미량요소복합 액제로, 새뿌리 발달·뿌리 활착·수세 회복이 핵심 용도입니다.',
+        effects: [['새뿌리 발달·활착', '뿌리가 약할 때 활력영양소를 공급해 새뿌리 발달·활착을 도움.'],['수세 회복', '장마·습해·냉해 등으로 약해진 작물의 수세를 회복.'],['내병성 향상', '조직을 강화해 병해 저항력을 높임.'],['양분 흡수 증진', '킬레이팅 효과로 양분 흡수와 생육을 촉진.'],['육묘·정식기 안정', '육묘기 냉해·동해 예방·회복과 옮겨심기 전후 고사율 경감.']],
+        ingredients: [['L-아미노산(고농도 복합유리)', '바로 흡수되는 활력영양소로 새뿌리 발달·수세 회복·생육을 빠르게 지원.'],['킬레이트칼슘', '흡수·이동이 잘 되는 칼슘으로 세포막·조직 강화, 뿌리 발육을 도움.'],['질소·칼리·붕소·몰리브덴', '생육·세포벽·대사를 보완해 뿌리·지상부 균형 회복.'],['유기산', '펙틴산 결합·킬레이팅으로 양분 흡수를 돕고 유해물질을 중화.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '전생육기 · 7~10일 간격', count: '1~5회 · 관주 300평당 1~1.5ℓ',
+        crops: '고추·수박·참외·오이·토마토 등 과채·엽경채, 마늘·양파·감자·고구마 등 근채, 사과·배·포도 등 과수, 콩·들깨·참깨, 화훼류',
+        faq: [['언제 사용하면 좋나요?', '장마·습해로 뿌리 기능이 약할 때, 옮겨심기(정식) 전후, 육묘기 냉해·동해 예방·회복, 수세가 떨어졌을 때 사용하면 회복에 효과적입니다.'],['희석 배수와 사용 횟수는?', '500~1,000배로 전생육기에 걸쳐 7~10일 간격 1~5회 살포합니다. 관주는 300평당 1~1.5ℓ를 희석해 사용합니다.'],['사용 시 주의할 점은?', '고온기에는 아침·저녁 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '엔피칼마': mk({
+        type: '미량요소복합 액제',
+        summary: '칼슘·마그네슘·붕소에 천연생리활성물질을 더해 흡수율을 높인 미량요소복합 액제로, 조직·잎 기능 강화와 무름 경감이 핵심 용도입니다.',
+        effects: [['조직·잎 기능 강화', '세포막·조직을 강화해 병해·일소 저항력을 높임.'],['무름(물러짐) 경감', '엽채·과채류 물러짐을 줄여 상품성을 지킴.'],['잎 황화 예방·회복', '잎을 푸르고 싱싱하게 유지해 황화를 예방·회복.'],['저장·수송성 증진', '단단한 조직으로 저장성·수송성을 높임.'],['생리장해 예방', '스트레스에 의한 생리장해를 예방·경감하고 생육 촉진.']],
+        ingredients: [['칼슘 (Ca)', '세포막을 생성·강화하고 조직을 단단하게 해 무름을 줄이고 저장성을 높임.'],['마그네슘(고토)', '엽록소 구성 성분으로 광합성을 돕고 잎을 푸르게 유지해 황화 예방.'],['붕소 (B)', '세포벽 형성·수정에 관여해 조직 강화와 결실을 도움.'],['천연생리활성물질', '칼슘·마그네슘·붕소의 흡수율을 높여 본래 기능을 더 잘 발휘하게 함.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '7~10일 간격', count: '2~4회 · 관주 300평당 1~1.5ℓ',
+        crops: '전작물 (특히 물러짐이 잦은 엽채·과채류, 잎 색 유지가 중요한 작물)',
+        faq: [['무름 경감과 잎 황화 예방에 왜 좋은가요?', '칼슘·붕소가 세포막과 조직을 강화해 물러짐을 줄이고, 마그네슘이 엽록소 구성 성분으로 잎을 푸르게 유지해 황화를 예방·회복합니다. 천연생리활성물질이 흡수율을 높여 효과를 더 잘 발휘하게 합니다.'],['희석 배수와 사용 횟수는?', '500~1,000배로 7~10일 간격 2~4회 살포합니다. 관주는 300평당 1~1.5ℓ를 희석해 사용합니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '일소가드': mk({
+        type: '미량요소복합 · 일소(햇빛데임) 방지 액제',
+        summary: '미립자 탄산칼슘·트레할로스·기능성 아미노산에 붕소·몰리브덴을 더한 미량요소복합 액제로, 폭염·강광으로 인한 일소·엽소 피해 예방이 핵심입니다. 피해가 나기 전 미리 뿌리는 예방제입니다.',
+        effects: [['일소·엽소 피해 예방', '보호막 형성·세포벽 강화로 강한 햇빛·열에 의한 과실·잎 데임을 미리 막음.'],['약흔·착색 불량 최소화', '미립자 탄산칼슘으로 흰 약흔을 줄여 착색 불량품을 최소화.'],['수분 유지·세포 재생', '선인장 유래 트레할로스가 보습 기능과 스트레스 후 회복력을 높임.'],['광합성 촉진·내균성 향상', '기능성 아미노산이 광합성을 돕고 병 저항력을 높여 2차 피해를 줄임.'],['수세 회복·수정율 향상', '붕소·몰리브덴이 뿌리·잎 발육과 건실한 화분 형성을 도움.']],
+        ingredients: [['미립자 탄산칼슘', '표면에 보호막을 형성하고 세포벽을 강화. 미립자라 흰 약흔을 줄여 착색 불량을 최소화.'],['트레할로스(선인장 유래)', '세포 수분을 붙잡아 보습 기능을 높이고 세포 재생력을 키우는 보호 당(糖).'],['기능성 아미노산', '엽록소 합성·질소 대사를 도와 광합성을 촉진하고 내균성을 높임.'],['붕소·몰리브덴', '화분 형성·수정율과 질소 대사를 도와 열과·낙과 경감·생육 지원.']],
+        dilute: '500배 (물 20ℓ당 40㎖)', timing: '6월 중하순 장마 전 1회 → 7월 이후 2~4회', count: '총 1~4회 (7~10일 간격) · 엽면살포',
+        crops: '감귤·사과·배·포도·복숭아·단감·자두·매실·밤 등 과수, 고추·오이·토마토·수박·참외·딸기·멜론 등 과채, 배추·무·상추·양파·마늘·당근·감자·고구마 등 채소',
+        faq: [['약흔(흰 자국)이나 착색 불량 걱정은 없나요?', '탄산칼슘을 아주 곱게 만든 미립자 형태로 배합해, 잘 녹지 않아 흰 약흔을 남기는 기존 탄산칼슘의 단점을 보완했습니다. 표면 약흔을 줄여 착색기 착색 불량품을 최소화하도록 설계되었습니다.'],['이미 일소 피해가 생긴 과실에도 효과가 있나요?', '한번 데인 조직은 되돌릴 수 없습니다. 일소가드는 치료제가 아니라 피해가 나기 전 표면에 보호막을 만들어 두는 예방 제품이므로, 장마 전과 폭염기 이전에 미리 사용하는 것이 중요합니다.'],['희석 배수와 사용 시기는?', '500배로 희석(물 20ℓ당 40㎖)해, 6월 중하순 장마 전 1회를 시작으로 7월 이후 2~4회, 7~10일 간격 총 1~4회 엽면살포합니다.']],
+      }),
+      '임팩트골드': mk({
+        type: '토양개량 및 작물생육용 액제',
+        gongsi: '공시-2-3-802',
+        summary: '혈액발효액·목초액·해조류추출물 기반에 고함량 효소분해 아미노산과 해조추출물을 담은 토양개량·작물생육용 액제로, 환경스트레스 회복·수세 회복·토양개량이 핵심입니다.',
+        effects: [['환경스트레스 회복', '고함량 아미노산·해조추출물이 기후변화로 지친 작물의 회복을 도움.'],['세력 유지·수세 회복', '수세가 떨어졌을 때·피해 회복에 세력을 되살림.'],['토양개량·염류해소', '토양 환경을 개선하고 염류 집적을 해소, 하우스·연속 착과에 적합.'],['세포분열·생장 촉진', '천연 호르몬을 제공해 세포분열을 촉진하고 생장 속도를 높임.'],['뿌리 발달·당 합성·착색', '기능성 아미노산이 뿌리 발달과 당 합성·착색을 도움.']],
+        ingredients: [['혈액발효액 (70%)', '고함량 효소분해 아미노산 공급원. 천연 호르몬·아미노산으로 세포분열·생장·뿌리발달·당합성·착색을 도움.'],['목초액 (7%)', '토양 환경을 정돈하고 뿌리 주변을 건강하게 유지해 흡수력·생육을 뒷받침.'],['해조류추출물 (10%)', '해조 유래 활성물질이 환경스트레스 회복·세력 유지·토양개량·염류해소에 기여.']],
+        dilute: '1,000배 (물 20ℓ당 20㎖)', timing: '7~10일 간격', count: '1~3회 · 엽면살포 또는 관주 (5ℓ는 관주용 하우스 전용)',
+        crops: '전작물 사용 가능 (특히 하우스 과수·연속 착과 작물, 염류가 쌓인 시설재배지, 수세가 떨어진 수도작)',
+        faq: [['엽면살포와 관주 중 어떤 방식이 좋나요?', '두 방식 모두 사용할 수 있습니다. 수세 회복·피해 회복에는 엽면살포가, 토양개량·염류해소에는 관주가 효과적입니다. 특히 5ℓ 제품은 관주용 하우스 전용에 좋습니다.'],['토양개량·염류해소는 어떻게 도움이 되나요?', '해조추출물과 목초액이 토양 환경을 정돈하고 뿌리 주변을 건강하게 유지해, 시설재배에서 흔한 염류 집적을 해소하고 뿌리 흡수력을 회복시킵니다.'],['희석 배수와 사용 횟수는?', '1,000배로 희석(물 20ℓ당 20㎖)해 7~10일 간격 1~3회 엽면살포 또는 관주합니다.']],
+      }),
+      '임팩트원': mk({
+        type: '액상 4종복합비료 (엽면시비용)',
+        summary: '보증성분 인산7-가리4-고토1.0에 붕소·아연·망간 미량요소와 L-아미노산·기능성 식물추출물을 배합한 4종복합 엽면시비용 액상비료로, 개화·수정·다수확·도복경감과 이상기후 대응이 핵심입니다.',
+        effects: [['개화·수정 촉진', '인산·붕소 공급으로 꽃눈 형성과 수정·착과를 안정시킴.'],['다수확 지원', '생식생장기 영양 보충으로 결실률과 수량을 높임.'],['도복 경감', '가리 성분이 줄기를 튼튼하게 해 벼 등 화본과 쓰러짐을 줄임.'],['냉해·이상기후 대응', '아미노산·식물추출물이 냉해·고온·가뭄 스트레스 회복을 도움.'],['초기 생육 가속', '인산 중심 배합으로 뿌리 발달과 생육 초기 활력을 지원.']],
+        ingredients: [['수용성 인산 (P₂O₅) 7%', '개화·착과, 뿌리·초기 생육.'],['수용성 가리 (K₂O) 4%', '도복 경감, 등숙·품질.'],['수용성 고토·붕소·아연·망간', '엽록소 생성·수정·효소 활성·광합성을 보완.'],['L-아미노산·기능성 식물추출물', '흡수·대사를 돕고 환경 스트레스 회복을 지원.']],
+        dilute: '엽면살포 1,000배 / 관주 1,000㎡당 1~1.5ℓ', timing: '벼 1차 유수형성기 · 2차 출수개화기 (조생종 7월 초·8월 초 / 중만생종 7월 10~20일·8월 10~20일)', count: '전작물 · 생육 단계별',
+        crops: '전작물 (벼 등 화본과 도복 경감·등숙에 특히 유용, 과채·과수 개화·착과기 활용)',
+        faq: [['벼에는 언제 사용하나요?', '1차로 유수형성기, 2차로 출수개화기에 사용합니다. 조생종은 7월 초와 8월 초, 중만생종은 7월 10~20일과 8월 10~20일이 기준 시기입니다.'],['냉해나 이상기후에 도움이 되나요?', '냉해·고온·가뭄 등 이상기후 스트레스 대응을 목적으로 설계되었습니다. L-아미노산과 기능성 식물추출물이 스트레스 상황에서 작물의 회복과 생육 유지를 돕습니다.'],['희석 배수는?', '엽면살포는 1,000배, 관주는 1,000㎡당 1~1.5ℓ가 기준입니다. 고온기(35℃ 이상)에는 서늘한 시간에 살포하세요.']],
+      }),
+      '칼슘탄': mk({
+        type: '액상석회',
+        summary: '흡수·이동이 쉬운 유기산 킬레이트 칼슘을 공급하는 액상석회로, 배꼽썩음·고두·열과 등 칼슘결핍 생리장해가 잦은 작물의 예방·회복에 효과적입니다.',
+        effects: [['칼슘결핍 생리장해 예방·회복', '고두·내부갈반·배꼽썩음·바람들이·녹반과 등을 예방·회복.'],['세포막·조직 강화', '세포막을 만들고 조직을 튼튼하게 해 저항력을 높임.'],['경도·저장성 증대', '과실 경도와 저장성·수송성을 높임.'],['열과·연화 경감', '생리적 열과·연화현상을 줄이고 낙과를 경감.'],['일소·병 저항성', '일소 피해 경감과 탄저균 등 식물병 저항성 증진.']],
+        ingredients: [['킬레이트칼슘', '흡수·이동이 잘 되는 칼슘으로 세포막·조직 강화, 칼슘결핍 생리장해 예방·회복.'],['붕소 (B)', '칼슘의 이동·이용을 돕고 세포벽 형성에 관여해 결실·조직 강화 보완.'],['당류·유기산', '칼슘 흡수를 돕고 유해물질을 중화, 킬레이팅으로 이용성을 높임.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '칼슘결핍 우려·발생 시 7~10일 간격', count: '1~5회 · 관주 300평당 1~1.5ℓ',
+        crops: '사과·감·배·포도·복숭아 등 과수, 고추·수박·토마토·참외·딸기 등 과채·엽채·근채, 참깨·들깨·콩 등 유지·두류',
+        faq: [['일반 석회보다 무엇이 좋은가요?', '칼슘을 유기산으로 킬레이트화해 흡수·이동성이 좋습니다. 고온·건조·습해 등으로 칼슘 흡수가 어려운 상황에서도 신속하게 칼슘을 공급·흡수시켜 칼슘결핍 생리장해 예방·회복에 효과적입니다.'],['희석 배수와 사용 횟수는?', '500~1,000배로 칼슘결핍이 우려되거나 발생했을 때 7~10일 간격 1~5회 살포합니다. 관주는 300평당 1~1.5ℓ를 희석해 사용합니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '토탈그로': mk({
+        type: '제4종복합(엽면시비용) 액제',
+        summary: '필수 영양소를 고르게 담은 종합 생리활성제로, 초·중기 균형 생육과 환경스트레스 대응에 두루 쓰는 기본 영양제입니다.',
+        effects: [['양분 균형 유지', '필수 영양소를 고르게 공급해 영양결핍성 낙화·낙과 등 생리장해를 예방.'],['수세 회복', '뿌리 기능이 약해 흡수가 어려울 때도 흡수를 도와 생육을 촉진.'],['환경스트레스 저항력', '냉해·가뭄·일소·습해 등 스트레스 저항력을 높임.'],['생육·수확량 증진', '초·중기 균형 생육으로 생육 촉진과 수확량 증대.']],
+        ingredients: [['질소·인산·칼리 (N·P·K)', '잎·줄기 생육, 뿌리·꽃눈·비대, 당·품질을 균형 있게 지원하는 기본 3요소.'],['고토·붕소', '엽록소 구성과 세포벽·수정에 관여해 광합성과 결실을 도움.'],['망간·아연·몰리브덴·구리', '광합성·생장호르몬·질소대사 등에 관여하는 미량요소.'],['아미노산', '양분 흡수와 스트레스 후 회복을 도와 수세 회복을 지원.']],
+        dilute: '생육초기 1,000배 / 생육중기 이후 500~1,000배', timing: '7~10일 간격', count: '1~5회 · 관주 300평당 1~1.5ℓ',
+        crops: '사과·배·포도 등 과수, 참외·수박·오이·고추·토마토 등 채소, 콩·들깨·땅콩 등 유지·두류 (전작물)',
+        faq: [['언제 사용하면 좋나요?', '초·중기 균형 생육에 적합합니다. 생리적 낙화·낙과가 우려되거나 냉해·가뭄·일소·습해 등으로 수세가 떨어졌을 때 사용하면 회복에 도움이 됩니다.'],['희석 배수와 사용 횟수는?', '생육초기 1,000배(물 20ℓ당 20㎖), 생육중기 이후 500~1,000배로 7~10일 간격 1~5회 살포합니다. 관주는 300평당 1~1.5ℓ.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '파이널솔루션': mk({
+        type: '제4종복합(엽면시비용) 액제',
+        summary: '천연유기인산과 고함량 인산·칼리, 아미노산으로 과실 크기·착색·당도·경도를 높이고 조기 수확을 돕는 수확기 마무리 후기 전용 제품입니다.',
+        effects: [['과실 크기·비대 증대', '수정·결실을 돕고 과실 및 근경 크기를 키움.'],['착색·당도 증진', '칼리와 천연유기인산이 착색과 당도를 끌어올림.'],['경도·조기수확', '과실 경도를 높이고 조기 수확에 도움.'],['환경스트레스 예방', '고온·가뭄·장마·폭염·습해·동해 피해를 예방.'],['새뿌리 발달·웃자람 경감', '지하부 새뿌리 발달을 돕고 웃자람을 줄임.']],
+        ingredients: [['고함량 인산·칼리', '인산은 꽃눈·결실·비대·뿌리 발달, 칼리는 당·전분 축적·착색·품질·저장성을 도움.'],['천연유기인산화합물', '발아·발근·화아분화·개화결실에 관여하고 킬레이트로 체내 양분 균형을 잡음.'],['고토·붕소·망간·구리', '광합성·수정·효소 반응을 돕는 성분.'],['L-아미노산', '흡수·회복을 도와 환경스트레스 예방과 품질 형성을 지원.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '과수 수확 70일 전부터 / 과채류 개화·비대·착색기 등 작물별', count: '1~3회 · 관주 300평당 1~1.5ℓ',
+        crops: '사과·배·복숭아·감 등 과수, 포도·양파·감자·수박·참외·호박·토마토·딸기·멜론 등 과채류',
+        faq: [['언제 쓰면 가장 효과적인가요?', '화아분화기·결실기·비대기·착색기에 사용하면 더욱 효과적입니다. 수확기 마무리 단계에서 과실 품질을 끌어올리는 후기용으로 설계된 제품입니다.'],['희석 배수와 사용 시기는?', '500~1,000배로 사용합니다. 과수는 수확 70일 전부터 1~3회, 과채류는 개화·비대·착색기 등 작물별 시기에 1~3회 살포합니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '하이슈거': mk({
+        type: '미량요소복합 액제',
+        summary: '천연생리활성물질을 최고 함량으로 담아 과실 비대·성숙과 당분 함량·저장성을 높여 맛·당도·착색을 끌어올리는 수확 후기용 당 증진제입니다.',
+        effects: [['당도 증진', '당분 함량을 높여 단기간 당도 증진에 도움.'],['과실 비대·성숙', '과실의 크기와 과중을 키우고 성숙을 도움.'],['착색·활력 증진', '자연 착색을 유도하고 활력을 높임.'],['경도·저장성 향상', '정형과 형성과 경도·저장성 증진에 도움.']],
+        ingredients: [['식물천연추출물(천연생리활성물질)', '최고 수준으로 함유해 과실 비대·성숙과 당분 축적, 자연 착색을 이끌어 냄.'],['인산·가리(칼리)', '당·전분 축적과 착색·품질·저장성을 도와 당도 증진의 바탕.'],['고토·붕소·몰리브덴', '광합성과 수정·대사를 도와 과실 품질을 뒷받침.'],['기능성 아미노산', '흡수·활력을 도와 환경스트레스에도 안정적 품질 형성을 지원.']],
+        dilute: '500~1,000배 (물 20ℓ당 40~20㎖)', timing: '수확 30~50일 전부터 비대기·착색기', count: '1~5회 · 관주 200평당 500㎖ 5일 간격 3~4회',
+        crops: '당도·착색이 중요한 과수, 수박·참외·토마토 등 과채류, 수도작(조기 수확용)',
+        faq: [['언제 사용하면 당도 증진에 좋나요?', '수확 전 후기 단계(비대기·착색기)에 사용할 때 당도 증진 효과가 가장 좋습니다. 과수 후기용으로 당도·착색 기능에 초점을 맞춘 제품입니다.'],['희석 배수와 사용 시기는?', '500~1,000배로 수확 30~50일 전부터 비대기·착색기에 1~5회 살포합니다. 관주는 200평당 500㎖를 5일 간격 3~4회 사용할 수 있습니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '황실': mk({
+        type: '미량요소복합 액제',
+        summary: '유황과 규산(실리카)에 천연생리활성물질을 더해 흡수·이동이 빠른 조직 강화 제품으로, 도복·병충해가 걱정되는 화본과와 조직 강화가 필요한 과수·과채·구근류에 두루 효과적입니다.',
+        effects: [['조직 강도 강화', '규산·유황이 조직을 단단하게 해 도복을 줄이고 상품성을 높임.'],['병충해 저항성 증진', '식물체 조직 강화로 병충해 저항성을 높임.'],['광합성·등숙 증진', '광합성을 돕고 등숙율을 높임.'],['미질·식미 향상', '미질과 고유의 향, 식미를 향상.'],['뿌리 발달·활력 증진', '뿌리 발달과 활력 증진에 도움.']],
+        ingredients: [['규산 (실리카·SiO₂)', '표피·조직에 쌓여 조직 강도를 높이고 병충해 저항성·도복 경감·등숙을 도움.'],['유황 (S)', '아미노산·단백질 구성과 향·풍미에 관여, 병충해 저항성·식미 향상에 기여.'],['천연생리활성물질', '유황·규산의 흡수·이동을 빠르게 해 효과 발현을 앞당기고 활력을 높임.'],['붕소·몰리브덴·아미노산', '세포벽·대사·회복을 보완해 뿌리 발달과 생육을 도움.']],
+        dilute: '화본과 1,000배 · 엽채류 500~1,000배 · 과수·과채 1,000배 · 구근류 초기 1,000배/중기 500배', timing: '7~10일 간격', count: '1~5회 · 관주 300평당 1~1.5ℓ',
+        crops: '벼·보리 등 화본과(도복 경감·등숙), 엽채류·과수·과채류(조직·저항성 강화), 구근류',
+        faq: [['규산과 유황은 어떤 역할을 하나요?', '규산은 조직에 쌓여 조직 강도를 높이고 병충해 저항성과 도복 경감, 등숙을 돕습니다. 유황은 향·풍미와 병충해 저항성, 식미 향상에 기여합니다. 천연생리활성물질이 이들의 흡수·이동을 빠르게 해 효과 발현을 앞당깁니다.'],['희석 배수와 사용 횟수는?', '화본과 1,000배, 엽채류 500~1,000배, 과수·과채류 1,000배, 구근류 생육초기 1,000배·중기 500배로 7~10일 간격 1~5회 살포합니다.'],['사용 시 주의할 점은?', '고온기에는 서늘한 시간에 살포하세요. 다른 농약과 혼용할 때는 소면적 테스트를 먼저 진행하세요.']],
+      }),
+      '히미업': mk({
+        type: '액상 아미노산 영양제',
+        summary: '아미노산 복합체에 미량요소와 천연 활성물질을 배합한 액상 아미노산 영양제로, 고온·가뭄·침수 등 환경 스트레스 회복과 모종·육묘기 초기 생육·정식 활착에 특히 유용합니다.',
+        effects: [['환경 스트레스 회복', '고온·가뭄·침수 등으로 손상된 작물 생육을 아미노산이 빠르게 되살림.'],['엽색 개선', '스트레스로 옅어진 잎 색을 진하게 회복.'],['광합성 활성화', '미량요소가 엽록소 생성과 광합성 효율을 높여 생육 활력을 지원.'],['세포막 보호', '천연 활성물질이 세포막을 안정시켜 환경 스트레스 저항력을 강화.'],['모종·육묘기 적합', '미량요소가 어린 조직 수요를 채우고 아미노산이 정식 활착·몸살 회복을 지원.']],
+        ingredients: [['아미노산 복합체', '스트레스 회복의 핵심. 흡수·대사를 도와 손상된 생육을 빠르게 되살림.'],['미량요소(아연·망간·붕소·철 등)', '엽록소 생성과 효소 활성을 도와 엽색·광합성을 회복.'],['천연 활성물질', '세포막을 보호하고 환경 스트레스 저항력을 높임.']],
+        dilute: '엽면살포 1,000배 (스트레스 심할 때 800배)', timing: '스트레스 발생 직후 · 장마 후 · 폭염기', count: '엽면살포',
+        crops: '전작물 (특히 모종·육묘기와 정식 초기, 침수·과습·고온 피해 회복이 필요한 작물)',
+        faq: [['모종(육묘)에도 좋은가요?', '특히 좋습니다. 아연·망간·붕소·철 등 미량요소가 풍부한데, 이들은 세포분열이 왕성한 어린 조직에서 수요가 큽니다. 미량요소는 식물체 내 이동성이 낮아 결핍이 새 잎·생장점에서 먼저 나타나므로 육묘기 꾸준한 공급이 중요하며, 아미노산이 흡수와 정식 활착·몸살 회복을 돕습니다.'],['언제 사용하면 좋나요?', '스트레스 발생 직후에 사용하는 것이 가장 효과적입니다. 장마 후 침수·과습 피해 회복기, 폭염이 지속되는 여름철에 특히 유용합니다.'],['희석 배수는?', '엽면살포 기준 1,000배, 스트레스가 심할 때는 800배로 진하게 사용합니다. 고온기(35℃ 이상)에는 아침·저녁 서늘한 시간에 살포하세요.']],
+      }),
+      '임팩트과립': mk({
+        type: '유기농업자재 — 토양개량 및 작물생육용',
+        gongsi: '공시-2-3-792',
+        summary: '규산질 원료(베이직슬래그)·휴믹산·당밀에 국내산 효소분해 돼지혈액 아미노산을 담은 과립형 유기농업자재로, 토양을 바로잡으면서 작물에 힘을 더하는 것이 핵심입니다.',
+        effects: [['산성토양 개량·수도작 최적', '알칼리성 규산질로 산성 논·밭을 중화하고 벼 줄기를 튼튼하게 해 도복을 줄임.'],['연작장해 해소·토양 정화', '쌓인 염류·유해 요인을 완화하고 지력을 회복.'],['양분 흡수 조력·용탈 저감', '휴믹산의 CEC·킬레이트 작용으로 양분 유실을 줄이고 흡수를 도움.'],['토양 미생물 활성', '당밀이 미생물 먹이가 되고 휴믹산이 서식 환경을 만들어 유용 미생물을 늘림.'],['뿌리 활착·생육 강화', '규산·휴믹산·아미노산이 함께 뿌리 발달과 초기 활력을 높임.']],
+        ingredients: [['규산질 원료(베이직슬래그)', '규산 다량 함유 알칼리성 원료. 수도작 줄기·잎 규질화로 도복 경감, 산성토양 개량.'],['휴믹산', '입단구조 형성·CEC 향상·킬레이트로 토양·뿌리·미생물 환경을 개선.'],['국내산 효소분해 돼지혈액 아미노산 100%', '효소분해로 형태를 보존한 동물성 아미노산. 발근·광합성·양분흡수·스트레스 저항을 지원.'],['당밀', '미생물이 좋아하는 먹이(탄소원)로 유용 미생물 증식·양분 순환을 촉진.']],
+        dilute: '과립(고형) · 경운 전 토양 혼합', timing: '기초 밑작업(경운 전)', count: '규격 2·6·8kg · 라벨 기준 사용량',
+        crops: '수도작·산성토양 개량에 특히 적합 (pH 6.5 이상 토양·화학/유기 자재 혼합 금지)',
+        faq: [['왜 규산 원료가 벼농사에 좋은가요?', '규산은 벼 줄기·잎을 구성하는 성분입니다. 표피를 규질화해 조직을 튼튼하게 하면 도복이 줄고 잎이 곧게 서서 광합성이 잘 됩니다. 도열병 등 병해충·기상장해 저항성도 높아지고, 알칼리성이라 산성화된 논·밭을 중화·개량합니다.'],['국내산 돼지혈액 아미노산은 무엇이 다른가요?', '국내산 돼지 전혈을 효소분해한 동물성 아미노산을 100% 사용합니다. 화학분해가 아닌 효소분해라 형태가 보존돼 흡수 후 바로 활용되고, 동물성이라 아미노산 종류·함량이 풍부해 발근·광합성·양분 흡수·스트레스 저항에 도움을 줍니다.'],['사용 시 주의할 점은?', '알칼리성 자재이므로 화학·유기질 농자재와 혼합 살포하지 마세요. pH 6.5 이상 토양에는 사용하지 않습니다. 서늘한 곳에 보관하세요.']],
+      }),
+    };
+  }
+
+  renderVals() {
+    const playlist = ['assets/video/hero-1.mp4', 'assets/video/hero-2.mp4', 'assets/video/hero-3.mp4'];
+    const videoRef = (el) => {
+      if (!el || el.__afInit) return;
+      el.__afInit = true;
+      el.muted = true; // 속성이 아니라 프로퍼티로 설정해야 자동재생 정책을 통과한다
+      let i = 0;
+      const play = () => { el.src = playlist[i]; try { el.load(); el.play().catch(() => {}); } catch (e) {} };
+      el.addEventListener('ended', () => { i = (i + 1) % playlist.length; play(); });
+      play();
+    };
+    const cat = this.catalog();
+    const cur = this.state.pidx;
+    const p = cat[cur - 1] || cat[0];
+    const r = this.richData()[p.name];
+    const related = cat.filter((_, i) => i + 1 !== cur).slice(0, 4);
+
+    const placeName = (this.state.place && this.state.place.name) || '위치 확인 중';
+    const wx = this.state.wx;
+    const cw = wx && wx.current, dl = wx && wx.daily;
+    const [wxIcon, wxDesc] = cw ? this.wxMeta(cw.weather_code) : ['🌤', '불러오는 중'];
+    const dayN = ['일', '월', '화', '수', '목', '금', '토'];
+    const week = dl ? dl.time.map((t, i) => {
+      const d = new Date(t);
+      const pop = dl.precipitation_probability_max[i] || 0;
+      return {
+        day: dayN[d.getDay()],
+        date: (d.getMonth() + 1) + '/' + d.getDate(),
+        mm: pop + '%',
+        hi: Math.round(dl.temperature_2m_max[i]) + '°',
+        h: Math.max(4, Math.round((pop / 100) * 86)) + 'px',
+      };
+    }) : [];
+    const sum7 = dl ? dl.precipitation_sum.reduce((a, b) => a + b, 0) : 0;
+    const hot = dl ? dl.temperature_2m_max.filter(v => v >= 33).length : 0;
+    let wxAdvice = '7일간 강수 예보를 확인해 살포 시기를 조정하세요.';
+    if (dl) {
+      if (hot >= 2) wxAdvice = `33℃ 이상 고온일 ${hot}일 예보 — 고온 스트레스 관리가 필요한 주간입니다.`;
+      else if (sum7 >= 80) wxAdvice = `주간 누적 강수 ${Math.round(sum7)}mm — 침수·습해 대비와 살포 시기 조정이 필요합니다.`;
+      else if (sum7 < 5) wxAdvice = `주간 누적 강수 ${sum7.toFixed(1)}mm — 건조·가뭄 스트레스에 유의하세요.`;
+      else wxAdvice = `주간 누적 강수 ${Math.round(sum7)}mm — 비 예보를 피해 엽면살포 시기를 잡으세요.`;
+    }
+    const pd = this.state.priceData;
+    const rows = this.state.live || (pd ? pd['품목'] : []);
+    const prices = rows.map((it) => {
+      const pct = it.prev ? ((it.price - it.prev) / it.prev) * 100 : 0;
+      const flat = Math.abs(pct) < 0.05;
+      return {
+        name: it.name,
+        unit: it.unit,
+        price: it.price.toLocaleString('ko-KR') + '원',
+        diff: flat ? '—' : (pct > 0 ? '▲' : '▼') + Math.abs(pct).toFixed(1) + '%',
+        color: flat ? '#9aa393' : (pct > 0 ? '#c0453b' : '#2f6bb8'),
+        flash: it.name === this.state.flashName ? 'af-flash' : '',
+      };
+    });
+    const pricesLoop = prices.concat(prices);
+    let priceDate = '기준일 확인 중';
+    if (pd && pd['기준일']) {
+      const d = new Date(pd['기준일']);
+      priceDate = (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+    }
+    const priceSource = pd && pd['_출처'] ? pd['_출처'] : 'KAMIS 농산물유통정보';
+
+    return {
+      wxRegionLabel: placeName + ' 기준 · 자동 감지',
+      wxRegion: placeName,
+      wxIcon, wxDesc,
+      wxTemp: cw ? Math.round(cw.temperature_2m) + '°' : '—',
+      wxHi: dl ? Math.round(dl.temperature_2m_max[0]) + '°' : '—',
+      wxLo: dl ? Math.round(dl.temperature_2m_min[0]) + '°' : '—',
+      wxPop: dl ? dl.precipitation_probability_max[0] + '%' : '—',
+      wxRain: dl ? dl.precipitation_sum[0].toFixed(1) + 'mm' : '—',
+      wxWind: cw ? cw.wind_speed_10m.toFixed(1) + 'm/s' : '—',
+      wxAdvice, week, prices, pricesLoop, priceDate, priceSource,
+      ...this.hiVals(),
+      ...this.qnaVals(),
+      goFaq: () => {
+        const el = document.getElementById('detail-faq');
+        if (!el) return;
+        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        const first = el.querySelector('details');
+        if (first) first.open = true;
+      },
+      isQna: this.state.view === 'qna',
+      goQna: () => {
+        this.setState({ view: 'qna', qOpen: null }, () => window.scrollTo({ top: 0, behavior: 'auto' }));
+      },
+      askMore: () => {
+        const name = (p && p.name) || '';
+        this.setState({
+          view: 'qna', qOpen: null,
+          qCrop: this.state.qCrop || '',
+          qBody: name ? '[' + name + '] 관련 추가 질문입니다.\n\n' : '',
+          qMsg: 'FAQ로 해결되지 않은 내용을 자세히 적어주시면 담당자가 직접 답변드립니다.',
+        }, () => window.scrollTo({ top: 0, behavior: 'auto' }));
+      },
+      goBuy: () => {
+        const jump = () => {
+          const el = document.getElementById('buy');
+          if (!el) return;
+          el.open = true;
+          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        };
+        if (this.state.view !== 'home') this.setState({ view: 'home' }, () => setTimeout(jump, 60));
+        else jump();
+      },
+      goDetail: () => {
+        const jump = () => {
+          const el = document.getElementById('detail');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' });
+        };
+        if (this.state.view !== 'home') this.setState({ view: 'home' }, () => setTimeout(jump, 60));
+        else jump();
+      },
+      goAbout: () => {
+        const jump = () => {
+          const el = document.getElementById('about');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' });
+        };
+        if (this.state.view !== 'home') this.setState({ view: 'home' }, () => setTimeout(jump, 60));
+        else jump();
+      },
+      goProducts: () => {
+        const jump = () => {
+          const el = document.getElementById('products');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' });
+        };
+        if (this.state.view !== 'home') this.setState({ view: 'home' }, () => setTimeout(jump, 60));
+        else jump();
+      },
+      isHome: this.state.view === 'home',
+      isDetail: this.state.view === 'detail',
+      products: cat,
+      hero: cat[4],
+      related,
+      p,
+      pnum: p.num,
+      pname: p.name,
+      ptag: p.tag,
+      psize: p.size,
+      pimg: p.img,
+      pchips: p.chips.map((c) => ({ v: c[0], l: c[1] })),
+      pdesc: p.desc,
+      goHome: () => this.setState({ view: 'home' }, () => window.scrollTo({ top: 0, behavior: 'smooth' })),
+      videoRef,
+      hasRich: !!r,
+      hasRichNot: !r,
+      rType: r ? r.type : '',
+      rGongsi: r ? (r.gongsi || '') : '',
+      rHasGongsi: !!(r && r.gongsi),
+      rSummary: r ? r.summary : '',
+      rEffects: r ? r.effects.map((e) => ({ t: e[0], d: e[1] })) : [],
+      rIngredients: r ? r.ingredients.map((e) => ({ n: e[0], a: e[1] })) : [],
+      rDilute: r ? r.dilute : '',
+      rTiming: r ? r.timing : '',
+      rCount: r ? r.count : '',
+      rCrops: r ? r.crops : '',
+      rFaq: r ? r.faq.map((e) => ({ q: e[0], a: e[1] })) : [],
+    };
+  }
+}
+</script>
+</body>
+</html>
