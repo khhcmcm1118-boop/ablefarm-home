@@ -153,9 +153,9 @@
           <span style="font-size:11.5px;color:#9aa393">7일 강수확률</span>
         </div>
         <div style="font-size: 15px; color: #6b7465; margin-bottom: 18px">{{ wxAdvice }}</div>
-        <div style="display:flex;gap:8px;align-items:flex-end;flex:1;min-height:130px">
+        <div style="display:flex;gap:5px;align-items:flex-end;flex:1;min-width:0;min-height:130px">
           <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px">
+            <div style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px">
               <div style="font-size: 15px; font-weight: 700; color: #4a7c59">{{ d.mm }}</div>
               <div style="width:100%;background:#cfe0c0;border-radius:6px 6px 0 0;height:{{ d.h }}"></div>
               <div style="font-size:11.5px;color:#54604f;font-weight:600">{{ d.hi }}</div>
