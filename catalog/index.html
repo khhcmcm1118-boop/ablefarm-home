@@ -159,6 +159,29 @@
   flip.loadFromHTML(book.querySelectorAll(".page"));
   var ld = document.getElementById("loading"); if (ld) ld.remove();
 
+
+  // 끌어서 넘기기: 60% 넘게 끌면 자동으로 끝까지 넘어가고, 놓았을 때 40% 넘었으면 마저 넘긴다
+  var fc = flip.getFlipController();
+  var AUTO = 60, RELEASE = 40;
+  fc.stopMove = function () {
+    var c = this.calc; if (!c) return;
+    var r = this.getBoundsRect(), pos = c.getPosition();
+    var y = c.getCorner() === "bottom" ? r.height : 0;
+    if (c.getFlippingProgress() >= RELEASE) this.animateFlippingTo(pos, { x: -r.pageWidth, y: y }, true);
+    else this.animateFlippingTo(pos, { x: r.pageWidth, y: y }, false);
+  };
+  function finishDrag() {
+    if (flip.isUserTouch && flip.isUserMove) flip.userStop({ x: 0, y: 0 });
+  }
+  function checkAuto() {
+    var c = fc.getCalculation && fc.getCalculation();
+    if (c && flip.isUserMove && fc.getState() === "user_fold" && c.getFlippingProgress() >= AUTO) finishDrag();
+  }
+  window.addEventListener("mousemove", checkAuto);
+  window.addEventListener("touchmove", checkAuto, { passive: true });
+  // 마우스가 창 밖으로 나가거나 창이 포커스를 잃어도 들린 채로 남지 않게
+  document.addEventListener("mouseleave", finishDrag);
+  window.addEventListener("blur", finishDrag);
   var counter = document.getElementById("counter");
   var prev = document.getElementById("prev"), next = document.getElementById("next");
   var first = document.getElementById("first"), last = document.getElementById("last");
