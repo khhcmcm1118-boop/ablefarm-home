@@ -116,6 +116,8 @@
     .af-botfab{right:14px !important;bottom:14px !important}
     input,textarea{font-size:16px !important}
   }
+@keyframes afCatFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
+  @media (prefers-reduced-motion:reduce){[style*="afCatFloat"]{animation:none !important}}
 </style>
 </helmet>
 
@@ -139,7 +141,7 @@
       <img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:46px;width:auto;display:block;mix-blend-mode:multiply">
     </div>
     <div class="af-navlinks" style="display:flex;gap:26px;color:#4c554a;font-weight:600">
-      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
+      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
     </div>
   </div>
   <span class="af-btn" onClick="{{ goQna }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px">문의하기 →</span>
@@ -317,6 +319,24 @@
     </div>
   </div>
 
+  <!-- 제품 카다로그 -->
+  <div id="catalog" class="af-sec" style="position:relative;overflow:hidden;padding:72px 40px;background:#e9e4d2;scroll-margin-top:80px">
+    <div aria-hidden="true" style="position:absolute;inset:-40px;background-image:url('catalog/pages/p15.webp');background-size:cover;background-position:center 18%;filter:blur(14px) saturate(1.05);transform:scale(1.08);pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(246,241,223,.35) 0%,rgba(246,241,223,.78) 48%,rgba(246,241,223,.9) 100%);pointer-events:none"></div>
+    <div class="af-2col" style="position:relative;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:40px;align-items:center">
+      <a href="catalog/index.html" onClick="{{ catOpen }}" style="display:flex;justify-content:center;gap:0;text-decoration:none">
+        <img src="catalog/pages/p01.webp" alt="에이블팜 제품 카다로그 표지" loading="lazy" style="width:min(100%,280px);aspect-ratio:1024/1600;object-fit:cover;border-radius:6px 14px 14px 6px;box-shadow:0 30px 60px -22px rgba(22,39,28,.6);transform-origin:20% 90%;animation:afCatFloat 5.5s ease-in-out infinite;will-change:transform">
+      </a>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59">PRODUCT CATALOG</div>
+        <h2 style="margin:0;font-weight:800;font-size:34px;letter-spacing:-.02em;color:#16241a;text-wrap:pretty">에이블팜 제품 카다로그</h2>
+        <p style="margin:0;font-size:15.5px;line-height:1.75;color:#4c554a;text-wrap:pretty">32개 제품의 사용 작물, 희석 배수, 시비 기준량, 현장 사용 효과를 책장 넘기듯 볼 수 있습니다.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="catalog/index.html" onClick="{{ catOpen }}" class="af-cta" style="flex:none;white-space:nowrap;padding:14px 26px;background:#16271c;color:#fff;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">카다로그 펼쳐보기 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- 제품소개 (흐르는 갤러리 · 클릭 시 상세) -->
   <div id="products" class="af-sec" style="padding:64px 0 68px;background:#fff;overflow:hidden;scroll-margin-top:80px">
     <div class="af-sec" style="padding:0 40px;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px">
@@ -699,6 +719,18 @@
   <span>{{ botLabel }}</span>
 </div>
 
+
+<!-- ===== 카다로그 보기 (화면 안에서 열기) ===== -->
+<sc-if value="{{ catShow }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:80;background:rgba(15,28,20,.78);display:flex;flex-direction:column;padding:16px">
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px 10px">
+      <span style="color:#eaf1e2;font-weight:800;font-size:15px">에이블팜 제품 카다로그</span>
+      <span class="af-btn" onClick="{{ catClose }}" style="flex:none;white-space:nowrap;padding:9px 18px;background:#fff;color:#16241a;border-radius:10px;font-weight:800;font-size:14px">닫기 ✕</span>
+    </div>
+    <iframe src="catalog/index.html" title="에이블팜 제품 카다로그" style="flex:1;width:100%;border:0;border-radius:14px;background:#f6f1df"></iframe>
+  </div>
+</sc-if>
+
 <!-- ===== 정적 제품 색인 (검색엔진·AI 크롤러용 · JS 없이 읽히는 실제 텍스트) ===== -->
 <div class="af-sec" style="padding:52px 40px 44px;background:#16271c;color:#9aa89a">
   <div style="max-width:1100px;margin:0 auto">
@@ -738,7 +770,7 @@
 <div class="af-footer" style="padding:40px;background:#0f1c14;color:#8a9585;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;font-size:13px">
   <div><div class="af-btn" onClick="{{ goHome }}" style="display:inline-block;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:14px"><img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:52px;width:auto;display:block;mix-blend-mode:multiply"></div><p style="margin:0;line-height:1.7;max-width:260px">작물과 생육 시기에 맞춘 액상 영양·유기농업자재 — (주)에이블팜 Able FARM.</p></div>
   <div><div style="color:#fff;font-weight:700;margin-bottom:12px">제품</div><div style="line-height:2">임팩트 라인업<br>규산·칼슘 영양제<br>토양개량제<br>작물별 처방</div></div>
-  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">회사</div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px"><span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개</span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span></div></div>
+  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">회사</div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px"><span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개</span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a></div></div>
   <div><div style="color:#fff;font-weight:700;margin-bottom:12px">고객센터</div><div style="line-height:2">전화 02-858-6229<br>팩스 02-6442-6229<br>평일 09:00–17:00</div></div>
 </div>
 
@@ -1440,6 +1472,9 @@ class Component extends DCLogic {
       priceBadge, priceBadgeBg, priceBadgeFg, priceNote,
       ...this.hiVals(),
       ...this.qnaVals(),
+      catShow: !!this.state.catOpen,
+      catOpen: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ catOpen: true }); },
+      catClose: () => this.setState({ catOpen: false }),
       ...(() => {
         const open = this.state.botOpen ?? (typeof window !== 'undefined' && window.innerWidth > 760);
         return { botOpen: open, botLabel: open ? '상담 닫기' : '작물 고민 상담', botToggle: () => this.setState({ botOpen: !open }) };
