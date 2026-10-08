@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>에이블팜 제품 카다로그</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+  /* Layout: a quiet reading table — the book sits centered on a cream field, one slim control bar under it */
+  :root {
+    --field: #f6f1df;        /* catalog cover cream */
+    --field-edge: #e9e0c4;
+    --ink: #2b3a2c;
+    --muted: #6f7a66;
+    --leaf: #2f7a3a;         /* ABLE FARM green */
+    --leaf-soft: #e1ecd8;
+    --bar: #fffdf6;
+    --shadow: rgba(48, 58, 36, .28);
+    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --font-display: "Gowun Dodum", "IBM Plex Sans KR", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --field: #1d221b; --field-edge: #141812; --ink: #e8ecdf; --muted: #a3ad98;
+      --leaf: #7cc287; --leaf-soft: #2a3a2b; --bar: #262c24; --shadow: rgba(0,0,0,.55);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --field: #1d221b; --field-edge: #141812; --ink: #e8ecdf; --muted: #a3ad98;
+    --leaf: #7cc287; --leaf-soft: #2a3a2b; --bar: #262c24; --shadow: rgba(0,0,0,.55);
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(ellipse at 50% 40%, var(--field) 55%, var(--field-edge) 100%);
+    background-color: var(--field);
+    color: var(--ink);
+    font-family: var(--font-body);
+    padding-inline: 16px;
+    padding-block: 18px 22px;
+    box-sizing: border-box;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    overflow-x: hidden;
+  }
+  header.top {
+    width: 100%; max-width: 1180px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  header.top h1 {
+    margin: 0; font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(18px, 2.4vw, 24px); letter-spacing: -.01em; text-wrap: balance;
+  }
+  header.top h1 b { color: var(--leaf); font-weight: 400; }
+  header.top p { margin: 0; color: var(--muted); font-size: 13px; }
+
+  /* Book fits the viewport height: 2 pages × (1132/1600) ratio */
+  .stage {
+    width: min(100%, calc((100dvh - 150px) * 1.415));
+    min-width: 0;
+    position: relative;
+  }
+  #book { margin: 0 auto; filter: drop-shadow(0 18px 30px var(--shadow)); }
+  .page { background: #fff; overflow: hidden; }
+  .page img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+  .loading {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    color: var(--muted); font-size: 14px;
+  }
+
+  nav.bar {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center;
+    background: var(--bar); border: 1px solid var(--field-edge);
+    border-radius: 999px; padding: 6px 8px;
+    box-shadow: 0 4px 14px -8px var(--shadow);
+  }
+  nav.bar button {
+    appearance: none; border: 0; background: transparent; color: var(--ink);
+    font: 600 14px/1 var(--font-body); padding: 10px 14px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  nav.bar button:hover { background: var(--leaf-soft); color: var(--leaf); }
+  nav.bar button:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+  nav.bar button:disabled { opacity: .35; cursor: default; background: transparent; color: var(--ink); }
+  nav.bar svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .counter {
+    min-width: 92px; text-align: center; font-variant-numeric: tabular-nums;
+    font-size: 14px; color: var(--muted);
+  }
+  .counter strong { color: var(--ink); font-weight: 600; }
+  .hint { color: var(--muted); font-size: 12px; margin: 0; text-align: center; }
+  @media (max-width: 560px) { .hide-sm { display: none; } nav.bar button { padding: 10px 11px; } }
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <h1><b>ABLE FARM</b> 4종 비료 제품안내 2026</h1>
+  <p>모서리를 끌거나 클릭하면 책장이 넘어갑니다</p>
+</header>
+
+<div class="stage" id="stage">
+  <div id="book"></div>
+  <div class="loading" id="loading">카다로그를 펼치는 중…</div>
+</div>
+
+<nav class="bar" aria-label="카다로그 넘기기">
+  <button id="first" class="hide-sm" aria-label="표지로"><svg viewBox="0 0 24 24"><path d="M18 6l-6 6 6 6M8 6v12"/></svg></button>
+  <button id="prev" aria-label="이전 페이지"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>이전</button>
+  <span class="counter" id="counter" aria-live="polite"><strong>1</strong> / 24</span>
+  <button id="next" aria-label="다음 페이지">다음<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button id="last" class="hide-sm" aria-label="마지막 페이지로"><svg viewBox="0 0 24 24"><path d="M6 6l6 6-6 6M16 6v12"/></svg></button>
+  <button id="fs" class="hide-sm" aria-label="전체 화면"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+<p class="hint">키보드 ← → 로도 넘길 수 있어요</p>
+
+<script src="page-flip.browser.js"></script>
+<script>
+(function () {
+  var TOTAL = 24;
+  var PAGE_DIR = "pages/";
+  var book = document.getElementById("book");
+
+  for (var i = 1; i <= TOTAL; i++) {
+    var d = document.createElement("div");
+    d.className = "page";
+    if (i === 1 || i === TOTAL) d.setAttribute("data-density", "hard");
+    var img = document.createElement("img");
+    img.src = PAGE_DIR + "p" + String(i).padStart(2, "0") + ".webp";
+    img.alt = "에이블팜 카다로그 " + i + "페이지";
+    img.decoding = "async";
+    d.appendChild(img);
+    book.appendChild(d);
+  }
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var flip = new St.PageFlip(book, {
+    width: 566, height: 800,
+    size: "stretch",
+    minWidth: 260, maxWidth: 1132,
+    minHeight: 368, maxHeight: 1600,
+    showCover: true,
+    maxShadowOpacity: 0.45,
+    flippingTime: reduce ? 250 : 850,
+    mobileScrollSupport: false,
+    usePortrait: true,
+    autoSize: true
+  });
+  flip.loadFromHTML(book.querySelectorAll(".page"));
+  document.getElementById("loading").hidden = true;
+
+  var counter = document.getElementById("counter");
+  var prev = document.getElementById("prev"), next = document.getElementById("next");
+  var first = document.getElementById("first"), last = document.getElementById("last");
+
+  function update() {
+    var idx = flip.getCurrentPageIndex();           // 0-based
+    var portrait = flip.getOrientation() === "portrait";
+    var label;
+    if (portrait || idx === 0 || idx === TOTAL - 1) label = "<strong>" + (idx + 1) + "</strong> / " + TOTAL;
+    else {
+      var l = idx % 2 === 1 ? idx : idx - 1;
+      label = "<strong>" + (l + 1) + "–" + (l + 2) + "</strong> / " + TOTAL;
+    }
+    counter.innerHTML = label;
+    prev.disabled = first.disabled = idx === 0;
+    next.disabled = last.disabled = idx >= TOTAL - 1;
+  }
+  flip.on("flip", update);
+  flip.on("changeOrientation", update);
+  update();
+
+  prev.addEventListener("click", function () { flip.flipPrev(); });
+  next.addEventListener("click", function () { flip.flipNext(); });
+  first.addEventListener("click", function () { flip.turnToPage(0); update(); });
+  last.addEventListener("click", function () { flip.turnToPage(TOTAL - 1); update(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") flip.flipNext();
+    if (e.key === "ArrowLeft") flip.flipPrev();
+  });
+  document.getElementById("fs").addEventListener("click", function () {
+    var el = document.documentElement;
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (el.requestFullscreen) el.requestFullscreen().catch(function () {});
+    } catch (e) {}
+  });
+})();
+</script>
+
+</body>
+</html>
