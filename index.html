@@ -780,6 +780,7 @@ class Component extends DCLogic {
   state = { view: 'home', pidx: 1 };
 
   componentDidMount() {
+    this.afProductHook();
     document.documentElement.lang = 'ko';
     this.detectRegion();
     this.qnaLoad();
@@ -1051,6 +1052,41 @@ class Component extends DCLogic {
       95: ['⛈', '뇌우'], 96: ['⛈', '우박 동반 뇌우'], 99: ['⛈', '우박 동반 뇌우'],
     };
     return m[code] || ['🌤', '—'];
+  }
+
+  afFindProduct(name) {
+    const norm = (x) => String(x || '').replace(/\(.*?\)|\s|액제|유기농/g, '').toLowerCase();
+    const n = norm(name);
+    if (!n) return -1;
+    const cat = this.catalog();
+    let i = cat.findIndex((p) => norm(p.name) === n);
+    if (i < 0) i = cat.findIndex((p) => n.startsWith(norm(p.name)) || norm(p.name).startsWith(n));
+    return i;
+  }
+
+  afProductHook() {
+    const openByName = (name) => {
+      const i = this.afFindProduct(name);
+      if (i < 0) {
+        // 상세페이지가 없는 제품은 제품소개 목록으로
+        this.setState({ view: 'home' }, () => setTimeout(() => {
+          const el = document.getElementById('products');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        }, 80));
+        return false;
+      }
+      this.setState({ botOpen: window.innerWidth > 760 ? this.state.botOpen : false });
+      this.open(i + 1);
+      return true;
+    };
+    window.addEventListener('message', (e) => {
+      const d = e && e.data;
+      if (d && d.type === 'af-open-product') openByName(d.name);
+    });
+    try {
+      const q = new URLSearchParams(window.location.search).get('product');
+      if (q) setTimeout(() => openByName(q), 0);
+    } catch (e) {}
   }
 
   open(i) {

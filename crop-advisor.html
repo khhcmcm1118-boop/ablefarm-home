@@ -2126,7 +2126,7 @@ function addCard(product, reasonNote){
     <div class="row-line"><span class="label">적용 시기 · </span>${product.timing}</div>
     <div class="caution">⚠ ${product.caution}</div>
     <div class="promo">🌾 농박사 추천 · ${product.name} — ${product.tag}</div>
-    <a class="more-btn" href="${HOMEPAGE_URL}" target="_blank" rel="noopener">${product.name} 자세히 보기 ↗</a>
+    <a class="more-btn" data-product="${product.name}" href="${HOMEPAGE_URL}/?product=${encodeURIComponent(product.name)}" target="_blank" rel="noopener">${product.name} 자세히 보기 ↗</a>
   `;
   row.appendChild(c);
   thread.appendChild(row);
@@ -2148,7 +2148,7 @@ function addProductMiniCard(key){
         <div style="font-size:13px;color:var(--ink-soft)">🌾 농박사가 자신 있게 권하는 에이블팜 제품이에요.</div>
       </div>
     </div>
-    <a class="more-btn" href="${HOMEPAGE_URL}" target="_blank" rel="noopener">${name} 자세히 보기 ↗</a>
+    <a class="more-btn" data-product="${name}" href="${HOMEPAGE_URL}/?product=${encodeURIComponent(name)}" target="_blank" rel="noopener">${name} 자세히 보기 ↗</a>
   `;
   row.appendChild(c);
   thread.appendChild(row);
@@ -3265,6 +3265,20 @@ window.onload = () => {
     { label:"일소가드 알아보기", value:"일소가드에 대해 알려줘" }
   ]);
 };
+</script>
+
+<script>
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest && e.target.closest('a.more-btn');
+  if (!a) return;
+  var name = a.getAttribute('data-product') || (a.textContent || '').replace(/자세히 보기.*$/, '').trim();
+  if (window.parent && window.parent !== window) {
+    e.preventDefault();
+    window.parent.postMessage({ type: 'af-open-product', name: name }, '*');
+  } else {
+    a.href = HOMEPAGE_URL + '/?product=' + encodeURIComponent(name);
+  }
+}, true);
 </script>
 </body>
 </html>
