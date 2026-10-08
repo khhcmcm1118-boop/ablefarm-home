@@ -396,6 +396,13 @@
   html.embed body{padding:0 !important;display:block !important;min-height:0 !important;background:#FAF7F0}
   html.embed .widget{max-width:none !important;height:100vh;border:0 !important;border-radius:0 !important;box-shadow:none !important}
 </style>
+<style>
+  /* 대화가 시작되면 얼굴 영역을 접고 대화창을 넓게 */
+  .widget .hero-char{transition:height .45s ease, opacity .3s ease, border-width .3s ease}
+  .widget.compact .hero-char{height:0 !important;opacity:0;border-width:0 !important;margin:0 !important}
+  .widget.compact .band{display:none !important}
+  .widget .thread{overflow-x:hidden !important}
+</style>
 </head>
 <body>
 
