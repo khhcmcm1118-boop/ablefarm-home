@@ -61,13 +61,16 @@
     min-width: 0;
     position: relative;
   }
-  #book { margin: 0 auto; filter: drop-shadow(0 18px 30px var(--shadow)); }
+  #book { margin: 0 auto; cursor: grab; touch-action: none; }
+  #book:active { cursor: grabbing; }
+  #book .stf__item { box-shadow: 0 18px 34px -16px var(--shadow); }
   .page { background: #fff; overflow: hidden; }
   .page img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; pointer-events: none; }
   .loading {
     position: absolute; inset: 0; display: grid; place-items: center;
-    color: var(--muted); font-size: 14px;
+    color: var(--muted); font-size: 14px; pointer-events: none;
   }
+  .loading[hidden] { display: none; }
 
   nav.bar {
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center;
@@ -98,7 +101,7 @@
 
 <header class="top">
   <h1><b>ABLE FARM</b> 4종 비료 제품안내 2026</h1>
-  <p>모서리를 끌거나 클릭하면 책장이 넘어갑니다</p>
+  <p>페이지를 클릭하거나 끌어서 넘기세요 · 마우스 휠도 됩니다</p>
 </header>
 
 <div class="stage" id="stage">
@@ -114,7 +117,7 @@
   <button id="last" class="hide-sm" aria-label="마지막 페이지로"><svg viewBox="0 0 24 24"><path d="M6 6l6 6-6 6M16 6v12"/></svg></button>
   <button id="fs" class="hide-sm" aria-label="전체 화면"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 </nav>
-<p class="hint">키보드 ← → 로도 넘길 수 있어요</p>
+<p class="hint">클릭 · 끌기 · 마우스 휠 · 키보드 ← → 로 넘길 수 있어요</p>
 
 <script src="page-flip.browser.js"></script>
 <script>
@@ -146,10 +149,15 @@
     flippingTime: reduce ? 250 : 850,
     mobileScrollSupport: false,
     usePortrait: true,
-    autoSize: true
+    autoSize: true,
+    useMouseEvents: true,
+    disableFlipByClick: false,
+    clickEventForward: false,
+    showPageCorners: true,
+    swipeDistance: 15
   });
   flip.loadFromHTML(book.querySelectorAll(".page"));
-  document.getElementById("loading").hidden = true;
+  var ld = document.getElementById("loading"); if (ld) ld.remove();
 
   var counter = document.getElementById("counter");
   var prev = document.getElementById("prev"), next = document.getElementById("next");
@@ -176,6 +184,22 @@
   next.addEventListener("click", function () { flip.flipNext(); });
   first.addEventListener("click", function () { flip.turnToPage(0); update(); });
   last.addEventListener("click", function () { flip.turnToPage(TOTAL - 1); update(); });
+  var wheelLock = 0;
+  document.getElementById("stage").addEventListener("wheel", function (e) {
+    var d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (Math.abs(d) < 8) return;
+    e.preventDefault();
+    var now = Date.now();
+    if (now < wheelLock) return;
+    wheelLock = now + 900;
+    if (d > 0) flip.flipNext(); else flip.flipPrev();
+  }, { passive: false });
+  document.getElementById("stage").addEventListener("click", function (e) {
+    if (book.contains(e.target)) return;
+    var r = book.getBoundingClientRect();
+    if (e.clientX > r.right) flip.flipNext();
+    else if (e.clientX < r.left) flip.flipPrev();
+  });
   document.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight") flip.flipNext();
     if (e.key === "ArrowLeft") flip.flipPrev();
