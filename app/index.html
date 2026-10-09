@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>에이블팜 출하앱</title>
+
+<!-- 홈 화면 아이콘 — 이 파일들이 같은 폴더에 함께 있어야 합니다 -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="에이블팜">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f172a">
+
+<style>
+  html,body{margin:0; height:100%; background:#f1f5f9;
+    font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕",sans-serif}
+  iframe{border:0; width:100%; height:100%; display:block}
+  #load{
+    position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; background:#f1f5f9; z-index:5;
+  }
+  #load img{width:86px; height:86px; border-radius:20px; box-shadow:0 8px 24px rgba(15,23,42,.12)}
+  #load .t{font-size:15px; font-weight:700; color:#0f172a}
+  #load .s{font-size:13px; color:#94a3b8}
+  #err{display:none; padding:24px; max-width:520px; margin:0 auto; line-height:1.7; color:#0f172a}
+  #err a{color:#2563eb; word-break:break-all}
+</style>
+</head>
+<body>
+
+<div id="load">
+  <img src="icon-192.png" alt="에이블팜">
+  <div class="t">에이블팜 출하앱</div>
+  <div class="s">여는 중…</div>
+</div>
+
+<iframe id="app" title="에이블팜 출하앱" allow="clipboard-write; clipboard-read"></iframe>
+
+<div id="err">
+  <h3>앱을 여는 데 시간이 걸립니다</h3>
+  <p>아래 주소를 눌러 바로 여세요.</p>
+  <p><a id="direct" href="#">앱 열기</a></p>
+</div>
+
+<script>
+/* 앱 주소 — 앱을 새로 배포해 주소가 바뀌면 이 한 줄만 고치면 됩니다 */
+var APP_URL = 'https://script.google.com/macros/s/AKfycbxRWri_ueNYyvU67osGuURmbQHop7kFiPobWRpQ3VqQIpken-yvWQrThSwSsmH-lkezVw/exec';
+
+/* 주소 뒤에 ?admin 을 붙이면 컴퓨터용 관제 화면이 열립니다 */
+var isAdmin = /(\?|&)admin\b/.test(location.search);
+var url = APP_URL + (isAdmin ? '?view=admin' : '');
+
+var frame = document.getElementById('app');
+var load = document.getElementById('load');
+document.getElementById('direct').href = url;
+if (isAdmin) document.title = '에이블팜 관제';
+
+frame.addEventListener('load', function(){ load.style.display = 'none'; });
+frame.src = url;
+
+/* 10초 안에 안 열리면 직접 여는 링크를 보여준다 */
+setTimeout(function(){
+  if (load.style.display !== 'none'){
+    load.style.display = 'none';
+    frame.style.display = 'none';
+    document.getElementById('err').style.display = 'block';
+  }
+}, 10000);
+</script>
+</body>
+</html>
