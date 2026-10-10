@@ -141,7 +141,7 @@
       <img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:46px;width:auto;display:block;mix-blend-mode:multiply">
     </div>
     <div class="af-navlinks" style="display:flex;gap:26px;color:#4c554a;font-weight:600">
-      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
+      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><a href="calc/" class="af-btn" style="color:inherit;text-decoration:none">희석 계산기</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
     </div>
   </div>
   <span class="af-btn" onClick="{{ goQna }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px">문의하기 →</span>
@@ -155,6 +155,7 @@
       <div class="af-ctarow" style="display:flex;gap:12px;margin-bottom:30px">
         <span class="af-btn" onClick="{{ goProducts }}" style="flex:none;white-space:nowrap;padding:15px 28px;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">제품 보기 →</span>
         <span class="af-btn" onClick="{{ goBuy }}" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.38);color:#fff;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px)">지역별 상담 →</span>
+        <a href="calc/" class="af-btn" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(169,209,138,.7);color:#c7e3a8;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px);text-decoration:none">💧 희석 계산기 →</a>
       </div>
       
     </div></div>
@@ -507,6 +508,14 @@
           <span class="af-btn" onClick="{{ goFaq }}" class="af-btn af-cta" style="flex:1;text-align:center;padding:16px 0;background:#16271c;color:#fff;border-radius:12px;font-weight:800;font-size:15px">사용 상담 문의</span>
           <span class="af-btn" onClick="{{ goProducts }}" class="af-btn af-cta" style="flex:1;text-align:center;padding:16px 0;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">전체 제품 보기</span>
         </div>
+        <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+          <sc-if value="{{ pHasCalc }}" hint-placeholder-val="{{ true }}">
+            <a href="{{ pCalcUrl }}" class="af-btn af-cta" style="flex:1;min-width:200px;text-align:center;padding:16px 0;background:#fff;border:2px solid #16271c;color:#16271c;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">💧 이 제품 사용량 계산하기</a>
+          </sc-if>
+          <sc-if value="{{ pHasGuide }}" hint-placeholder-val="{{ false }}">
+            <a href="guide/uni-nk.html" class="af-btn af-cta" style="flex:1;min-width:200px;text-align:center;padding:16px 0;background:#fff;border:2px solid #4a7c59;color:#4a7c59;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">📄 작물별 살포 안내서</a>
+          </sc-if>
+        </div>
       </div>
     </div>
   </div>
@@ -813,7 +822,7 @@ class Component extends DCLogic {
       const item = {
         '@type': 'Product',
         name: p.name,
-        category: d.type || '액상비료',
+        category: d.type || p.type || '액상비료',
         description: d.summary || p.desc,
         brand: { '@type': 'Brand', name: 'Able FARM' },
         manufacturer: { '@id': '#ablefarm' },
@@ -1126,10 +1135,10 @@ class Component extends DCLogic {
       { name: '원팩트', tag: '토양 경운 처리 전용 입제', size: '10kg', file: 'p08.jpg', accent: '#c0272d',
         chips: [['토양개량', '전용'], ['뿌리', '발달'], ['염류장해', '개선'] ],
         desc: '노지 및 시설작물 토양 경운 처리 전용 입제. 토양개량·조기수확·저장성 향상·기후피해 경감까지 한 번에.' },
-      { name: '유니NK칼', tag: '15-0-15 +17CaO +붕소', size: '10kg', file: 'p09.jpg', accent: '#3a7d44',
+      { name: '유니NK칼', type: '관주용', tag: '15-0-15 +17CaO +붕소', size: '10kg', file: 'p09.jpg', accent: '#3a7d44',
         chips: [['CaO 17', '고칼슘'], ['수용성', '100%'], ['붕소', '함유'] ],
         desc: '100% 수용성 고칼슘 복합비료. 질소·칼륨에 칼슘·붕소를 더해 균형 잡힌 양분을 공급합니다.' },
-      { name: '유니NK칼마', tag: '13-0-10 +5Mg +12CaO', size: '10kg', file: 'p10.jpg', accent: '#1f7fb5',
+      { name: '유니NK칼마', type: '관주용', tag: '13-0-10 +5Mg +12CaO', size: '10kg', file: 'p10.jpg', accent: '#1f7fb5',
         chips: [['Ca·Mg', '고함량'], ['수용성', '100%'], ['균형', '양분'] ],
         desc: '100% 수용성 칼슘·마그네슘 복합비료. 세포 강화와 균형 잡힌 미량요소 공급에 적합합니다.' },
       { name: '임팩트규산', tag: '식물체 조직강화 · 뿌리발달', size: '500ml', file: 'p11.jpg', accent: '#1f4b8f',
@@ -1162,7 +1171,7 @@ class Component extends DCLogic {
       { name: '파이널솔루션', tag: '과실크기 · 착색 · 경도 · 조기수확', size: '500ml', file: 'p20.jpg', accent: '#c0272d',
         chips: [['과실', '크기·착색'], ['경도', '조기수확'], ['스트레스', '예방'] ],
         desc: '수확기 마무리 전용. 과실 크기·착색·경도를 높이고 조기수확과 환경 스트레스 예방을 돕습니다.' },
-      { name: '하이그로퍼 골드', tag: '토양개량 · 작물생육용 유기농업자재', size: '20kg', file: 'p21.jpg', accent: '#2f6b3a',
+      { name: '하이그로퍼 골드', type: '유기농업자재', tag: '토양개량 · 작물생육용 유기농업자재', size: '20kg', file: 'p21.jpg', accent: '#2f6b3a',
         chips: [['토양', '개량'], ['측조시비', '가능'], ['공시', '2-3-900'] ],
         desc: '노지·시설 전반에 쓰는 토양개량 및 작물생육용 유기농업자재. 측조시비 가능(20kg, 공시-2-3-900).' },
       { name: '하이슈거', tag: '당도 · 착색 및 활력 증진', size: '500ml', file: 'p22.jpg', accent: '#c0272d',
@@ -1582,6 +1591,10 @@ class Component extends DCLogic {
       pimg: p.img,
       pchips: p.chips.map((c) => ({ v: c[0], l: c[1] })),
       pdesc: p.desc,
+      // 희석·사용량 계산기(calc/)로 이 제품을 골라 둔 채 연다. 원팩트는 계산기에 없다
+      pHasCalc: p.name !== '원팩트',
+      pCalcUrl: 'calc/?p=' + encodeURIComponent(p.name),
+      pHasGuide: p.name === '유니NK칼' || p.name === '유니NK칼마',
       goHome: () => this.setState({ view: 'home' }, () => window.scrollTo({ top: 0, behavior: 'smooth' })),
       videoRef,
       hasRich: !!r,

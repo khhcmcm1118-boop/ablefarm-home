@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>희석·사용량 계산기 | (주)에이블팜</title>
+<meta name="description" content="물 몇 리터에 비료 몇 ㎖? 밭 몇 평에 몇 병? 에이블팜 제품별 희석배수로 바로 계산합니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="희석·사용량 계산기 | (주)에이블팜">
+<meta property="og:description" content="물 몇 리터에 비료 몇 ㎖? 밭 몇 평에 몇 병? 제품을 고르면 바로 계산됩니다.">
+<meta property="og:image" content="https://www.ablefarm.co.kr/assets/logo-full.jpg">
+<meta property="og:url" content="https://www.ablefarm.co.kr/calc/">
+<link rel="canonical" href="https://www.ablefarm.co.kr/calc/">
+<link rel="icon" href="../assets/logo.png">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf7ef; --card:#ffffff; --ink:#16241a; --sub:#5d6b5f; --line:#e3e0d4;
+    --deep:#16271c; --green:#4a7c59; --leaf:#a9d18a; --soft:#eef4e6; --warn:#fff4dc; --warn-ink:#7a5200;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",system-ui,sans-serif;font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--green)}
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+  header{background:var(--deep);color:#fff;padding:18px 16px 22px}
+  header .in{max-width:560px;margin:0 auto}
+  header .home{color:var(--leaf);font-size:15px;font-weight:700;text-decoration:none}
+  header h1{margin:8px 0 4px;font-size:27px;font-weight:800;letter-spacing:-.02em}
+  header p{margin:0;font-size:16px;color:#cfe3bf}
+
+  .tabs{display:flex;gap:8px;margin:18px 0 14px}
+  .tab{flex:1;padding:14px 8px;border:2px solid var(--line);border-radius:14px;background:var(--card);font:inherit;font-size:17px;font-weight:800;color:var(--sub);cursor:pointer}
+  .tab[aria-selected="true"]{border-color:var(--deep);background:var(--deep);color:#fff}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+  .step{font-size:15px;font-weight:800;color:var(--green);margin:0 0 8px}
+  label.q{display:block;font-size:19px;font-weight:800;margin:0 0 10px}
+  select,input[type=number]{width:100%;font:inherit;font-size:20px;font-weight:700;padding:14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+  select:focus,input:focus{outline:none;border-color:var(--green)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{padding:11px 14px;border:2px solid var(--line);border-radius:999px;background:#fff;font:inherit;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer}
+  .chip[aria-pressed="true"]{border-color:var(--green);background:var(--soft);color:var(--deep)}
+  .chip.rec{border-color:#b9d3a3}
+  .chip em{font-style:normal;font-size:13px;font-weight:800;color:#fff;background:var(--green);border-radius:6px;padding:1px 6px;margin-left:2px;vertical-align:1px}
+  .hint .warn{display:block;margin-top:6px;padding:8px 10px;border-radius:10px;background:var(--warn);color:var(--warn-ink);font-weight:700}
+  .row{display:flex;gap:8px;align-items:center}
+  .row input{flex:1}
+  .unit{display:flex;border:2px solid var(--line);border-radius:12px;overflow:hidden;flex:none}
+  .unit button{font:inherit;font-size:17px;font-weight:800;padding:14px 14px;border:0;background:#fff;color:var(--sub);cursor:pointer}
+  .unit button[aria-pressed="true"]{background:var(--deep);color:#fff}
+  .hint{font-size:15px;color:var(--sub);margin:8px 0 0}
+
+  .result{background:var(--deep);color:#fff;border-radius:18px;padding:20px 18px;margin-bottom:14px}
+  .result .lead{font-size:16px;color:#cfe3bf;margin:0 0 4px}
+  .result .big{font-size:40px;font-weight:900;letter-spacing:-.02em;line-height:1.15;margin:0}
+  .result .big small{font-size:22px;font-weight:800}
+  .result .more{margin:12px 0 0;padding:12px 0 0;border-top:1px solid rgba(255,255,255,.18);font-size:16px;color:#e6f0dc}
+  .result .more div+div{margin-top:4px}
+  .result.empty .big{font-size:22px;color:#cfe3bf}
+
+  .info{font-size:16px}
+  .info dt{font-weight:800;color:var(--green);margin-top:10px}
+  .info dt:first-child{margin-top:0}
+  .info dd{margin:2px 0 0}
+  .note{background:var(--warn);color:var(--warn-ink);border-radius:14px;padding:14px 16px;font-size:16px;margin-bottom:14px}
+  .note b{display:block;margin-bottom:4px}
+  .note ul{margin:0;padding-left:20px}
+
+  .contact{font-size:16px}
+  .contact h2{font-size:19px;margin:0 0 10px}
+  .contact .p{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+  .contact .p:first-of-type{border-top:0}
+  .contact .p span{color:var(--sub);font-size:15px}
+  .contact a.tel{font-weight:800;font-size:17px;text-decoration:none;white-space:nowrap}
+  footer{text-align:center;font-size:14px;color:var(--sub);margin-top:22px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="in">
+    <a class="home" href="../">← 에이블팜 홈</a>
+    <h1>희석·사용량 계산기</h1>
+    <p>제품을 고르면 물 양과 밭 넓이로 바로 계산됩니다</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabWater" aria-selected="true">물에 타는 양</button>
+    <button class="tab" role="tab" id="tabArea" aria-selected="false">밭 넓이로</button>
+  </div>
+
+  <div class="card">
+    <p class="step">1단계</p>
+    <label class="q" for="product">어떤 제품을 쓰세요?</label>
+    <select id="product"></select>
+    <div id="rateBox" hidden>
+      <div class="chips" id="rateChips"></div>
+      <p class="hint" id="rateHint"></p>
+    </div>
+    <div id="customBox" hidden>
+      <div class="row" style="margin-top:10px">
+        <input type="number" id="customRate" inputmode="numeric" min="1" placeholder="예: 1000">
+        <span style="font-weight:800">배</span>
+      </div>
+      <p class="hint">원하는 희석배수를 숫자로 넣으세요</p>
+    </div>
+    <p class="hint" id="noData" hidden></p>
+    <div id="cropBox" hidden>
+      <label class="q" for="crop" style="margin-top:18px">어떤 작물에 주세요?</label>
+      <select id="crop"></select>
+      <p class="hint" id="cropHint"></p>
+    </div>
+  </div>
+
+  <!-- 물에 타는 양 -->
+  <div class="card" id="waterCard">
+    <p class="step">2단계</p>
+    <label class="q" for="water">물을 얼마나 받으세요?</label>
+    <div class="row">
+      <input type="number" id="water" inputmode="decimal" min="0" value="20">
+      <span style="font-weight:800">리터</span>
+    </div>
+    <div class="chips" id="waterChips"></div>
+  </div>
+
+  <!-- 밭 넓이로 -->
+  <div class="card" id="areaCard" hidden>
+    <p class="step">2단계</p>
+    <label class="q" for="area" id="areaQ">밭이 얼마나 넓으세요?</label>
+    <div class="row">
+      <input type="number" id="area" inputmode="decimal" min="0" value="300">
+      <span id="treeUnit" style="font-weight:800" hidden>그루</span>
+      <div class="unit" id="unitBox">
+        <button id="uPyeong" aria-pressed="true">평</button>
+        <button id="uM2" aria-pressed="false">㎡</button>
+      </div>
+    </div>
+    <div class="chips" id="areaChips"></div>
+    <p class="hint" id="areaHint"></p>
+  </div>
+
+  <div class="result empty" id="result" aria-live="polite">
+    <p class="lead" id="rLead">계산 결과</p>
+    <p class="big" id="rBig">제품을 골라 주세요</p>
+    <div class="more" id="rMore" hidden></div>
+  </div>
+
+  <div class="card info" id="infoCard" hidden>
+    <dl id="info"></dl>
+  </div>
+
+  <div class="note">
+    <b>쓰기 전에 꼭 확인하세요</b>
+    <ul>
+      <li>제품 라벨에 적힌 사용법이 이 계산기보다 우선입니다.</li>
+      <li>농약 등 다른 자재와 섞을 때는 좁은 면적에 먼저 시험해 보세요.</li>
+      <li>더운 날에는 아침·저녁 서늘할 때 뿌리세요.</li>
+    </ul>
+  </div>
+
+  <div class="card contact">
+    <h2>사용법이 헷갈리면 전화 주세요</h2>
+    <div class="p"><div>충청·경기 <span>이준희 팀장</span></div><a class="tel" href="tel:01092831393">010-9283-1393</a></div>
+    <div class="p"><div>영남 <span>박태진 팀장</span></div><a class="tel" href="tel:01081319840">010-8131-9840</a></div>
+    <div class="p"><div>강원·호남 <span>박정호 부장 (경북 청송·봉화 포함)</span></div><a class="tel" href="tel:01091580404">010-9158-0404</a></div>
+    <div class="p"><div>고객센터 <span>평일 09:00–17:00</span></div><a class="tel" href="tel:028586229">02-858-6229</a></div>
+  </div>
+
+  <footer>(주)에이블팜 · <a href="../">www.ablefarm.co.kr</a></footer>
+</div>
+
+<script>
+/*
+  제품별 사용량 — data/products.json 의 희석배수·사용횟수 칸에서 옮긴 값.
+  products.json 이 바뀌면 여기도 같이 고친다. 홈페이지에 사용량이 안 적힌 제품은 넣지 않는다.
+  rates: 고를 수 있는 희석배수 / area: 관주량 (perPyeong 평당 L 범위) / bottle: 한 병 용량(㎖)
+*/
+var P = [
+  {n:"구근짱",      rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"속딴딴",      rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"아미닥터",    rates:[500,1000], extra:[100], bottle:500, area:{per:300, L:[1,1.5]}, tip:"사과 역병 둥치 피해에는 100배로 진하게 씁니다."},
+  {n:"아미루트",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"엔피칼마",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"일소가드",    rates:[500],      bottle:1000, foliarOnly:true},
+  {n:"임팩트골드",  rates:[1000],     bottle:500, areaNote:"임팩트골드는 엽면살포나 관주 둘 다 됩니다. 관주량은 홈페이지에 아직 없으니 담당자에게 물어보세요. 5ℓ 제품은 하우스 관주 전용입니다.", tip:"5ℓ 제품은 하우스 관주 전용입니다. 관주량은 담당자에게 물어보세요."},
+  {n:"임팩트원",    rates:[1000],     bottle:500, area:{perM2:1000, L:[1,1.5]}, tip:"벼는 1차 유수형성기, 2차 출수개화기에 씁니다."},
+  {n:"칼슘탄",      rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"토탈그로",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}, tip:"생육 초기에는 1,000배로 연하게, 중기부터 500~1,000배로 씁니다."},
+  {n:"파이널솔루션",rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
+  {n:"하이슈거",    rates:[500,1000], bottle:500, area:{per:200, L:[0.5,0.5]}, tip:"관주는 5일 간격으로 3~4회 줍니다."},
+  {n:"황실",        rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}, tip:"벼·보리와 과수·과채는 1,000배, 엽채류는 500~1,000배, 구근류는 초기 1,000배·중기 500배로 씁니다."},
+  // 아래 5종은 홈페이지에 사용량이 없어 500·1,000배를 권장으로 둔다 (2026-10-10 사용자 지정). 관주량은 없음
+  {n:"산소탱크",    rates:[500,1000], bottle:500},
+  {n:"엔피씰",      rates:[500,1000], bottle:500},
+  {n:"임팩트",      rates:[500,1000], bottle:500},
+  {n:"임팩트규산",  rates:[500,1000], bottle:500},
+  {n:"임팩트규산 골드", rates:[500,1000], bottle:500},
+  {n:"히미업",      rates:[800,1000], bottle:500, foliarOnly:true, tip:"평소에는 1,000배, 피해가 심할 때만 800배로 씁니다."}
+];
+/*
+  웃거름 입제 (물에 타는 액제가 아님) — 「유니NK칼·유니NK칼마 살포 안내」(대리점 배포용 A4)에서 옮긴 값.
+  10a = 300평 = 1,000㎡. 줄마다 [작물, 10a당 총량 kg 최소, 최대, 1회 kg 최소, 최대, 횟수, 시기, 방법]
+*/
+var G = {
+  "유니NK칼": {bag:10, desc:"질소15·칼리15·칼슘17 · 칼슘 결핍 예방 웃거름", rows:[
+    ["배추 (가을)",70,100,23,33,3,"정식 후 15일 간격 3회","토양"],
+    ["배추 (고랭지)",90,120,30,40,3,"정식 후 15일 간격 3회","토양"],
+    ["무",80,105,27,35,3,"본잎 5~6매 ~ 뿌리 비대 초기 3회","토양"],
+    ["마늘·양파",75,100,38,50,2,"월동 후 2월 하순~3월 2회","토양"],
+    ["대파",50,70,17,23,3,"생육 중 2~3주 간격 3회","토양"],
+    ["시금치·상추",50,70,25,35,2,"생육 중·수확 시작기 2회","토양"],
+    ["부추",70,80,23,27,3,"수확 후마다 나눠서 3회","토양"],
+    ["당근",60,80,30,40,2,"파종 30~40일 후·뿌리 비대기 2회","토양"],
+    ["생강",70,80,23,27,3,"6~8월 3회","토양"],
+    ["고추",45,50,15,17,3,"정식 25~30일 후부터 25~30일 간격 3회","토양"],
+    ["가지",50,60,17,20,3,"정식 25~30일 후부터 25~30일 간격 3회","토양"],
+    ["오이",45,60,3,5,0,"수확 시작 후 7~10일 간격 관주","관주"],
+    ["토마토 (시설)",30,45,3,5,0,"1화방 착과 후 7~10일 간격 관주","관주"],
+    ["참외·수박 (시설)",30,45,15,22,2,"착과 후 과실 비대기 2회","토양"],
+    ["딸기 (시설)",25,35,3,5,0,"개화·수확기 7~10일 간격 관주","관주"],
+    ["사과·배·감",20,30,10,15,2,"과실 비대기(6~7월) 2회","토양"],
+    ["복숭아",20,30,10,15,2,"과실 비대기 2회, 수확 1개월 전 중단","토양"],
+    ["포도",25,35,12,18,2,"과실 비대기 2회, 착색기 전 중단","토양"],
+    ["밤",30,40,15,20,2,"6~7월 2회","토양"],
+    ["벼 (이삭거름)",15,20,15,20,1,"출수 25일 전 1회","토양"]]},
+  "유니NK칼마": {bag:10, desc:"질소13·칼리10·고토5·칼슘12 · 잎 황화 예방 웃거름", rows:[
+    ["배추 (가을)",65,90,22,30,3,"정식 후 15일 간격 3회","토양"],
+    ["배추 (고랭지)",80,110,27,37,3,"정식 후 15일 간격 3회","토양"],
+    ["무",70,95,23,32,3,"본잎 5~6매 ~ 뿌리 비대 초기 3회","토양"],
+    ["마늘·양파",70,90,35,45,2,"월동 후 2월 하순~3월 2회","토양"],
+    ["대파",45,65,15,22,3,"생육 중 2~3주 간격 3회","토양"],
+    ["시금치·상추",45,60,22,30,2,"생육 중·수확 시작기 2회","토양"],
+    ["부추",65,70,22,23,3,"수확 후마다 나눠서 3회","토양"],
+    ["당근",55,70,28,35,2,"파종 30~40일 후·뿌리 비대기 2회","토양"],
+    ["생강",65,70,22,23,3,"6~8월 3회","토양"],
+    ["고추",40,45,13,15,3,"정식 25~30일 후부터 25~30일 간격 3회","토양"],
+    ["가지",45,55,15,18,3,"정식 25~30일 후부터 25~30일 간격 3회","토양"],
+    ["오이",40,55,3,5,0,"수확 시작 후 7~10일 간격 관주","관주"],
+    ["토마토 (시설)",25,40,3,5,0,"1화방 착과 후 7~10일 간격 관주","관주"],
+    ["참외·수박 (시설)",25,40,12,20,2,"착과 후 과실 비대기 2회","토양"],
+    ["딸기 (시설)",20,30,3,5,0,"개화·수확기 7~10일 간격 관주","관주"],
+    ["사과·배·감",20,25,10,12,2,"과실 비대기(6~7월) 2회","토양"],
+    ["복숭아",20,25,10,12,2,"과실 비대기 2회, 수확 1개월 전 중단","토양"],
+    ["포도",20,30,10,15,2,"과실 비대기 2회, 착색기 전 중단","토양"],
+    ["밤",25,35,12,18,2,"6~7월 2회","토양"],
+    ["벼 (이삭거름)",15,20,15,20,1,"출수 25일 전 1회","토양"]]},
+  // 물에 녹지 않는 비료 — 제품 안내의 「작물별 시비량 (300평 10a 기준)」. 1회량·시기는 받은 자료가 없어 비워 둔다
+  "하이그로퍼 골드": {bag:20, insoluble:true, desc:"물에 녹지 않는 비료 · 흙에 뿌려 씁니다", rows:[
+    ["벼",80,100,null,null,0,"","토양"],
+    ["과수·과채류",120,150,null,null,0,"","토양"],
+    ["마늘·양파",120,140,null,null,0,"","토양"]]},
+  // 녹지 않는 일반 비료 — 제품 안내의 「시비기준량」. 6kg 한 포가 덮는 넓이(평) 또는 나무 수. 줄마다 [작물, 한 포 넓이 최소, 최대, 한 포 나무 수, 처리방법]
+  // 같은 비료라도 6kg은 밭·하우스·과수용, 8kg은 수도작(벼·보리·밀)용
+  "임팩트과립 6kg": {bag:6, infoName:"임팩트과립", insoluble:true, perBag:true, desc:"물에 녹지 않는 비료 · 밭·하우스·과수용 6kg 한 포 기준", rows:[
+    ["노지",300,300,0,"살포기 또는 드론으로 흙 위에 뿌립니다"],
+    ["시설 (하우스)",200,200,0,"살포기 또는 드론으로 흙 위에 뿌립니다"],
+    ["과수 (어린나무)",0,0,60,"나무 한 그루에 100g씩 나무 밑 흙 전체에 뿌립니다"],
+    ["과수 (다 자란 나무)",0,0,30,"나무 한 그루에 200g씩 나무 밑 흙 전체에 뿌립니다"]]},
+  "임팩트과립 8kg": {bag:8, infoName:"임팩트과립", insoluble:true, perBag:true, desc:"물에 녹지 않는 비료 · 수도작용 8kg 한 포 기준", rows:[
+    ["벼·보리·밀 (수도작)",1000,1200,0,"논에 뿌립니다"]]}
+};
+var GRAN_TIPS = "웃거름(추비) 전용입니다. 비료가 잎·줄기에 닿지 않게 하세요. 염류가 쌓인 하우스는 양을 절반으로 줄이세요. 인산 비료·황산염 비료와 한 통에 섞지 마세요.";
+var gran = null; // 지금 고른 입제
+
+var NO_DATA = []; // 권장 배수를 모르는 제품 (지금은 없음). 원팩트는 계산기에서 뺐다
+var M2_PER_PYEONG = 3.3058;
+
+var info = {}; // products.json 의 설명 (있으면 보여줌)
+var mode = "water", unit = "pyeong", rate = null, cur = null;
+var $ = function(id){ return document.getElementById(id); };
+
+function fmtNum(x, d){
+  var s = (Math.round(x * Math.pow(10,d)) / Math.pow(10,d)).toLocaleString("ko-KR", {maximumFractionDigits:d});
+  return s;
+}
+function fmtVol(ml){ // ㎖ → 읽기 쉬운 단위
+  if (ml >= 1000) return fmtNum(ml/1000, ml >= 10000 ? 1 : 2) + "<small> ℓ</small>";
+  return fmtNum(ml, ml < 10 ? 1 : 0) + "<small> ㎖</small>";
+}
+function fmtVolText(ml){ return fmtVol(ml).replace(/<[^>]+>/g,""); }
+
+function buildSelect(){
+  var s = $("product");
+  var h = '<option value="">— 제품을 고르세요 —</option><optgroup label="에이블팜 제품">';
+  P.map(function(p,i){ return [p.n,i]; }).sort(function(a,b){ return a[0].localeCompare(b[0],"ko"); })
+   .forEach(function(x){ h += '<option value="'+x[1]+'">'+x[0]+'</option>'; });
+  h += '</optgroup><optgroup label="흙에 뿌리는 포대 제품">';
+  Object.keys(G).forEach(function(n){ h += '<option value="g:'+n+'">'+(/kg$/.test(n) ? n : n+' ('+G[n].bag+'kg)')+'</option>'; });
+  h += '</optgroup>';
+  if (NO_DATA.length) h += '<optgroup label="권장 배수는 라벨 확인">';
+  NO_DATA.forEach(function(n){ h += '<option value="x:'+n+'">'+n+'</option>'; });
+  h += (NO_DATA.length ? '</optgroup>' : '') + '<option value="custom">목록에 없는 자재 (배수만 골라 계산)</option>';
+  s.innerHTML = h;
+}
+
+function chips(boxId, items, cls, onPick, selected){
+  var box = $(boxId); box.innerHTML = "";
+  items.forEach(function(it){
+    var b = document.createElement("button");
+    b.className = "chip"; b.type = "button"; b.textContent = it.label;
+    b.setAttribute("aria-pressed", String(it.value === selected));
+    b.onclick = function(){ onPick(it.value); };
+    box.appendChild(b);
+  });
+}
+
+var COMMON_RATES = [200,300,500,800,1000,1500,2000]; // 사용자가 고를 수 있는 배수
+var customOn = false;
+
+function onProduct(){
+  var v = $("product").value;
+  $("rateBox").hidden = true; $("customBox").hidden = true; $("noData").hidden = true; $("infoCard").hidden = true;
+  cur = null; rate = null; customOn = false; gran = null; $("cropBox").hidden = true;
+  if (v.indexOf("g:") === 0){
+    gran = G[v.slice(2)];
+    $("crop").innerHTML = gran.rows.map(function(r,i){ return '<option value="'+i+'">'+r[0]+'</option>'; }).join("");
+    $("cropBox").hidden = false;
+    $("cropHint").innerHTML = gran.desc + "<br>" + (gran.perBag ? "비료가 잎·줄기에 닿지 않게 하세요." : gran.insoluble ? "비료가 잎·줄기에 닿지 않게 하세요. 나눠 주는 횟수와 시기는 담당자에게 물어보세요." : GRAN_TIPS);
+    showInfo(gran.infoName || v.slice(2));
+    if (mode !== "area") setMode("area");
+  }
+  else if (v === "custom"){ drawRates(); }
+  else if (v.indexOf("x:") === 0){
+    $("noData").hidden = false;
+    $("noData").innerHTML = "<b>"+v.slice(2)+"</b>은(는) 홈페이지에 권장 희석배수가 아직 안 올라와 있습니다. 라벨에 적힌 배수를 아래에서 고르시거나 담당자에게 전화 주세요.";
+    drawRates();
+    showInfo(v.slice(2));
+  }
+  else if (v !== ""){
+    cur = P[Number(v)];
+    rate = cur.rates[cur.rates.length-1]; // 기본은 권장 중 연한 쪽
+    drawRates();
+    showInfo(cur.n);
+  }
+  syncAreaInput();
+  calc();
+}
+
+function recRates(){ return cur ? cur.rates : []; }
+function recText(){
+  var r = recRates();
+  return r.length > 1 ? r[0].toLocaleString("ko-KR")+"~"+r[r.length-1].toLocaleString("ko-KR")+"배" : r[0].toLocaleString("ko-KR")+"배";
+}
+
+function drawRates(){
+  $("rateBox").hidden = false;
+  var rec = recRates();
+  var list = COMMON_RATES.concat(rec, cur && cur.extra ? cur.extra : []);
+  list = list.filter(function(x,i){ return list.indexOf(x) === i; }).sort(function(a,b){ return a-b; });
+  var box = $("rateChips"); box.innerHTML = "";
+  list.forEach(function(r){
+    var b = document.createElement("button");
+    var isRec = rec.indexOf(r) >= 0;
+    b.type = "button"; b.className = "chip" + (isRec ? " rec" : "");
+    b.innerHTML = r.toLocaleString("ko-KR") + "배" + (isRec ? ' <em>권장</em>' : "");
+    b.setAttribute("aria-pressed", String(!customOn && r === rate));
+    b.onclick = function(){ rate = r; customOn = false; drawRates(); calc(); };
+    box.appendChild(b);
+  });
+  var c = document.createElement("button");
+  c.type = "button"; c.className = "chip"; c.textContent = "직접 입력";
+  c.setAttribute("aria-pressed", String(customOn));
+  c.onclick = function(){ customOn = true; rate = Number($("customRate").value) || null; drawRates(); calc(); $("customRate").focus(); };
+  box.appendChild(c);
+  $("customBox").hidden = !customOn;
+  drawRateHint();
+}
+
+function drawRateHint(){
+  var h = "숫자가 작을수록 진합니다.";
+  if (cur){
+    h = "<b>권장 "+recText()+"</b> · 숫자가 작을수록 진합니다.";
+    if (rate){
+      var rec = recRates(), lo = rec[0], hi = rec[rec.length-1];
+      var okExtra = cur.extra && cur.extra.indexOf(rate) >= 0;
+      if (rate < lo && !okExtra) h += '<span class="warn">권장보다 진합니다. 잎이 타는 약해가 생길 수 있으니 좁은 곳에 먼저 시험해 보세요.</span>';
+      else if (rate > hi) h += '<span class="warn">권장보다 연합니다. 효과가 약하게 나올 수 있습니다.</span>';
+    }
+    if (cur.tip) h += "<br>" + cur.tip;
+  }
+  $("rateHint").innerHTML = h;
+}
+function showInfo(name){
+  var d = info[name];
+  if (!d) return;
+  var rows = [["이럴 때 씁니다", d.한줄설명], ["쓰는 시기", d.사용시기], ["맞는 작물", d.적용작물]].filter(function(r){ return r[1]; });
+  if (!rows.length) return;
+  $("info").innerHTML = rows.map(function(r){ return "<dt>"+r[0]+"</dt><dd>"+r[1]+"</dd>"; }).join("");
+  $("infoCard").hidden = false;
+}
+
+function setResult(lead, big, more){
+  $("result").classList.toggle("empty", !more && !/\d/.test(big));
+  $("rLead").textContent = lead;
+  $("rBig").innerHTML = big;
+  $("rMore").hidden = !more;
+  $("rMore").innerHTML = more || "";
+}
+
+function calc(){
+  if (gran){ if (mode === "water") calcGranWater(); else calcGranArea(); return; }
+  if (mode === "water") calcWater(); else calcArea();
+}
+
+function kg(x){ return fmtNum(x, x < 10 ? 1 : 0); }
+function kgRange(a, b){ return a === b ? kg(a) : kg(a) + " ~ " + kg(b); }
+
+function calcGranArea(){
+  var a = Number($("area").value);
+  if (!(a > 0)){ setResult("계산 결과", "밭 넓이를 넣어 주세요"); return; }
+  var r = gran.rows[Number($("crop").value) || 0];
+  if (gran.perBag){ calcPerBag(r, a); return; }
+  var pyeong = unit === "pyeong" ? a : a / M2_PER_PYEONG;
+  var u = pyeong / 300; // 10a = 300평
+  var where = unit === "pyeong" ? fmtNum(a,0)+"평" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)";
+  var bags = function(x){ return Math.max(1, Math.ceil(x / gran.bag - 0.05)); };
+  var bagTxt = gran.bag+"kg 포대 "+(bags(r[1]*u)===bags(r[2]*u) ? bags(r[1]*u) : bags(r[1]*u)+"~"+bags(r[2]*u))+"개";
+  if (r[3] == null){ // 총 시비량만 있는 제품
+    setResult("이 넓이에 줄 비료 양 (한 철)", kgRange(r[1]*u, r[2]*u) + "<small> kg</small>",
+      "<div>"+r[0]+" · "+where+" · 기준 300평(10a)당 "+r[1]+"~"+r[2]+"kg</div><div>"+bagTxt+"</div><div>나눠 주는 횟수와 시기는 담당자에게 물어보세요</div>");
+    return;
+  }
+  var more = "<div>"+r[0]+" · "+where+" · "+r[6]+"</div>";
+  more += "<div>한 철 전체 "+kgRange(r[1]*u, r[2]*u)+"kg → "+bagTxt+"</div>";
+  if (r[7] === "관주"){
+    more += "<div>물 "+fmtNum(Math.max(1, u),1)+"톤 이상에 녹여서 주세요 (10a당 3~5kg을 물 1톤 이상)</div>";
+    setResult("한 번 관주할 때 녹일 양", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more);
+  } else {
+    more += "<div>포기 사이·이랑 옆에 뿌리고 흙을 덮거나 물을 주세요</div>";
+    setResult("한 번에 뿌릴 양 (흙에)", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more);
+  }
+}
+
+function isTreeRow(){ return gran && gran.perBag && gran.rows[Number($("crop").value) || 0][3] > 0; }
+
+function calcPerBag(r, a){
+  var bagTxt = function(lo, hi){ var b1 = Math.max(1, Math.ceil(lo - 0.05)), b2 = Math.max(1, Math.ceil(hi - 0.05)); return gran.bag+"kg 포대 "+(b1===b2 ? b1 : b1+"~"+b2)+"개"; };
+  if (r[3] > 0){ // 나무 수 기준
+    var kgv = a * gran.bag / r[3];
+    setResult("나무 "+fmtNum(a,0)+"그루에 줄 양", kg(kgv) + "<small> kg</small>",
+      "<div>"+r[0]+" · 한 포("+gran.bag+"kg)로 "+r[3]+"그루</div><div>"+bagTxt(a / r[3], a / r[3])+"</div><div>"+r[4]+"</div>");
+    return;
+  }
+  var pyeong = unit === "pyeong" ? a : a / M2_PER_PYEONG;
+  var where = unit === "pyeong" ? fmtNum(a,0)+"평" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)";
+  var hiKg = pyeong / r[1] * gran.bag, loKg = pyeong / r[2] * gran.bag; // 한 포가 덮는 넓이가 넓을수록 적게 든다
+  setResult("이 넓이에 줄 비료 양", kgRange(loKg, hiKg) + "<small> kg</small>",
+    "<div>"+r[0]+" · "+where+" · 기준 한 포("+gran.bag+"kg)당 "+(r[1]===r[2] ? fmtNum(r[1],0) : fmtNum(r[1],0)+"~"+fmtNum(r[2],0))+"평</div><div>"+bagTxt(loKg / gran.bag, hiKg / gran.bag)+"</div><div>"+r[4]+"</div>");
+}
+
+function syncAreaInput(){ // 과수는 나무 수로 받는다
+  var tree = isTreeRow();
+  $("areaQ").textContent = tree ? "나무가 몇 그루예요?" : "밭이 얼마나 넓으세요?";
+  $("treeUnit").hidden = !tree;
+  $("unitBox").hidden = tree;
+  if (tree !== syncAreaInput.tree){ $("area").value = tree ? 60 : 300; if (!tree && unit === "m2") $("area").value = 992; syncAreaInput.tree = tree; }
+  drawAreaChips();
+}
+
+function calcGranWater(){
+  if (gran.insoluble){ setResult("계산 결과", "물에 녹이지 않는 제품입니다", "<div>흙에 뿌려 쓰는 비료입니다. 「밭 넓이로」 탭에서 작물을 골라 계산하세요.</div>"); return; }
+  var L = Number($("water").value);
+  if (!(L > 0)){ setResult("계산 결과", "물 양을 넣어 주세요"); return; }
+  var lo = L * 3 / 1000, hi = L * 5 / 1000; // 물 1톤에 3~5kg
+  var big = hi < 1 ? fmtNum(lo*1000,0)+" ~ "+fmtNum(hi*1000,0)+"<small> g</small>" : kgRange(lo, hi)+"<small> kg</small>";
+  var more = "<div>관주할 때 물 "+fmtNum(L,1)+"ℓ에 녹이는 최대 양입니다 (물 1톤에 3~5kg)</div>";
+  more += "<div>흙에 뿌리는 양은 「밭 넓이로」 탭에서 작물을 골라 계산하세요</div>";
+  setResult("물에 녹일 양 (관주)", big, more);
+}
+
+function calcWater(){
+  var L = Number($("water").value);
+  if (!rate){ setResult("계산 결과", $("product").value === "" ? "제품을 골라 주세요" : "희석배수를 골라 주세요"); return; }
+  if (!(L > 0)){ setResult("계산 결과", "물 양을 넣어 주세요"); return; }
+  var ml = L * 1000 / rate;
+  var more = "<div>물 "+fmtNum(L,1)+"ℓ에 "+rate.toLocaleString("ko-KR")+"배로 탈 때</div>";
+  if (cur){
+    var other = cur.rates.filter(function(r){ return r !== rate; }).map(function(r){ return "권장 "+r.toLocaleString("ko-KR")+"배면 "+fmtVolText(L*1000/r); });
+    if (other.length) more += "<div>"+other.join(" · ")+"</div>";
+  }
+  var bottle = cur ? cur.bottle : 500;
+  var perBottle = bottle * rate / 1000; // 한 병으로 탈 수 있는 물 ℓ
+  more += "<div>"+(bottle>=1000 ? fmtNum(bottle/1000,1)+"ℓ" : bottle+"㎖")+" 한 병이면 물 "+fmtNum(perBottle,0)+"ℓ (말통 "+fmtNum(perBottle/20,1)+"통)까지 탈 수 있습니다</div>";
+  setResult("제품을 이만큼 넣으세요", fmtVol(ml), more);
+}
+
+function calcArea(){
+  var a = Number($("area").value);
+  if (!cur && $("product").value !== "custom"){ setResult("계산 결과", $("product").value.indexOf("x:")===0 ? "담당자에게 문의해 주세요" : "제품을 골라 주세요"); return; }
+  if (!cur || !cur.area){
+    setResult("계산 결과", "관주량 정보가 없습니다",
+      cur && cur.areaNote ? "<div>"+cur.areaNote+"</div>"
+    : cur && cur.foliarOnly ? "<div>"+cur.n+"은(는) 잎에 뿌리는(엽면살포) 제품입니다. 「물에 타는 양」 탭에서 계산하세요.</div>"
+                            : cur ? "<div>"+cur.n+"은(는) 관주량 자료가 아직 없습니다. 관주하실 때는 담당자에게 물어보세요. 물에 타는 양은 「물에 타는 양」 탭에서 계산됩니다.</div>"
+    : "<div>밭 넓이 계산은 제품을 골라야 합니다. 「물에 타는 양」 탭을 쓰세요.</div>");
+    return;
+  }
+  if (!(a > 0)){ setResult("계산 결과", "밭 넓이를 넣어 주세요"); return; }
+  var pyeong = unit === "pyeong" ? a : a / M2_PER_PYEONG;
+  var m2 = pyeong * M2_PER_PYEONG;
+  var r = cur.area, lo, hi, base;
+  if (r.perM2){ lo = m2 / r.perM2 * r.L[0]; hi = m2 / r.perM2 * r.L[1]; base = fmtNum(r.perM2,0)+"㎡(약 "+fmtNum(r.perM2/M2_PER_PYEONG,0)+"평)당 "+fmtL(r.L); }
+  else        { lo = pyeong / r.per * r.L[0]; hi = pyeong / r.per * r.L[1]; base = r.per+"평당 "+fmtL(r.L); }
+  var big = lo === hi ? fmtVol(lo*1000)
+          : hi >= 1 ? fmtNum(lo, lo >= 10 ? 1 : 2) + " ~ " + fmtNum(hi, hi >= 10 ? 1 : 2) + "<small> ℓ</small>"
+          : fmtNum(lo*1000, 0) + " ~ " + fmtNum(hi*1000, 0) + "<small> ㎖</small>";
+  var bLo = Math.ceil(lo*1000 / cur.bottle - 0.05), bHi = Math.ceil(hi*1000 / cur.bottle - 0.05); // 평↔㎡ 반올림 오차로 한 병 더 나오지 않게
+  var more = "<div>"+(unit==="pyeong" ? fmtNum(a,0)+"평 (약 "+fmtNum(m2,0)+"㎡)" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)")+" · 기준 "+base+"</div>";
+  more += "<div>"+cur.bottle+"㎖ 병으로 "+(bLo===bHi ? bLo+"병" : bLo+"~"+bHi+"병")+"이 듭니다</div>";
+  setResult("관주로 줄 제품 양", big, more);
+}
+function fmtL(L){ return L[0]===L[1] ? (L[0]<1 ? L[0]*1000+"㎖" : L[0]+"ℓ") : L[0]+"~"+L[1]+"ℓ"; }
+
+function setMode(m){
+  mode = m;
+  $("tabWater").setAttribute("aria-selected", String(m==="water"));
+  $("tabArea").setAttribute("aria-selected", String(m==="area"));
+  $("waterCard").hidden = m !== "water";
+  $("areaCard").hidden = m !== "area";
+  calc();
+}
+function setUnit(u){
+  if (u === unit) return;
+  var a = Number($("area").value);
+  if (a > 0) $("area").value = Math.round(u === "m2" ? a * M2_PER_PYEONG : a / M2_PER_PYEONG);
+  unit = u;
+  $("uPyeong").setAttribute("aria-pressed", String(u==="pyeong"));
+  $("uM2").setAttribute("aria-pressed", String(u==="m2"));
+  drawAreaChips(); calc();
+}
+function drawAreaChips(){
+  var tree = isTreeRow();
+  var list = tree ? [10,30,60,100,200,500] : unit === "pyeong" ? [100,200,300,600,1000,3000] : [330,1000,2000,3300,10000];
+  var u = tree ? "그루" : unit === "pyeong" ? "평" : "㎡";
+  chips("areaChips", list.map(function(v){ return {label: v.toLocaleString("ko-KR")+u, value:v}; }), "", function(v){ $("area").value = v; drawAreaChips(); calc(); }, Number($("area").value));
+}
+function drawWaterChips(){
+  var list = [[1,"분무기 1ℓ"],[16,"등짐 16ℓ"],[20,"말통 20ℓ"],[100,"100ℓ"],[200,"드럼 200ℓ"],[500,"500ℓ"],[1000,"1톤 1,000ℓ"]];
+  chips("waterChips", list.map(function(x){ return {label:x[1], value:x[0]}; }), "", function(v){ $("water").value = v; drawWaterChips(); calc(); }, Number($("water").value));
+}
+
+$("tabWater").onclick = function(){ setMode("water"); };
+$("tabArea").onclick  = function(){ setMode("area"); };
+$("uPyeong").onclick  = function(){ setUnit("pyeong"); };
+$("uM2").onclick      = function(){ setUnit("m2"); };
+$("product").onchange = onProduct;
+$("crop").onchange = function(){ syncAreaInput(); calc(); };
+$("customRate").oninput = function(){ rate = Number(this.value) || null; drawRateHint(); calc(); };
+$("water").oninput = function(){ drawWaterChips(); calc(); };
+$("area").oninput  = function(){ drawAreaChips(); calc(); };
+
+syncAreaInput.tree = false;
+buildSelect(); drawWaterChips(); drawAreaChips(); calc();
+
+// 제품 설명은 홈페이지 제품 데이터에서 가져온다 (없어도 계산은 된다)
+fetch("../data/products.json").then(function(r){ return r.json(); }).then(function(d){
+  (d.제품 || []).forEach(function(p){ info[p.제품명] = p; });
+  var v = $("product").value;
+  if (cur) showInfo(cur.n); else if (v.indexOf("x:") === 0) showInfo(v.slice(2));
+}).catch(function(){});
+
+// 주소 끝에 ?p=제품명 을 붙이면 그 제품이 골라진 채로 열린다 (제품 상세페이지에서 연결용)
+(function(){
+  var m = location.search.match(/[?&]p=([^&]+)/);
+  if (!m) return;
+  var name = decodeURIComponent(m[1]);
+  var i = P.findIndex(function(p){ return p.n === name; });
+  if (i >= 0){ $("product").value = String(i); onProduct(); }
+  else {
+    var g = G[name] ? name : Object.keys(G).filter(function(k){ return k.indexOf(name + " ") === 0; })[0];
+    if (g){ $("product").value = "g:" + g; onProduct(); }
+  }
+})();
+</script>
+</body>
+</html>

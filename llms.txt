@@ -11,6 +11,11 @@
 - [제품 데이터 (JSON)](https://www.ablefarm.co.kr/data/products.json): 24개 제품의 분류·성분·효과·희석배수·사용시기·적용작물·FAQ
 - 홈페이지(`ablefarm-home.dc.html`)에는 schema.org JSON-LD(Organization, ItemList, Product, FAQPage)가 포함되어 있습니다.
 
+## 농가용 도구
+
+- [희석·사용량 계산기](https://www.ablefarm.co.kr/calc/): 제품별 권장 희석배수로 물 양·밭 넓이에 맞는 사용량 계산
+- [유니NK칼·유니NK칼마 작물별 살포 안내](https://www.ablefarm.co.kr/guide/uni-nk.html)
+
 ## 문의
 
 - 고객센터: 02-858-6229 (평일 09:00–17:00) / 팩스 02-6442-6229
