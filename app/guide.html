@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에이블팜 출하앱 · 알림 사용설명서</title>
+<style>
+  :root{
+    --bg:#f1f5f9; --card:#fff; --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8; --line:#e2e8f0;
+    --g:#047857; --g-bg:#d1fae5; --b:#1d4ed8; --b-bg:#dbeafe; --a:#b45309; --a-bg:#fef3c7;
+    --r:#b91c1c; --r-bg:#fee2e2; --kakao:#fee500;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink); font-size:17px; line-height:1.7; word-break:keep-all;
+    font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕",sans-serif}
+  .wrap{max-width:820px; margin:0 auto; padding:0 16px 70px}
+  header{background:linear-gradient(135deg,#064e3b,#047857); color:#fff; padding:28px 16px 24px; margin-bottom:20px}
+  header .in{max-width:820px; margin:0 auto}
+  header .tag{display:inline-block; background:rgba(255,255,255,.18); border-radius:999px; padding:3px 13px; font-size:14px; font-weight:700; margin-bottom:8px}
+  header h1{margin:0; font-size:26px; letter-spacing:-.5px}
+  header p{margin:8px 0 0; font-size:16px; color:#d1fae5}
+  section{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px 18px 22px; margin-bottom:16px}
+  h2{font-size:21px; margin:0 0 12px; padding-bottom:10px; border-bottom:2px solid var(--g-bg); letter-spacing:-.4px}
+  h2 .n{display:inline-grid; place-items:center; width:30px; height:30px; border-radius:9px; background:var(--g); color:#fff; font-size:16px; margin-right:8px; vertical-align:-5px}
+  h3{font-size:18px; margin:20px 0 8px; color:var(--g)}
+  p{margin:8px 0}
+  b{font-weight:800}
+  .big{font-size:19px}
+  .kakao{background:var(--kakao); color:#3c1e1e; border-radius:14px; padding:14px 16px; font-weight:700; font-size:18px}
+  .kakao small{display:block; font-weight:500; font-size:15px; margin-top:4px}
+  ol.step{list-style:none; counter-reset:s; padding:0; margin:10px 0}
+  ol.step>li{counter-increment:s; position:relative; padding-left:42px; margin:13px 0}
+  ol.step>li::before{content:counter(s); position:absolute; left:0; top:0; width:30px; height:30px; border-radius:50%;
+    display:grid; place-items:center; background:var(--g); color:#fff; font-weight:800; font-size:16px}
+  .note{background:var(--a-bg); border-left:5px solid var(--a); border-radius:10px; padding:11px 14px; margin:12px 0; font-size:16px}
+  .tip{background:var(--g-bg); border-left:5px solid var(--g); border-radius:10px; padding:11px 14px; margin:12px 0; font-size:16px}
+  .warn{background:var(--r-bg); border-left:5px solid var(--r); border-radius:10px; padding:11px 14px; margin:12px 0; font-size:16px}
+  .kbd{display:inline-block; border:1px solid var(--ink3); border-bottom-width:3px; border-radius:7px; padding:0 7px; font-weight:700; background:#fff; white-space:nowrap}
+  .path{display:inline-block; background:#eef2f7; border-radius:8px; padding:2px 8px; font-weight:700}
+
+  /* QR · 설치 단추 */
+  .qrbox{display:flex; gap:18px; align-items:center; flex-wrap:wrap; background:#f8fafc; border:1px solid var(--line); border-radius:16px; padding:16px}
+  #qr{width:200px; height:200px; flex:none; display:grid; place-items:center; background:#fff; border-radius:12px; padding:8px; font-size:13px; color:var(--ink2); text-align:center}
+  #qr img, #qr canvas{width:184px; height:184px; display:block}
+  .qrside{flex:1; min-width:220px}
+  .go{display:block; text-align:center; background:var(--g); color:#fff; text-decoration:none; font-weight:800; font-size:19px; border-radius:14px; padding:15px; margin:12px 0 4px}
+  .url{font-size:14px; color:var(--ink2); word-break:break-all}
+
+  /* 알림 모양 (그림) */
+  .phone{background:#1f2937; border-radius:22px; padding:14px 12px; margin:12px 0; max-width:460px}
+  .phone .bar{color:#cbd5e1; font-size:13px; padding:0 4px 8px; display:flex; justify-content:space-between}
+  .noti{background:#f8fafc; border-radius:16px; padding:11px 13px; margin-bottom:8px; position:relative}
+  .noti .app{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink2)}
+  .noti .app i{width:20px; height:20px; border-radius:6px; background:var(--g); color:#fff; font-style:normal; font-size:11px; display:grid; place-items:center; font-weight:800}
+  .noti .t{font-weight:800; font-size:16px; margin-top:4px; padding-right:40px}
+  .noti .b{font-size:14.5px; color:#334155; white-space:pre-line; margin-top:2px; padding-right:40px}
+  .noti .chev{position:absolute; right:10px; top:12px; width:32px; height:32px; border-radius:50%; background:#e2e8f0;
+    display:grid; place-items:center; font-size:16px; font-weight:800; color:#334155}
+  .noti .chev.hot{background:#fde047; box-shadow:0 0 0 4px rgba(250,204,21,.45)}
+  .noti.short .b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .lbl{font-size:14px; font-weight:800; color:#fde047; margin:4px 2px 6px}
+
+  /* 아이콘 숫자 (그림) */
+  .icons{display:flex; gap:26px; align-items:flex-end; flex-wrap:wrap; margin:10px 0}
+  .ic{text-align:center; font-size:14px; color:var(--ink2)}
+  .ic .sq{width:66px; height:66px; border-radius:18px; background:#fff; border:1px solid var(--line); position:relative; display:grid; place-items:center; margin:0 auto 6px;
+    font-weight:900; color:var(--g); font-size:15px; box-shadow:0 2px 6px rgba(0,0,0,.08)}
+  .ic .sq.k{background:var(--kakao); color:#3c1e1e}
+  .ic .badge{position:absolute; top:-7px; right:-7px; min-width:24px; height:24px; border-radius:12px; background:#ef4444; color:#fff; font-size:14px; font-weight:800; display:grid; place-items:center; padding:0 6px; border:2px solid #fff}
+
+  /* 앱 안 창 (그림) */
+  .modal{border:1px solid var(--line); border-radius:16px; padding:14px 16px; max-width:420px; box-shadow:0 6px 20px rgba(15,23,42,.12); margin:10px 0}
+  .modal .t{font-weight:800; font-size:17px}
+  .modal .b{white-space:pre-line; font-size:15px; color:var(--ink2); margin:6px 0 12px}
+  .modal .btns{display:flex; gap:8px; justify-content:flex-end}
+  .modal .btns span{border-radius:10px; padding:8px 14px; font-weight:700; font-size:15px}
+  .modal .no{border:1px solid var(--line)}
+  .modal .yes{background:var(--g); color:#fff}
+
+  .who{display:inline-block; border-radius:8px; padding:1px 9px; font-weight:800; font-size:15px}
+  .who.l{background:var(--g-bg); color:var(--g)}
+  .who.s{background:var(--b-bg); color:var(--b)}
+  table{width:100%; border-collapse:collapse; font-size:16px; margin:8px 0}
+  th,td{border-bottom:1px solid var(--line); padding:9px 6px; text-align:left; vertical-align:top}
+  th{background:#f8fafc; font-size:15px; color:var(--ink2)}
+  details{border:1px solid var(--line); border-radius:14px; padding:4px 14px; margin:10px 0; background:#fff}
+  summary{font-weight:800; font-size:17px; padding:10px 0; cursor:pointer}
+  details[open] summary{border-bottom:1px solid var(--line); margin-bottom:6px}
+  .foot{text-align:center; color:var(--ink2); font-size:15px; margin-top:24px}
+  @media (max-width:520px){
+    body{font-size:16.5px}
+    header h1{font-size:23px}
+    section{padding:16px 14px 18px}
+    #qr{margin:0 auto}
+  }
+  @media print{
+    body{background:#fff}
+    header{background:#047857 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    section{break-inside:avoid}
+    .go{display:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="in">
+    <span class="tag">전 직원 안내</span>
+    <h1>📱 출하앱 휴대폰 알림 사용설명서</h1>
+    <p>이제 출하앱이 <b>카카오톡처럼</b> 알림을 보냅니다. 처음 한 번만 설치하고 「허용」을 누르면 됩니다.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>💬 한눈에 보기</h2>
+  <div class="kakao">카카오톡에 메시지가 오는 것과 똑같습니다.
+    <small>소리 · 진동이 울리고, 화면 위에 알림이 뜨고, 앱 아이콘에 <b>안 읽은 개수(숫자)</b>가 붙습니다.<br>
+    앱을 열어 확인하면 숫자는 없어집니다.</small>
+  </div>
+  <table>
+    <tr><th style="width:30%">누가</th><th>언제 알림이 오나요</th></tr>
+    <tr><td><span class="who l">물류 담당자</span></td><td>새 주문이 들어오면 <b>「📦 주문이 있습니다」</b><br>확인을 안 하면 <b>10분마다 다시 울림</b> ⏰</td></tr>
+    <tr><td><span class="who s">영업직원</span></td><td>내 주문이 출고되면 <b>「✅ 출하완료 되었습니다」</b></td></tr>
+  </table>
+</section>
+
+<section id="install">
+  <h2><span class="n">1</span>설치하기 (처음 한 번만)</h2>
+
+  <div class="qrbox">
+    <div id="qr">QR 준비 중…</div>
+    <div class="qrside">
+      <div class="big"><b>휴대폰 카메라로 QR을 비추세요</b></div>
+      <p>뜨는 링크를 누르면 출하앱이 열립니다.</p>
+      <a class="go" href="https://www.ablefarm.co.kr/app/">이 휴대폰에 설치하러 가기 →</a>
+      <div class="url">주소: https://www.ablefarm.co.kr/app/</div>
+    </div>
+  </div>
+  <div class="tip">이 안내문을 <b>휴대폰으로 보고 있다면</b> QR 대신 위의 초록 단추 <b>「설치하러 가기」</b>를 누르세요.</div>
+
+  <h3>안드로이드 (삼성 갤럭시 등)</h3>
+  <ol class="step">
+    <li>QR(또는 초록 단추)로 연 화면이 <b>크롬(Chrome)</b>인지 확인합니다.</li>
+    <li>화면 아래에 <b>「설치」</b> 또는 <b>「앱 설치」</b> 안내가 뜨면 누릅니다.<br>
+      안 뜨면 오른쪽 위 <span class="kbd">⋮</span> → <b>「홈 화면에 추가」</b> → <b>「설치」</b>.</li>
+    <li>홈 화면에 생긴 <b>에이블팜 아이콘</b>을 눌러 엽니다.</li>
+    <li><b>이름</b>을 고르고 <b>PIN 4자리</b>를 넣어 로그인합니다.</li>
+    <li><b>「알림을 보내도록 허용하시겠습니까?」</b>가 뜨면 꼭 <b>「허용」</b>을 누릅니다. 🔔</li>
+  </ol>
+
+  <h3>아이폰</h3>
+  <ol class="step">
+    <li>QR로 연 화면이 <b>사파리(Safari)</b>인지 확인합니다.</li>
+    <li>아래 가운데 <b>공유 단추 ⬆</b> → <b>「홈 화면에 추가」</b> → <b>「추가」</b>.</li>
+    <li>홈 화면의 <b>에이블팜 아이콘</b>으로 열고 로그인 → <b>「허용」</b>.</li>
+  </ol>
+  <div class="note">아이폰은 <b>iOS 16.4 이상</b>이고, <b>홈 화면 아이콘으로 열었을 때만</b> 알림이 옵니다. (사파리에서 그냥 열면 안 옵니다)</div>
+
+  <div class="warn"><b>카카오톡 안에서 링크를 열면 설치가 안 됩니다.</b><br>
+    카톡에서 열렸다면 오른쪽 아래 <span class="kbd">⋮</span> → <b>「다른 브라우저로 열기」 → Chrome</b> (아이폰은 <b>Safari로 열기</b>)을 누른 뒤 위 순서대로 하세요.</div>
+
+  <h3>✔ 제대로 됐는지 확인</h3>
+  <p>앱 맨 위 오른쪽에 <b>🔔</b> 가 보이면 알림이 켜진 것입니다.</p>
+  <ul>
+    <li><b>🔕</b> 로 보이면 → 눌러서 켜세요.</li>
+    <li>노란 띠 <b>「🔔 알림을 켜 주세요」</b>가 보이면 → <b>「알림 켜기」</b>를 누르세요.</li>
+    <li>이미 예전에 깐 에이블팜 아이콘이 있는데 🔔·🔕 가 <b>아예 안 보이면</b> → 예전 방식 아이콘입니다. 그 아이콘을 지우고 위 QR로 다시 설치하세요.</li>
+  </ul>
+</section>
+
+<section id="look">
+  <h2><span class="n">2</span>알림은 이렇게 옵니다</h2>
+  <p>알림이 오면 <b>소리·진동</b>과 함께 화면 위에 이렇게 뜹니다. (아래는 예시입니다)</p>
+
+  <div class="phone">
+    <div class="lbl">물류 담당자 휴대폰</div>
+    <div class="noti">
+      <div class="app"><i>AF</i>에이블팜 · 지금</div>
+      <div class="t">📦 주문이 있습니다 — 한빛농원</div>
+      <div class="b">천안물류센터 · 영업 박정호
+출하예정 10월 11일(토) · 4품목 · 농협
+· 칼슘플러스 20L × 5
+· 아미노킹 10L × 3
+· 규산골드 20L × 2
+  외 1품목
+배송지 충남 천안시 동남구 ○○로 123</div>
+      <span class="chev">∧</span>
+    </div>
+    <div class="noti short">
+      <div class="app"><i>AF</i>에이블팜 · 10분 전</div>
+      <div class="t">⏰ 확인 안 한 주문이 있습니다 — 푸른농장</div>
+      <div class="b">아미노랩 · 접수 후 20분째 「대기」 (2번째 알림)</div>
+      <span class="chev">∨</span>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="lbl">영업직원 휴대폰</div>
+    <div class="noti">
+      <div class="app"><i>AF</i>에이블팜 · 지금</div>
+      <div class="t">✅ 출하완료 되었습니다 — 한빛농원</div>
+      <div class="b">천안물류센터에서 김물류 님이 10월 10일 14:32 출고
+출하예정 10월 11일(토) · 4품목
+· 칼슘플러스 20L × 5
+· 아미노킹 10L × 3
+물류메모 택배 2박스로 나감</div>
+      <span class="chev">∧</span>
+    </div>
+  </div>
+</section>
+
+<section id="read">
+  <h2><span class="n">3</span>알림 내용 보기 · 확인하기</h2>
+
+  <h3>① 알림 오른쪽의 <span class="kbd">∨</span> 표시를 누르세요 — 전체 내용이 펼쳐집니다</h3>
+  <p>알림이 처음에는 <b>한두 줄만</b> 보입니다. 알림 <b>오른쪽 끝의 작은 화살표 <span class="kbd">∨</span></b>를 누르면 품목·수량·배송지까지 <b>전부</b> 펼쳐집니다. (다시 누르면 <span class="kbd">∧</span> 접힘)</p>
+  <div class="phone">
+    <div class="noti short">
+      <div class="app"><i>AF</i>에이블팜 · 지금</div>
+      <div class="t">📦 주문이 있습니다 — 한빛농원</div>
+      <div class="b">천안물류센터 · 영업 박정호</div>
+      <span class="chev hot">∨</span>
+    </div>
+    <div class="lbl" style="text-align:right">↑ 여기 노란 동그라미를 누르세요</div>
+  </div>
+  <div class="tip">화면 맨 위를 손가락으로 <b>아래로 쓸어내리면</b> 지나간 알림을 다시 볼 수 있습니다. (카톡 알림 보는 것과 같습니다)</div>
+
+  <h3>② 알림을 누르면 출하앱이 열리고, 같은 내용이 창으로 뜹니다</h3>
+  <div class="modal">
+    <div class="t">📦 주문이 있습니다 — 한빛농원</div>
+    <div class="b">천안물류센터 · 영업 박정호
+출하예정 10월 11일(토) · 4품목 · 농협
+· 칼슘플러스 20L × 5 …</div>
+    <div class="btns"><span class="no">취소</span><span class="yes">확인 — 준비중으로</span></div>
+  </div>
+  <table>
+    <tr><td style="width:30%"><span class="who l">물류 담당자</span><br><span style="font-size:14px">· 관리자</span></td>
+        <td><b>「확인 — 준비중으로」</b>를 누르세요.<br>그 주문이 <b>「준비중」</b>으로 바뀌고 <b>다시 울리던 알림이 멈춥니다.</b><br>
+        <span style="font-size:15px; color:var(--ink2)">이미 준비중·출고완료인 주문이면 바꾸지 않고 「이미 ○○ 상태입니다」라고만 알려 줍니다.</span></td></tr>
+    <tr><td><span class="who s">영업직원</span></td>
+        <td><b>「확인」</b>을 누르면 창이 닫힙니다.</td></tr>
+  </table>
+  <div class="note">로그인이 풀려 있으면 로그인 화면이 먼저 나옵니다. <b>로그인하면 바로 그 알림 내용 창</b>이 뜹니다.</div>
+</section>
+
+<section id="badge">
+  <h2><span class="n">4</span>아이콘의 빨간 숫자 = 안 읽은 알림</h2>
+  <p>카카오톡처럼 <b>읽지 않은 알림 개수</b>가 아이콘에 빨간 숫자로 붙습니다.</p>
+  <div class="icons">
+    <div class="ic"><div class="sq k">TALK<span class="badge">5</span></div>카카오톡</div>
+    <div class="ic"><div class="sq">에이블팜<span class="badge">3</span></div>안 읽은 알림 3개</div>
+    <div class="ic" style="font-size:22px; padding-bottom:28px">→</div>
+    <div class="ic"><div class="sq">에이블팜</div>앱을 열어 확인하면<br>숫자가 없어짐</div>
+  </div>
+  <ul>
+    <li><b>앱을 열거나</b>, <b>알림을 누르거나</b>, <b>알림을 옆으로 밀어 지우면</b> 숫자가 줄거나 없어집니다.</li>
+    <li>같은 주문의 「다시 알림」끼리는 <b>한 칸으로 합쳐집니다.</b> 10번 울려도 숫자가 10이 되지 않습니다.<br>
+      (주문 하나당 「주문이 있습니다」 1칸 + 「확인 안 한 주문」 1칸, 많아야 2칸)</li>
+  </ul>
+</section>
+
+<section id="ring">
+  <h2><span class="n">5</span>확인 안 하면 10분마다 다시 울립니다 ⏰ <span class="who l" style="vertical-align:3px">물류</span></h2>
+  <p>주문이 <b>「대기」</b> 그대로 있으면, 접수 <b>10분 뒤부터 10분마다</b> 알림이 다시 울립니다. <b>몇 번이든 계속</b> 울립니다. (단, 접수 3일이 지난 주문은 더 알리지 않습니다)</p>
+  <table>
+    <tr><th style="width:42%">이렇게 하면</th><th>알림이 멈춥니다</th></tr>
+    <tr><td>알림 창의 <b>「확인 — 준비중으로」</b></td><td>✅ 멈춤</td></tr>
+    <tr><td>앱 「오늘 출고」에서 <b>준비중 · 출고완료</b>로 바꿈</td><td>✅ 멈춤</td></tr>
+    <tr><td>컴퓨터에서 <b>준비중 · 출고완료</b>로 바꿈</td><td>✅ 멈춤 (휴대폰도 같이)</td></tr>
+    <tr><td>알림을 그냥 옆으로 밀어 지움</td><td>❌ 안 멈춤 — 10분 뒤 또 울림</td></tr>
+  </table>
+  <ul>
+    <li>다시 알림은 <b>평일 오전 8시 ~ 오후 6시</b>에만 울립니다. 밤·주말엔 쉬었다가 다음 근무 시간에 다시 알립니다.</li>
+    <li><b>5번째</b>(약 50분째)에는 <b>관리자에게도</b> 알림이 갑니다.</li>
+    <li>영업직원의 「출하완료」 알림은 <b>한 번만</b> 울립니다.</li>
+  </ul>
+</section>
+
+<section id="help">
+  <h2><span class="n">6</span>안 될 때 이렇게 하세요</h2>
+  <p>아래 제목을 누르면 방법이 펼쳐집니다.</p>
+
+  <details>
+    <summary>🔕 알림이 안 와요</summary>
+    <ol class="step">
+      <li>출하앱을 열고 맨 위 오른쪽이 <b>🔔</b> 인지 봅니다. <b>🔕</b> 면 눌러서 켭니다.</li>
+      <li>휴대폰 <span class="path">설정 → 애플리케이션 → 에이블팜 → 알림</span> 에서 <b>「알림 허용」을 켭니다.</b><br>
+        아래에 알림 종류가 여러 개 있으면 <b>전부 켭니다.</b></li>
+      <li><span class="path">설정 → 애플리케이션 → 에이블팜 → 배터리</span> 를 <b>「제한 없음」</b>으로 바꿉니다.<br>
+        같은 방법으로 <b>Chrome</b> 앱도 <b>「제한 없음」</b>으로 바꿉니다. (절전에 걸리면 알림이 늦거나 안 옵니다)</li>
+      <li>화면 위를 쓸어내려 <b>방해 금지 모드</b>가 꺼져 있는지 봅니다.</li>
+      <li>출하앱을 <b>한 번 열었다가 닫습니다.</b></li>
+      <li>그래도 안 되면 관리자에게 말해 주세요.</li>
+    </ol>
+  </details>
+
+  <details>
+    <summary>🔢 아이콘에 숫자가 안 생겨요</summary>
+    <ol class="step">
+      <li><span class="path">설정 → 애플리케이션 → 에이블팜 → 알림</span> 에서 <b>「앱 아이콘 배지」</b>를 켭니다.<br>
+        알림 종류(카테고리)가 있으면 하나씩 눌러 그 안의 <b>「앱 아이콘 배지」</b>도 켭니다.</li>
+      <li><span class="path">설정 → 알림 → 고급 설정 → 앱 아이콘 배지</span> 에서 <b>「숫자 표시」</b>를 고릅니다. (「점만 표시」면 숫자가 안 나옵니다)</li>
+      <li>알림을 이미 눌렀거나 앱을 열었다면 숫자가 없어지는 게 <b>정상</b>입니다.</li>
+    </ol>
+  </details>
+
+  <details>
+    <summary>🚫 「허용」 대신 「차단」을 눌렀어요</summary>
+    <ol class="step">
+      <li><span class="path">설정 → 애플리케이션 → 에이블팜 → 알림</span> → <b>「알림 허용」 켜기</b></li>
+      <li>출하앱을 다시 열면 됩니다.</li>
+    </ol>
+    <p>아이폰: <span class="path">설정 → 알림 → 에이블팜 → 알림 허용</span></p>
+  </details>
+
+  <details>
+    <summary>🔐 알림을 눌렀더니 로그인 화면이 나와요</summary>
+    <p>로그인이 풀린 상태입니다. <b>이름 · PIN으로 로그인</b>하면 바로 그 알림 내용 창이 뜹니다.</p>
+  </details>
+
+  <details>
+    <summary>🔇 소리가 안 나요</summary>
+    <p>휴대폰이 <b>무음·진동 모드</b>면 그대로 따릅니다. 소리 모드로 바꾸고, <span class="path">설정 → 애플리케이션 → 에이블팜 → 알림</span> 에서 <b>소리</b>가 켜져 있는지 봅니다.</p>
+  </details>
+
+  <details>
+    <summary>🙅 알림을 잠깐 끄고 싶어요</summary>
+    <p>출하앱 맨 위 <b>🔔</b> 를 누르고 <b>「알림 끄기」</b>. 다시 켤 때는 <b>🔕</b> 를 누르면 됩니다.</p>
+    <div class="warn">물류 담당자는 끄면 새 주문을 놓칩니다. 끄지 않는 것을 권합니다.</div>
+  </details>
+
+  <details>
+    <summary>📱 휴대폰을 바꿨거나 다른 사람이 로그인했어요</summary>
+    <p>알림은 <b>마지막으로 로그인한 사람</b>에게 갑니다. 내 휴대폰에는 <b>내 이름으로만</b> 로그인하세요.<br>
+      <b>로그아웃</b>하면 그 휴대폰으로는 알림이 오지 않습니다. 새 휴대폰은 1번 「설치하기」부터 다시 하면 됩니다.</p>
+  </details>
+</section>
+
+<div class="foot">
+  에이블팜 출하앱 · 문의 · PIN 발급은 관리자에게 말씀해 주세요.
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* 설치 주소 — 홈페이지 출하앱 (알림은 이 주소로 설치해야 온다) */
+var APP_URL = 'https://www.ablefarm.co.kr/app/';
+function drawQR(){
+  var box = document.getElementById('qr');
+  box.textContent = '';
+  try {
+    new QRCode(box, { text: APP_URL, width: 184, height: 184, correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) {
+    box.textContent = 'QR을 그리지 못했습니다. 인터넷에 연결한 뒤 새로고침하세요.';
+  }
+}
+if (typeof QRCode === 'function') drawQR();
+else window.addEventListener('load', function(){
+  if (typeof QRCode === 'function') drawQR();
+  else document.getElementById('qr').textContent = 'QR을 그리지 못했습니다. 인터넷에 연결한 뒤 새로고침하세요. 아래 주소로 들어가도 됩니다.';
+});
+</script>
+</body>
+</html>
