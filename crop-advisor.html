@@ -661,7 +661,8 @@ const CROP_LIST_RAW = [
   "미나리","쑥갓","아욱","근대","깻잎","락교",
   "대추","호두","은행","석류","유자","모과","살구",
   "팥","녹두","완두","수수","메밀","귀리",
-  "복분자","산딸기","아로니아"
+  "복분자","산딸기","아로니아",
+  "콩나물","강낭콩","완두콩","병아리콩"
 ];
 const CROP_LIST = [...CROP_LIST_RAW].sort((a,b)=> b.length - a.length);
 
@@ -671,6 +672,17 @@ const MIL_FALSE_POSITIVES = ["밀양","비밀","친밀","조밀","면밀","은�
 function stripMilFalsePositives(msg){
   let t = msg;
   MIL_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
+  return t;
+}
+
+/* "콩"은 "땅콩"(별개 작물)·"콩나물"·"강낭콩" 안에도 들어있어서, 그대로 substring
+   매칭하면 콩 전용 제품(벼밀콩애)이 엉뚱한 작물에 추천된다.
+   벼밀콩애 주의사항이 "콩 외 작물에는 사용하지 마세요" 이므로 반드시 걸러야 한다.
+   (10_프로젝트문서\ablefarm-crop-advisor.html 에 있던 차단을 옮겨 옴) */
+const KONG_FALSE_POSITIVES = ["땅콩","콩나물","강낭콩","완두콩","병아리콩","커피콩","콩기름","콩깻묵","메주콩가루"];
+function stripKongFalsePositives(msg){
+  let t = msg;
+  KONG_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
   return t;
 }
 
@@ -1900,6 +1912,47 @@ function isSpacingQuestion(msg){ return SPACING_PATTERNS.some(p => msg.includes(
 function isHarvestInfoQuestion(msg){ return HARVEST_INFO_PATTERNS.some(p => msg.includes(p)); }
 function isStorageQuestion(msg){ return STORAGE_PATTERNS.some(p => msg.includes(p)); }
 function isPriceQuestion(msg){ return PRICE_PATTERNS.some(p => msg.includes(p)); }
+
+// 희석배수·사용량 질문 → 홈페이지 희석·사용량 계산기(calc/)로 연결.
+// "배수"만으로는 잡지 않는다 (밭 배수 = 물빠짐). "몇 포기"(심는 수)도 제외
+// 강한 말: 이것만 있어도 희석·사용량 질문이다
+const DILUTION_PATTERNS = ["희석","배로 타","배로 희석","배 희석","몇 미리","몇미리","몇 ml","몇ml","몇 cc","몇cc","몇 ㎖","몇㎖","얼마나 타","얼마큼 타","얼만큼 타","물에 타","물 한 말","물 한말","한 말에","한말에","말통","물 20","20리터","원액","사용량","살포량","시비량","엽면시비 농도","엽면살포 농도","관주 농도","계산기","계산해"];
+// 약한 말: "몇 배로 늘었다", "몇 병 왔다", "얼마나 뿌려야 병이 안 생기나"처럼 증상에도 쓰인다.
+// 증상·비교 말(DILUTION_NOISE)이 없고, 제품명이 있거나 타다·넣다·섞다 같은 동사가 있을 때만 잡는다
+const DILUTION_REGEXES = [/\d[\d,]*\s*배(로|면|씩|\s|$|\?)/, /몇\s?배/, /몇\s?병/, /몇\s?포(?!기)/, /몇\s?(키로|kg|킬로|리터)/, /얼마나\s?(넣|섞|뿌려|뿌리|써|쓰)/, /농도/, /포대에|한\s?포에|한\s?포로|평당|평에|평이면/];
+const DILUTION_NOISE = /(늘었|늘어|많아|많이|크게|커지|커요|증가|차이|비싸|왔어|왔는|생겼|생기|걸렸|마리|군데|번\s?왔|안\s?생|자라|염류|EC|ec)/;
+const DILUTION_VERB = /(타요|타면|타야|타서|타나|넣|섞|뿌려|뿌리|써요|쓰나|쓰면|줘요|주나|주면|희석)/;
+function isDilutionQuestion(msg){
+  if(DILUTION_PATTERNS.some(p => msg.includes(p))) return true;
+  if(!DILUTION_REGEXES.some(r => r.test(msg))) return false;
+  if(DILUTION_NOISE.test(msg)) return false;
+  const hasProduct = PRODUCT_ALIASES.some(a => msg.includes(a[0])) || /칼마/.test(msg);
+  const areaAmount = /(평|10a|마지기)/.test(msg) && /몇\s?(kg|키로|킬로|포|병|리터)/.test(msg); // "1000평에 몇 kg"
+  return hasProduct || areaAmount || DILUTION_VERB.test(msg);
+}
+// 상담봇 제품 키 → 계산기 제품 이름 (calc/index.html 의 이름과 같아야 미리 골라진다). 벼밀콩애는 계산기에 없다
+const CALC_NAMES = {
+  impactone:"임팩트원", himiup:"히미업", impactgold:"임팩트골드", impactgold5L:"임팩트골드", ilsoguard:"일소가드",
+  impactgranule:"임팩트과립", npcalma:"엔피칼마", sokddanddan:"속딴딴", uninkcal:"유니NK칼", hisugar:"하이슈거",
+  finalsolution:"파이널솔루션", impact:"임팩트", totalgro:"토탈그로", gugeunjjang:"구근짱", calciumtan:"칼슘탄",
+  amiroot:"아미루트", hwangsil:"황실", amidoctor:"아미닥터", oxygentank:"산소탱크", hygrowergold:"하이그로퍼 골드"
+};
+function detectCalcProductName(msg){
+  if(/유니\s?(nk|NK|엔케이)?\s?칼마/.test(msg)) return "유니NK칼마";
+  for(const [alias, key] of PRODUCT_ALIASES){
+    if(msg.includes(alias)) return CALC_NAMES[key] || null;
+  }
+  return null;
+}
+function addCalcLink(name){
+  const url = "calc/" + (name ? "?p=" + encodeURIComponent(name) : "");
+  const label = name ? escapeHtml(name) + " 사용량 계산하기" : "희석·사용량 계산기 열기";
+  addBubbleHTML(
+    (name ? escapeHtml(name) + josa(name,["은","는"]) + " 희석배수와 사용량을 계산기에서 바로 확인하실 수 있어요." : "희석배수와 사용량은 계산기에서 바로 확인하실 수 있어요.") +
+    " 물 양(말통·드럼)이나 밭 넓이를 넣으면 넣을 양이 바로 나와요." +
+    '<br><a href="' + url + '" target="_top" style="display:inline-block;margin-top:10px;padding:11px 16px;border-radius:12px;background:#1E5C1E;color:#fff;font-weight:800;text-decoration:none">💧 ' + label + ' →</a>',
+    'bot');
+}
 function isCertQuestion(msg){ return CERT_PATTERNS.some(p => msg.includes(p)); }
 
 function tryAnswerCropInfo(msg){
@@ -2059,6 +2112,13 @@ const PRODUCT_PHOTOS = {
   totalgro: "data:image/webp;base64,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"
 };
 const HOMEPAGE_URL = "https://www.ablefarm.co.kr";
+// 위에 사진이 없는 제품은 홈페이지 제품 사진(assets/products, data/products.json 의 이미지)을 쓴다.
+// 그림(productVisual)은 사진이 정말 없는 제품(벼밀콩애)에만 나온다
+Object.assign(PRODUCT_PHOTOS, {
+  gugeunjjang:"assets/products/p01.jpg", amidoctor:"assets/products/p04.jpg", amiroot:"assets/products/p05.jpg",
+  npcalma:"assets/products/p07.jpg", uninkcal:"assets/products/p09.jpg", impactgold5L:"assets/products/p15.jpg",
+  finalsolution:"assets/products/p20.jpg", hygrowergold:"assets/products/p21.jpg", hwangsil:"assets/products/p23.jpg"
+});
 const PRODUCT_SHAPE = { impactgranule:"bag", hygrowergold:"bag", impactgold5L:"jug" };
 
 function productVisual(key, name){
@@ -2207,8 +2267,11 @@ function setChips(list){
 ------------------------------------------------------------------- */
 function detectCrop(msg){
   const safeForMil = stripMilFalsePositives(msg);
+  const safeForKong = stripKongFalsePositives(msg);
   for(const c of RESTRICTED_CROPS){
-    const target = (c === "밀") ? safeForMil : msg;
+    const target = (c === "밀") ? safeForMil
+                 : (c === "콩" || c === "콩류") ? safeForKong
+                 : msg;
     if(target.includes(c)) return c;
   }
   return null;
@@ -2217,12 +2280,16 @@ function detectCrop(msg){
 function matchProducts(msg){
   const safeMsg = stripMilFalsePositives(msg); // "밀양" 등 오탐 단어 제거한 버전
   const safeBburiMsg = stripBburiFalsePositives(msg); // "뿌리나요" 등 "뿌리다" 활용형 제거한 버전
+  const safeKongMsg = stripKongFalsePositives(msg); // "땅콩","콩나물" 등 제거한 버전
 
   const scores = {};
   for(const key in PRODUCTS){
     let score = 0;
     PRODUCTS[key].keywords.forEach(kw=>{
-      const target = (kw === "밀") ? safeMsg : (kw === "뿌리") ? safeBburiMsg : msg;
+      const target = (kw === "밀") ? safeMsg
+                   : (kw === "뿌리") ? safeBburiMsg
+                   : (kw === "콩" || kw === "콩류") ? safeKongMsg
+                   : msg;
       if(matchesKeyword(target, kw)) score += 1;
     });
     scores[key] = score;
@@ -2474,6 +2541,21 @@ function handleUserMessage(raw){
     showTyping(()=>{
       addBubble(getSupportedProductsMessage(), 'bot');
       chipsBox.innerHTML = '';
+    });
+    return;
+  }
+
+  // -3.2) 희석배수·사용량 질문 → 계산기로 연결 (제품명이 있으면 그 제품이 골라진 채로)
+  if(isDilutionQuestion(msg)){
+    showTyping(()=>{
+      const hit = PRODUCT_ALIASES.find(a => msg.includes(a[0]));
+      if(hit && !CALC_NAMES[hit[1]] && !/칼마/.test(msg)){
+        // 계산기에 없는 제품(벼밀콩애 등)은 상담봇이 가진 사용법으로 답한다
+        answerProductInfo(hit[1]);
+      } else {
+        addCalcLink(detectCalcProductName(msg));
+      }
+      setChips(followUpChips());
     });
     return;
   }
