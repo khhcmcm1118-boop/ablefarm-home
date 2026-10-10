@@ -45,14 +45,22 @@ self.addEventListener('push', function (e) {
   }).then(badge));
 });
 
+/* 알림을 누르면 앱을 열고 그 알림 내용을 창으로 띄운다 (index.html showNote).
+   앱이 떠 있으면 메시지로 넘기고, 꺼져 있으면 주소 뒤 ?note=… 로 넘긴다. */
 self.addEventListener('notificationclick', function (e) {
-  e.notification.close();
-  var url = new URL((e.notification.data && e.notification.data.url) || './', self.registration.scope).href;
+  var n = e.notification;
+  n.close();
+  var note = { t: n.title, b: n.body, tag: n.tag };
+  var url = new URL((n.data && n.data.url) || './', self.registration.scope);
+  url.searchParams.set('note', JSON.stringify(note));
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
     for (var i = 0; i < list.length; i++) {
-      if (list[i].url.indexOf(self.registration.scope) === 0 && 'focus' in list[i]) return list[i].focus();
+      var c = list[i];
+      if (c.url.indexOf(self.registration.scope) === 0 && 'focus' in c) {
+        return c.focus().then(function (w) { (w || c).postMessage({ type: 'note', note: note }); });
+      }
     }
-    return self.clients.openWindow(url);
+    return self.clients.openWindow(url.href);
   }).then(badge));
 });
 

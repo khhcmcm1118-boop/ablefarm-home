@@ -1295,6 +1295,7 @@ function start(){
     if (!S.inItems.length) addInItem();
     show(d.me.role === '물류' ? 'ship' : 'write');
     pushSync();   // 휴대폰 알림 — 홈페이지 출하앱에서만
+    if (PUSH.note){ var nt = PUSH.note; PUSH.note = null; showNote(nt); }   // 알림을 눌러 열었으면 그 내용
   }).catch(function(e){
     LS.del('af_token');
     S.token = '';
@@ -3875,6 +3876,45 @@ $('#btnPush').addEventListener('click', function(){
 });
 $('#pushBarOn').addEventListener('click', pushOn);
 $('#pushBarX').addEventListener('click', function(){ PUSH.hideBar = true; pushRender(); });
+
+/* ── 알림을 눌렀을 때 — 그 알림 내용을 창으로 띄운다 ──
+   sw.js 가 앱이 꺼져 있으면 주소 ?note=… 로, 떠 있으면 메시지로 넘긴다.
+   로그인 전이면 기억해 두었다가 로그인 뒤에 띄운다.
+   물류: 「확인 — 준비중으로」 → 그 주문 「대기」 줄만 준비중으로 바꾼다 → 10분마다 다시 알림이 멈춘다.
+   알림 이름(tag): o-주문ID 새 주문 · r-주문ID 다시 알림 · d-주문ID 출하완료 · t-… 시험 */
+PUSH.note = (function(){
+  try {
+    var p = new URLSearchParams(location.search).get('note');
+    if (!p) return null;
+    history.replaceState(null, '', location.pathname);   // 새로고침해도 또 뜨지 않게
+    return JSON.parse(p);
+  } catch (e) { return null; }
+})();
+if (PUSH.ok) navigator.serviceWorker.addEventListener('message', function(e){
+  if (!e.data || e.data.type !== 'note') return;
+  if (S.me) showNote(e.data.note); else PUSH.note = e.data.note;
+});
+function showNote(n){
+  if (!n) return;
+  var tag = String(n.tag || ''), test = tag.indexOf('t-') === 0;
+  var kind = (test ? tag.slice(2) : tag).charAt(0);          // o · r · d
+  var oid = test ? '' : tag.slice(2);
+  var order = kind === 'o' || kind === 'r';
+  var canAck = order && S.me && S.me.role !== '영업';
+  ask({ title: n.t || '알림', text: n.b || '', ok: canAck ? '확인 — 준비중으로' : '확인', kind: canAck ? 'green' : 'dark' })
+    .then(function(v){
+      if (v === null || !canAck) return;
+      if (test){
+        toast('시험 알림이라 바뀐 것은 없습니다. 실제 주문이면 「준비중」으로 바뀌고 다시 알림이 멈춥니다.', 'ok');
+        return;
+      }
+      return call('api_ackOrder', S.token, oid).then(function(d){
+        toast(d.updated ? '「준비중」으로 바꿨습니다. 이 주문 알림은 더 오지 않습니다.'
+                        : '이미 「' + d.status + '」 상태입니다. 알림은 더 오지 않습니다.', 'ok');
+        if (S.view === 'ship') loadShip();
+      }).catch(function(e){ toast(e.message, 'err'); });
+    });
+}
 
 /* ═══════════════════ 부팅 ═══════════════════ */
 syncTrade();
