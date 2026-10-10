@@ -270,6 +270,15 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
     background:var(--chip-bg); border:0; color:var(--chip-fg); border-radius:8px; padding:8px 10px;
     font-size:13px; min-height:36px
   }
+  /* 휴대폰 알림 켜기 안내 띠 — 홈페이지 출하앱에서 알림이 아직 꺼져 있을 때만 */
+  .pushBar{max-width:560px; width:calc(100% - 28px); box-sizing:border-box; margin:10px auto 0; padding:12px 14px; border-radius:var(--radius);
+    background:var(--amber-bg); color:var(--ink); border:1px solid var(--amber-line);
+    display:flex; align-items:center; gap:10px; font-size:14px; line-height:1.45}
+  .pushBar b{display:block; font-size:15px}
+  .pushBar .go{flex:none; background:var(--navy); color:var(--on-navy); border:0; border-radius:var(--btn-radius);
+    padding:10px 14px; font-weight:700; font-size:15px; min-height:44px}
+  .pushBar .x{flex:none; background:none; border:0; color:var(--ink2); font-size:20px; padding:4px 6px; min-height:44px}
+  header.top #btnPush.off{opacity:.55}
   nav.tabs{
     position:sticky; top:52px; z-index:19; display:flex; gap:6px; background:var(--bg);
     padding:10px 14px; border-bottom:1px solid var(--line);
@@ -600,10 +609,16 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   <header class="top">
     <span class="t">에이블팜 출하앱</span>
     <span class="who" id="who"></span>
+    <button id="btnPush" class="hidden" aria-label="휴대폰 알림 켜기·끄기">🔔</button>
     <button id="btnSkin" aria-label="화면 색 고르기">화면</button>
     <button id="btnLogout">로그아웃</button>
   </header>
   <nav class="tabs" id="tabs"></nav>
+  <div class="pushBar hidden" id="pushBar">
+    <span style="flex:1"><b>🔔 알림을 켜 주세요</b>새 주문·출하완료를 카톡처럼 휴대폰 알림으로 받습니다.</span>
+    <button class="go" id="pushBarOn">알림 켜기</button>
+    <button class="x" id="pushBarX" aria-label="닫기">×</button>
+  </div>
 
   <!-- ─── 주문 입력 ─── -->
   <div class="wrap view" id="v-write">
@@ -1161,6 +1176,8 @@ function doLogin(){
   if (!name) { $('#lgMsg').textContent = '이름을 고르세요.'; return; }
   if (!pin) { $('#lgMsg').textContent = 'PIN을 넣으세요.'; return; }
   $('#lgBtn').disabled = true; $('#lgMsg').textContent = '';
+  // 설치하고 처음 로그인할 때 알림 허용을 같이 묻는다 — 누른 이 순간이어야 휴대폰이 물어 준다
+  if (pushWanted()) PUSH.asking = pushAsk();
   call('api_login', name, pin).then(function(d){
     S.token = d.token; S.me = d.me;
     LS.set('af_token', d.token);
@@ -1173,8 +1190,11 @@ function doLogin(){
 $('#btnLogout').addEventListener('click', function(){
   confirmBox('로그아웃 할까요?', { ok: '로그아웃' }).then(function(ok){
     if (!ok) return;
-    LS.del('af_token');
-    location.reload();
+    // 이 폰으로 오던 알림도 끊는다 — 다른 사람이 이 폰으로 로그인하면 그 사람 것으로 다시 붙는다
+    pushForget().then(function(){
+      LS.del('af_token');
+      location.reload();
+    });
   });
 });
 
@@ -1274,6 +1294,7 @@ function start(){
     if (!S.items.length) addItem();
     if (!S.inItems.length) addInItem();
     show(d.me.role === '물류' ? 'ship' : 'write');
+    pushSync();   // 휴대폰 알림 — 홈페이지 출하앱에서만
   }).catch(function(e){
     LS.del('af_token');
     S.token = '';
@@ -2828,7 +2849,17 @@ renderBell();
 /** 방금 받은 목록에 전에 없던 주문이 있으면 알린다 */
 function checkNew(d){
   var now = {};
-  (d.groups || []).concat(d.late || []).forEach(function(g){ now[g.oid] = g.cust; });
+  var waiting = {};
+  (d.groups || []).concat(d.late || []).forEach(function(g){
+    now[g.oid] = g.cust;
+    if (g.status === '대기') waiting[g.oid] = true;
+  });
+  // 다른 기기(폰)에서 이미 「준비중」 등으로 바꾼 주문은 이 컴퓨터의 알림창·소리에서도 뺀다
+  var pend = Object.keys(NEW.pend);
+  if (pend.length){
+    pend.forEach(function(k){ if (now[k] !== undefined && !waiting[k]) delete NEW.pend[k]; });
+    if (!Object.keys(NEW.pend).length && NEW.box){ NEW.box.remove(); NEW.box = null; }
+  }
   if (S.seen){
     var fresh = Object.keys(now).filter(function(k){ return !S.seen[k]; });
     if (fresh.length){
@@ -3726,6 +3757,124 @@ $('#stPrint').addEventListener('click', function(){
   try { window.print(); } catch (e2) {}
   toast('새 탭이 막혀 있습니다. 브라우저에서 팝업을 허용해 주세요.', 'err');
 });
+
+/* ═══════════════════ 휴대폰 알림 (카톡처럼) ═══════════════════
+   홈 화면에 설치한 출하앱(www.ablefarm.co.kr/app/)에서만 된다 — 구글 웹앱 주소 화면은 안 된다.
+   물류: 「주문이 있습니다」 · 영업: 「출하완료 되었습니다」 를 앱이 꺼져 있어도 받는다 (sw.js 가 띄운다).
+   기본은 켬 — 로그인할 때 허용을 묻는다. 끄려면 상단 🔔 를 누른다 (af_push = '0' 이 이 폰에 남는다).
+   앱을 열면 쌓인 알림과 아이콘 숫자를 지운다 (카톡에서 읽으면 숫자가 사라지는 것처럼). */
+var PUSH = {
+  ok: typeof google === 'undefined' && location.protocol === 'https:' &&
+      'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window,
+  reg: null, hideBar: false
+};
+function pushWanted(){ return PUSH.ok && LS.get('af_push') !== '0'; }
+function pushReg(){
+  if (PUSH.reg) return Promise.resolve(PUSH.reg);
+  return navigator.serviceWorker.register('sw.js?api=' + encodeURIComponent(API_URL))
+    .then(function(){ return navigator.serviceWorker.ready; })
+    .then(function(r){ PUSH.reg = r; return r; });
+}
+function b64ToBytes(s){
+  s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '=';
+  var bin = atob(s), out = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+/** 허용을 묻는다 — 반드시 사람이 누른 그 순간에 불러야 한다 (아이폰은 아니면 무시한다) */
+function pushAsk(){
+  if (!PUSH.ok) return Promise.resolve('unsupported');
+  if (Notification.permission !== 'default') return Promise.resolve(Notification.permission);
+  try {
+    var p = Notification.requestPermission();
+    return p && p.then ? p : Promise.resolve(Notification.permission);
+  } catch (e) { return Promise.resolve(Notification.permission); }
+}
+/** 이 폰을 서버에 맡긴다. 허용이 이미 돼 있어야 한다 */
+function pushSubscribe(){
+  return Promise.all([pushReg(), call('api_pushKey')]).then(function(a){
+    var reg = a[0], key = a[1];
+    return reg.pushManager.getSubscription().then(function(sub){
+      if (sub) return sub;
+      return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(key) });
+    }).catch(function(){
+      // 예전 키로 구독돼 있으면 풀고 다시
+      return reg.pushManager.getSubscription().then(function(old){ return old ? old.unsubscribe() : null; })
+        .then(function(){ return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(key) }); });
+    });
+  }).then(function(sub){
+    return call('api_pushSubscribe', S.token, sub.endpoint, true);
+  });
+}
+function pushRender(){
+  var b = $('#btnPush'), on = PUSH.ok && Notification.permission === 'granted' && pushWanted();
+  b.classList.toggle('hidden', !PUSH.ok);
+  b.classList.toggle('off', !on);
+  b.textContent = on ? '🔔' : '🔕';
+  var bar = PUSH.ok && pushWanted() && Notification.permission === 'default' && !PUSH.hideBar;
+  $('#pushBar').classList.toggle('hidden', !bar);
+}
+/** 로그인 직후 · 앱을 열 때 — 허용돼 있으면 조용히 다시 맡긴다 (구독이 바뀌었어도 따라간다) */
+function pushSync(){
+  if (!PUSH.ok) return;
+  pushClear();
+  // 로그인 단추를 누를 때 띄운 허용 창이 아직 떠 있을 수 있다 — 답을 기다렸다가 맡긴다
+  (PUSH.asking || Promise.resolve()).then(function(){
+    PUSH.asking = null;
+    pushRender();
+    if (pushWanted() && Notification.permission === 'granted') return pushSubscribe();
+  }).catch(function(){}).then(pushRender);
+}
+function pushOn(){
+  LS.set('af_push', '1');
+  pushAsk().then(function(perm){
+    pushRender();
+    if (perm === 'granted'){
+      return pushSubscribe().then(function(){
+        toast(S.me && S.me.role === '영업' ? '켰습니다. 출하완료가 되면 휴대폰 알림으로 알려 드립니다.'
+                                           : '켰습니다. 주문이 들어오면 휴대폰 알림으로 알려 드립니다.', 'ok');
+      });
+    }
+    if (perm === 'denied'){
+      return ask({ title: '알림이 막혀 있습니다',
+        text: '휴대폰 설정에서 직접 켜 주세요.\n\n' +
+              '안드로이드: 설정 → 애플리케이션 → 에이블팜 → 알림 → 켜기\n' +
+              '아이폰: 설정 → 알림 → 에이블팜 → 알림 허용\n\n' +
+              '켠 뒤 앱을 다시 열면 됩니다.', ok: '알겠습니다' });
+    }
+  }).catch(function(e){ toast('알림을 켜지 못했습니다. ' + e.message, 'err'); })
+    .then(pushRender);
+}
+function pushOff(){
+  LS.set('af_push', '0');
+  return pushForget().then(function(){ pushRender(); toast('휴대폰 알림을 껐습니다. 🔕 를 누르면 다시 켭니다.'); });
+}
+/** 서버에서 이 폰을 지운다 — 알림 끄기 · 로그아웃 때 (다른 사람 알림이 이 폰으로 오지 않게) */
+function pushForget(){
+  if (!PUSH.ok) return Promise.resolve();
+  return pushReg().then(function(reg){ return reg.pushManager.getSubscription(); }).then(function(sub){
+    if (!sub) return;
+    return call('api_pushSubscribe', S.token, sub.endpoint, false).catch(function(){})
+      .then(function(){ return sub.unsubscribe(); });
+  }).catch(function(){});
+}
+/** 앱을 보면 쌓인 알림과 아이콘 숫자를 지운다 */
+function pushClear(){
+  if (!PUSH.ok || !S.token) return;
+  pushReg().then(function(reg){ return reg.getNotifications(); })
+    .then(function(list){ list.forEach(function(n){ n.close(); }); }).catch(function(){});
+  if (navigator.clearAppBadge) navigator.clearAppBadge().catch(function(){});
+}
+document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') pushClear(); });
+$('#btnPush').addEventListener('click', function(){
+  var on = Notification.permission === 'granted' && pushWanted();
+  if (!on){ pushOn(); return; }      // 누른 그 순간에 허용을 물어야 해서 확인창을 거치지 않는다
+  confirmBox((S.me && S.me.role === '영업' ? '출하완료' : '새 주문') + ' 휴대폰 알림을 끌까요?\n' +
+             '끈 뒤에도 앱을 열면 지금처럼 화면에서는 보입니다.', { ok: '알림 끄기' })
+    .then(function(ok){ if (ok) pushOff(); });
+});
+$('#pushBarOn').addEventListener('click', pushOn);
+$('#pushBarX').addEventListener('click', function(){ PUSH.hideBar = true; pushRender(); });
 
 /* ═══════════════════ 부팅 ═══════════════════ */
 syncTrade();
