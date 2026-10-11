@@ -2082,13 +2082,6 @@ function bindMine(){
       });
     });
   });
-  $$('#mineList [data-again]').forEach(function(b){
-    b.addEventListener('click', function(){
-      setEdit(null);
-      fillForm(JSON.parse(b.dataset.again), false);
-      toast('같은 내용을 불러왔습니다. 날짜·수량을 확인하세요.');
-    });
-  });
   $$('#mineList [data-edit]').forEach(function(b){
     b.addEventListener('click', function(){
       var g = JSON.parse(b.dataset.edit);
@@ -2185,17 +2178,18 @@ function orderCard(g, forShip){
       '</div>';
   } else {
     // 「대기」 주문은 「수정」 — 같은 주문번호 그대로 품목을 더하고 빼서 다시 저장한다.
-    // 물류가 손댄 뒤(준비중·출고완료 등)는 수정할 수 없어 예전처럼 「같은 내용 다시」(새 주문으로 복사)만 둔다.
+    // 물류가 손댄 뒤(준비중·출고완료 등)는 단추를 두지 않는다.
+    // 예전 「같은 내용 다시」(새 주문으로 복사)는 2026-10-12 뺐다 — 두 번 등록한 것처럼 보여 헷갈린다는 요청.
     var src = JSON.stringify({
       oid:g.oid, rep:g.rep, date:g.date, shipDate:g.shipDate, memo:g.memo,
       cust:g.cust, wh:g.wh, items:g.items, addr:g.addr, rcpt:g.rcpt, tel:g.tel, nh:g.nh, fax:g.fax, trade:g.trade
     });
-    acts = '<div class="acts">' +
-      (g.status === '대기'
-        ? '<button class="btn sm ghost" data-edit=\'' + esc(src) + '\'>✏️ 수정</button>'
-        : '<button class="btn sm ghost" data-again=\'' + esc(src) + '\'>같은 내용 다시</button>') +
-      (g.status === '대기' ? '<button class="btn sm ghost" data-cancel="' + esc(g.oid) + '" style="color:var(--red)">취소</button>' : '') +
-      '</div>';
+    acts = g.status === '대기'
+      ? '<div class="acts">' +
+          '<button class="btn sm ghost" data-edit=\'' + esc(src) + '\'>✏️ 수정</button>' +
+          '<button class="btn sm ghost" data-cancel="' + esc(g.oid) + '" style="color:var(--red)">취소</button>' +
+        '</div>'
+      : '';
   }
 
   // 물류 화면에서는 카드마다 체크칸을 둔다 — 여러 건을 한 번에 출고완료로 바꾸려고
@@ -3119,7 +3113,7 @@ function renderClose(){
   $('#closeList').innerHTML = d.groups.length
     ? d.groups.map(function(g){ return orderCard(g, false); }).join('')
     : '<div class="card muted tiny">이 날짜에 주문이 없습니다.</div>';
-  bindMine();   // 같은 카드라 취소·「같은 내용 다시」 버튼이 그대로 동작한다
+  bindMine();   // 같은 카드라 취소·「수정」 버튼이 그대로 동작한다
 }
 
 /** 카톡으로 올릴 만한 한 덩어리 글 — 복사가 막히면 보여주기라도 한다 */
