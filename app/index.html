@@ -623,6 +623,12 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   <!-- ─── 주문 입력 ─── -->
   <div class="wrap view" id="v-write">
     <div id="alertBox"></div>
+    <!-- 「내 주문」의 「수정」으로 들어왔을 때만 보인다 -->
+    <div class="pushBar hidden" id="editBar" style="width:100%; margin:0 0 12px">
+      <span style="flex:1"><b>✏️ 주문 수정 중</b><span id="editWhat"></span><br>
+        <span class="tiny">품목을 더하거나 빼고 아래 「수정 저장」을 누르세요. 원래 주문이 그대로 바뀝니다.</span></span>
+      <button class="x" id="btnEditStop" style="font-size:14px; font-weight:700">수정<br>그만두기</button>
+    </div>
 
     <div class="card">
       <div id="repBox" class="hidden">
@@ -1841,7 +1847,7 @@ function shortItems(){
     var qty = Number(it.qty) || 0;
     if (!it.prod || qty <= 0) return;
     var key = it.prod + '|' + it.size;
-    var left = Number((S.stock || {})[S.wh + '|' + key] || 0);
+    var left = Number((S.stock || {})[S.wh + '|' + key] || 0) + editBack(S.wh, key);
     if (left >= qty) return;
     var other = S.warehouses.filter(function(w){
       return w !== S.wh && Number((S.stock || {})[w + '|' + key] || 0) >= qty;
@@ -1964,7 +1970,9 @@ $('#btnSubmit').addEventListener('click', function(){
       return '· ' + it.prod + (it.size ? ' ' + it.size : '') + ' × ' + it.qty + (it.sample ? ' (샘플)' : '');
     }).join('\n') +
     '\n합계 ' + won(total);
-  checks.push({ title: '이대로 저장할까요?', text: summary, ok: '저장', kind: 'green' });
+  checks.push(S.edit
+    ? { title: '이대로 수정할까요?', text: summary + '\n\n원래 주문(' + S.edit.oid + ')이 이 내용으로 바뀝니다.', ok: '수정 저장', kind: 'green' }
+    : { title: '이대로 저장할까요?', text: summary, ok: '저장', kind: 'green' });
 
   askAll(checks).then(function(ok){
     if (!ok) return;
@@ -1981,16 +1989,25 @@ $('#btnSubmit').addEventListener('click', function(){
       return { prod: it.prod, size: it.size, qty: Number(it.qty), price: Number(it.price)||0, sample: !!it.sample };
     })
   };
+  if (S.edit) payload.editOid = S.edit.oid;
   $('#btnSubmit').disabled = true;
   $('#btnSubmit').textContent = '저장 중…';
   call('api_submitOrder', S.token, payload).then(function(d){
+    refreshStockCache();   // 재고는 주문 줄로 계산된다 — 저장·수정한 수량이 다음 재고 경고에 바로 들어가게
+    if (d.edited){
+      toast('수정했습니다 · ' + d.count + '품목 · ' + won(d.total), 'ok');
+      setEdit(null);
+      resetForm();
+      show('mine');   // 내 주문을 다시 불러온다
+      return;
+    }
     toast('저장했습니다 · ' + d.count + '품목 · ' + won(d.total) + ' · ' + d.trade, 'ok');
     resetForm();
   }).catch(function(e){
     toast(e.message, 'err');
   }).then(function(){
     $('#btnSubmit').disabled = false;
-    $('#btnSubmit').textContent = '주문 저장';
+    $('#btnSubmit').textContent = S.edit ? '수정 저장' : '주문 저장';
   });
   }
 });
@@ -2067,30 +2084,72 @@ function bindMine(){
   });
   $$('#mineList [data-again]').forEach(function(b){
     b.addEventListener('click', function(){
-      var g = JSON.parse(b.dataset.again);
-      var c = S.custs.filter(function(x){ return x.name === g.cust; })[0];
-      if (c) pickCust(c);
-      if (S.warehouses.indexOf(g.wh) !== -1){ S.wh = g.wh; renderWhChips(); }
-      S.items = g.items.map(function(it){
-        return { prod: it.prod, size: it.size, qty: it.qty, price: it.price, sample: !!it.sample };
-      });
-      renderItems();
-      $('#fAddr').value = g.addr || '';
-      $('#fRcpt').value = g.rcpt || '';
-      $('#fTel').value = g.tel || '';
-      $('#fNh').value = g.nh || '';
-      $('#fFax').value = g.fax || '';
-      $('#fDelivery').checked = g.trade === '농협';
-      S.deliveryTouched = true;
-      syncTrade();
-      var today = ymd(new Date());
-      $('#fDate').value = today; $('#fShip').value = today;
-      markShipQuick();
-      show('write');
+      setEdit(null);
+      fillForm(JSON.parse(b.dataset.again), false);
       toast('같은 내용을 불러왔습니다. 날짜·수량을 확인하세요.');
     });
   });
+  $$('#mineList [data-edit]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var g = JSON.parse(b.dataset.edit);
+      g.items = g.items.filter(function(it){ return !it.cancel; });
+      // 거래처 목록에 없으면 수정하지 않는다 — 그대로 두면 직전에 고른 다른 거래처 이름으로 저장될 수 있다
+      if (!S.custs.some(function(x){ return x.name === g.cust; })){
+        toast('「' + g.cust + '」 이(가) 내 거래처 목록에 없어 수정할 수 없습니다. 취소 후 새로 입력하거나 관리자에게 말씀하세요.', 'err');
+        return;
+      }
+      setEdit(g);
+      fillForm(g, true);
+      toast('주문을 불러왔습니다. 품목을 더하거나 빼고 「수정 저장」을 누르세요.');
+    });
+  });
 }
+
+/** 내 주문 카드 내용을 「주문 입력」 화면에 채운다. keepDates 면 원래 날짜·메모 그대로 (수정용) */
+function fillForm(g, keepDates){
+  var c = S.custs.filter(function(x){ return x.name === g.cust; })[0];
+  if (c) pickCust(c);
+  if (S.warehouses.indexOf(g.wh) !== -1){ S.wh = g.wh; renderWhChips(); }
+  if (keepDates && S.me && S.me.role !== '영업' && g.rep){ S.rep = g.rep; renderRepChips(); }
+  S.items = g.items.map(function(it){
+    return { prod: it.prod, size: it.size, qty: it.qty, price: it.price, sample: !!it.sample };
+  });
+  renderItems();
+  $('#fAddr').value = g.addr || '';
+  $('#fRcpt').value = g.rcpt || '';
+  $('#fTel').value = g.tel || '';
+  $('#fNh').value = g.nh || '';
+  $('#fFax').value = g.fax || '';
+  $('#fDelivery').checked = g.trade === '농협';
+  S.deliveryTouched = true;
+  syncTrade();
+  var today = ymd(new Date());
+  $('#fDate').value = (keepDates && g.date) || today;
+  $('#fShip').value = (keepDates && g.shipDate) || today;
+  if (keepDates) $('#fMemo').value = g.memo || '';
+  markShipQuick();
+  show('write');
+  window.scrollTo(0, 0);
+}
+
+/** 수정 중인 주문이 이미 잡아 둔 수량 — 재고 부족 경고에서 되돌려 센다 (자기 주문 때문에 모자라 보이지 않게) */
+function editBack(wh, key){
+  if (!S.edit || S.edit.wh !== wh) return 0;
+  return S.edit.items.reduce(function(s, it){ return s + ((it.prod + '|' + it.size) === key ? Number(it.qty) || 0 : 0); }, 0);
+}
+
+/* ── 주문 수정 모드 — 「수정」을 누르면 켜지고, 저장하거나 「수정 그만두기」를 누르면 꺼진다 ── */
+function setEdit(g){
+  S.edit = g ? { oid: g.oid, cust: g.cust, wh: g.wh, items: g.items || [] } : null;
+  $('#editBar').classList.toggle('hidden', !S.edit);
+  if (S.edit) $('#editWhat').textContent = g.cust + ' · 주문번호 ' + g.oid;
+  $('#btnSubmit').textContent = S.edit ? '수정 저장' : '주문 저장';
+}
+$('#btnEditStop').addEventListener('click', function(){
+  setEdit(null);
+  resetForm();
+  toast('수정을 그만뒀습니다. 원래 주문은 그대로입니다.');
+});
 
 function orderCard(g, forShip){
   var cls = 'ord' + (isDone(g.status) ? ' done' : '') + (g.status === '재고없음' ? ' nostock' : '');
@@ -2125,10 +2184,16 @@ function orderCard(g, forShip){
         ? '<button class="btn sm ghost" data-st="대기" data-oid="' + esc(g.oid) + '">되돌리기</button>' : '') +
       '</div>';
   } else {
+    // 「대기」 주문은 「수정」 — 같은 주문번호 그대로 품목을 더하고 빼서 다시 저장한다.
+    // 물류가 손댄 뒤(준비중·출고완료 등)는 수정할 수 없어 예전처럼 「같은 내용 다시」(새 주문으로 복사)만 둔다.
+    var src = JSON.stringify({
+      oid:g.oid, rep:g.rep, date:g.date, shipDate:g.shipDate, memo:g.memo,
+      cust:g.cust, wh:g.wh, items:g.items, addr:g.addr, rcpt:g.rcpt, tel:g.tel, nh:g.nh, fax:g.fax, trade:g.trade
+    });
     acts = '<div class="acts">' +
-      '<button class="btn sm ghost" data-again=\'' + esc(JSON.stringify({
-        cust:g.cust, wh:g.wh, items:g.items, addr:g.addr, rcpt:g.rcpt, tel:g.tel, nh:g.nh, fax:g.fax, trade:g.trade
-      })) + '\'>같은 내용 다시</button>' +
+      (g.status === '대기'
+        ? '<button class="btn sm ghost" data-edit=\'' + esc(src) + '\'>✏️ 수정</button>'
+        : '<button class="btn sm ghost" data-again=\'' + esc(src) + '\'>같은 내용 다시</button>') +
       (g.status === '대기' ? '<button class="btn sm ghost" data-cancel="' + esc(g.oid) + '" style="color:var(--red)">취소</button>' : '') +
       '</div>';
   }
