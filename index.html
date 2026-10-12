@@ -46,7 +46,7 @@
   .af-wall-shot{position:relative;border-radius:14px;overflow:hidden;background:#dae3c9;flex:none}
   .af-wall-shot>img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.22,1,.36,1)}
   .af-wall-shot:hover>img{transform:scale(1.06)}
-  .af-wall-cap{position:absolute;inset:auto 0 0 0;padding:26px 14px 11px;background:linear-gradient(180deg,rgba(15,28,20,0),rgba(15,28,20,.82));color:#fff;font-size:12px;font-weight:700;letter-spacing:-.01em}
+  .af-wall-cap{position:absolute;inset:auto 0 0 0;padding:26px 14px 11px;background:linear-gradient(180deg,rgba(15,28,20,0),rgba(15,28,20,.82));color:#fff;font-size:12px;font-weight:700;letter-spacing:-.01em;word-break:keep-all}
   @keyframes af-swap{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   .af-swap{animation:af-swap .5s cubic-bezier(.22,1,.36,1) both}
   @keyframes af-ticker{from{transform:translateY(0)}to{transform:translateY(-50%)}}
@@ -405,52 +405,64 @@
     </div>
 
     <div class="af-wall">
-      <div class="af-wall-col" style="left:0;width:calc((100% - 28px)/3);animation:af-up 58s linear infinite">
+      <div class="af-wall-col" style="left:0;width:calc((100% - 28px)/3);animation:af-up 80s linear infinite">
         <div class="af-wall-half">
           <div class="af-wall-shot" style="height:255px"><img loading="lazy" decoding="async" src="assets/album/web/field-01.jpg" alt="보리 포장에 임팩트원 사용"><span class="af-wall-cap">보리 · 임팩트원</span></div>
           <div class="af-wall-shot" style="height:205px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice.jpg" alt="벼 재배 현장"></div>
+          <div class="af-wall-shot" style="height:290px"><img loading="lazy" decoding="async" src="assets/album/web/field-08.jpg" alt="벼 포장에 임팩트원 3L와 임팩트과립 사용"><span class="af-wall-cap">벼 · 임팩트원 &amp; 임팩트과립</span></div>
           <div class="af-wall-shot" style="height:240px"><img loading="lazy" decoding="async" src="assets/album/web/field-04.jpg" alt="벼 생육 확인"></div>
           <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-cuke.jpg" alt="오이 재배 현장"></div>
           <div class="af-wall-shot" style="height:230px"><img loading="lazy" decoding="async" src="assets/album/web/field-07.jpg" alt="벼 육묘 비교"></div>
+          <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-11.jpg" alt="수확기 벼 이삭 확인"></div>
         </div>
         <div class="af-wall-half" aria-hidden="true">
           <div class="af-wall-shot" style="height:255px"><img loading="lazy" decoding="async" src="assets/album/web/field-01.jpg" alt=""><span class="af-wall-cap">보리 · 임팩트원</span></div>
           <div class="af-wall-shot" style="height:205px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:290px"><img loading="lazy" decoding="async" src="assets/album/web/field-08.jpg" alt=""><span class="af-wall-cap">벼 · 임팩트원 &amp; 임팩트과립</span></div>
           <div class="af-wall-shot" style="height:240px"><img loading="lazy" decoding="async" src="assets/album/web/field-04.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-cuke.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:230px"><img loading="lazy" decoding="async" src="assets/album/web/field-07.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-11.jpg" alt=""></div>
         </div>
       </div>
-      <div class="af-wall-col" style="left:calc((100% - 28px)/3 + 14px);width:calc((100% - 28px)/3);animation:af-up 66s linear infinite;animation-delay:-11s">
+      <div class="af-wall-col" style="left:calc((100% - 28px)/3 + 14px);width:calc((100% - 28px)/3);animation:af-up 90s linear infinite;animation-delay:-11s">
         <div class="af-wall-half">
           <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-03.jpg" alt="벼 사용 포장 시험구"><span class="af-wall-cap">벼 사용 포장 · 임팩트과립 &amp; 임팩트원</span></div>
           <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/field-06.jpg" alt="마늘 포장에 임팩트과립 사용"><span class="af-wall-cap">마늘 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/field-09.jpg" alt="딸기 하우스에 임팩트원 사용"><span class="af-wall-cap">딸기 · 임팩트원</span></div>
           <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/crop-apple.jpg" alt="사과 재배 현장"></div>
           <div class="af-wall-shot" style="height:265px"><img loading="lazy" decoding="async" src="assets/album/web/crop-melon.jpg" alt="수박 재배 현장"></div>
           <div class="af-wall-shot" style="height:225px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice2.jpg" alt="벼 출수기 현장"></div>
+          <div class="af-wall-shot" style="height:275px"><img loading="lazy" decoding="async" src="assets/album/web/field-12.jpg" alt="수확기 벼 이삭"></div>
         </div>
         <div class="af-wall-half" aria-hidden="true">
           <div class="af-wall-shot" style="height:200px"><img loading="lazy" decoding="async" src="assets/album/web/field-03.jpg" alt=""><span class="af-wall-cap">벼 사용 포장 · 임팩트과립 &amp; 임팩트원</span></div>
           <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/field-06.jpg" alt=""><span class="af-wall-cap">마늘 · 임팩트과립</span></div>
+          <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/field-09.jpg" alt=""><span class="af-wall-cap">딸기 · 임팩트원</span></div>
           <div class="af-wall-shot" style="height:210px"><img loading="lazy" decoding="async" src="assets/album/web/crop-apple.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:265px"><img loading="lazy" decoding="async" src="assets/album/web/crop-melon.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:225px"><img loading="lazy" decoding="async" src="assets/album/web/crop-rice2.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:275px"><img loading="lazy" decoding="async" src="assets/album/web/field-12.jpg" alt=""></div>
         </div>
       </div>
-      <div class="af-wall-col" style="left:calc(((100% - 28px)/3 + 14px) * 2);width:calc((100% - 28px)/3);animation:af-up 62s linear infinite;animation-delay:-27s">
+      <div class="af-wall-col" style="left:calc(((100% - 28px)/3 + 14px) * 2);width:calc((100% - 28px)/3);animation:af-up 85s linear infinite;animation-delay:-27s">
         <div class="af-wall-half">
           <div class="af-wall-shot" style="height:245px"><img loading="lazy" decoding="async" src="assets/album/web/field-02.jpg" alt="못자리에 임팩트과립 사용"><span class="af-wall-cap">못자리 · 임팩트과립</span></div>
           <div class="af-wall-shot" style="height:215px"><img loading="lazy" decoding="async" src="assets/album/web/field-05.jpg" alt="벼 이삭 생육 확인"></div>
+          <div class="af-wall-shot" style="height:285px"><img loading="lazy" decoding="async" src="assets/album/web/field-10.jpg" alt="오이 하우스 임팩트골드 사용 효과"><span class="af-wall-cap">오이 · 임팩트골드 효과</span></div>
           <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-seedling.jpg" alt="모종 육묘 현장"></div>
           <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean1.jpg" alt="콩 재배 현장"></div>
           <div class="af-wall-shot" style="height:220px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean2.jpg" alt="재배 현장"></div>
+          <div class="af-wall-shot" style="height:190px"><img loading="lazy" decoding="async" src="assets/album/web/field-13.jpg" alt="2026년 봉화 사과 수확기 현장"><span class="af-wall-cap">26년 봉화사과</span></div>
         </div>
         <div class="af-wall-half" aria-hidden="true">
           <div class="af-wall-shot" style="height:245px"><img loading="lazy" decoding="async" src="assets/album/web/field-02.jpg" alt=""><span class="af-wall-cap">못자리 · 임팩트과립</span></div>
           <div class="af-wall-shot" style="height:215px"><img loading="lazy" decoding="async" src="assets/album/web/field-05.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:285px"><img loading="lazy" decoding="async" src="assets/album/web/field-10.jpg" alt=""><span class="af-wall-cap">오이 · 임팩트골드 효과</span></div>
           <div class="af-wall-shot" style="height:195px"><img loading="lazy" decoding="async" src="assets/album/web/crop-seedling.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:250px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean1.jpg" alt=""></div>
           <div class="af-wall-shot" style="height:220px"><img loading="lazy" decoding="async" src="assets/album/web/crop-bean2.jpg" alt=""></div>
+          <div class="af-wall-shot" style="height:190px"><img loading="lazy" decoding="async" src="assets/album/web/field-13.jpg" alt=""><span class="af-wall-cap">26년 봉화사과</span></div>
         </div>
       </div>
     </div>
