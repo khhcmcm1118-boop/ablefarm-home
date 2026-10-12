@@ -437,6 +437,7 @@
     <span class="who" id="who"></span>
     <span class="grow"></span>
     <span class="who" id="asof"></span>
+    <button class="btn-ghost-w" id="btnBell" aria-pressed="true">🔔 소리</button>
     <button class="btn-ghost-w" id="btnAuto" aria-pressed="true">🔄 자동</button>
     <button class="btn-ghost-w" id="btnSkin" aria-label="화면 색 고르기">화면</button>
     <button class="btn-ghost-w" id="btnLogout">로그아웃</button>
@@ -786,6 +787,52 @@ function notify(msg, title){
  */
 var DLV = { list: [], timer: 0, open: false, EVERY: 10 * 60 * 1000 };
 
+/* 알림음 — 소리 파일은 쓰지 않는다. 브라우저가 직접 두 음을 낸다 (출하앱과 같은 소리).
+   브라우저는 사람이 화면을 한 번 눌러 준 뒤에야 소리를 내주므로 첫 클릭에 미리 깨워 둔다. */
+var AC = null;
+function ding(){
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    [[880, 0], [1320, .18]].forEach(function(p){
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.type = 'sine'; o.frequency.value = p[0];
+      var t = AC.currentTime + p[1];
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      o.connect(g); g.connect(AC.destination);
+      o.start(t); o.stop(t + 0.4);
+    });
+  } catch (e) {}
+}
+document.addEventListener('click', function once(){
+  try { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); AC.resume(); } catch (e) {}
+  document.removeEventListener('click', once);
+});
+
+var BELL = { on: true };
+function renderBell(){
+  var b = $('#btnBell');
+  b.textContent = BELL.on ? '🔔 소리' : '🔕 무음';
+  b.setAttribute('aria-pressed', BELL.on ? 'true' : 'false');
+  b.title = BELL.on
+    ? '배송정보 등록 확인창이 뜰 때 소리로 알립니다.'
+    : '소리를 내지 않습니다. 창만 뜹니다.';
+}
+$('#btnBell').addEventListener('click', function(){
+  BELL.on = !BELL.on;
+  LS.set('af_admin_bell', BELL.on ? '1' : '0');
+  renderBell();
+  if (BELL.on){ ding(); toast('확인창이 뜰 때 이 소리로 알립니다.', 'ok'); }
+  else toast('소리를 껐습니다.');
+});
+function bellStart(){
+  var saved = LS.get('af_admin_bell');
+  BELL.on = saved ? saved === '1' : true;
+  renderBell();
+}
+
 function dlvCheck(){
   if (!S.token) return;
   call('api_adminDeliveryPending', S.token).then(function(d){
@@ -793,11 +840,13 @@ function dlvCheck(){
     if (!DLV.list.length) { dlvClose(); return; }
     // 다른 확인창이 떠 있으면 덮지 않는다 — 10분 뒤에 다시 본다
     if ($('#modal').classList.contains('on')) return;
-    dlvOpen();
+    dlvOpen(true);
   }).catch(function(){ /* 조용히 넘어간다 — 다음 10분에 다시 본다 */ });
 }
 
-function dlvOpen(){
+/** ring: 소리를 낼지. 10분마다 확인할 때는 울리고, 「확인 완료」 뒤 남은 건을 다시 그릴 때는 조용히 */
+function dlvOpen(ring){
+  if (ring && BELL.on) ding();
   DLV.open = true;
   $('#dlvSub').textContent = '확인하지 않은 주문 ' + DLV.list.length + '건입니다. 배송정보를 보내신 뒤 「확인 완료」를 누르세요.';
   $('#dlvBody').innerHTML = DLV.list.map(function(g){
@@ -841,7 +890,7 @@ function dlvDone(oid, btn){
   call('api_adminDeliveryDone', S.token, oid).then(function(){
     DLV.list = DLV.list.filter(function(g){ return g.oid !== oid; });
     toast('배송정보 확인 완료 · ' + oid, 'ok');
-    if (DLV.list.length) dlvOpen(); else dlvClose();
+    if (DLV.list.length) dlvOpen(false); else dlvClose();
     if (S.orders.length) loadOrders();     // 목록의 표시도 바로 바뀌게
   }).catch(function(e){
     btn.disabled = false; btn.textContent = '확인 완료';
@@ -1154,6 +1203,7 @@ function start(){
   loadDash();
   dlvStart();
   autoStart();
+  bellStart();
 }
 // 「나중에」는 창만 닫는다 — 확인이 남아 있으면 10분 뒤에 다시 뜬다
 $('#dlvLater').addEventListener('click', dlvClose);
