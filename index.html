@@ -141,7 +141,7 @@
       <img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:46px;width:auto;display:block;mix-blend-mode:multiply">
     </div>
     <div class="af-navlinks" style="display:flex;gap:26px;color:#4c554a;font-weight:600">
-      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><a href="calc/" class="af-btn" style="color:inherit;text-decoration:none">희석 계산기</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
+      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><a href="calc/" onClick="{{ calcOpen }}" class="af-btn" style="color:inherit;text-decoration:none">희석 계산기</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
     </div>
   </div>
   <span class="af-btn" onClick="{{ goQna }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px">문의하기 →</span>
@@ -155,7 +155,7 @@
       <div class="af-ctarow" style="display:flex;gap:12px;margin-bottom:30px">
         <span class="af-btn" onClick="{{ goProducts }}" style="flex:none;white-space:nowrap;padding:15px 28px;background:#a9d18a;color:#16271c;border-radius:12px;font-weight:800;font-size:15px">제품 보기 →</span>
         <span class="af-btn" onClick="{{ goBuy }}" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.38);color:#fff;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px)">지역별 상담 →</span>
-        <a href="calc/" class="af-btn" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(169,209,138,.7);color:#c7e3a8;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px);text-decoration:none">💧 희석 계산기 →</a>
+        <a href="calc/" onClick="{{ calcOpen }}" class="af-btn" style="flex:none;white-space:nowrap;padding:15px 28px;background:rgba(255,255,255,.12);border:1.5px solid rgba(169,209,138,.7);color:#c7e3a8;border-radius:12px;font-weight:700;font-size:15px;backdrop-filter:blur(4px);text-decoration:none">💧 희석 계산기 →</a>
       </div>
       
     </div></div>
@@ -522,7 +522,7 @@
         </div>
         <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
           <sc-if value="{{ pHasCalc }}" hint-placeholder-val="{{ true }}">
-            <a href="{{ pCalcUrl }}" class="af-btn af-cta" style="flex:1;min-width:200px;text-align:center;padding:16px 0;background:#fff;border:2px solid #16271c;color:#16271c;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">💧 이 제품 사용량 계산하기</a>
+            <a href="{{ pCalcUrl }}" onClick="{{ calcOpen }}" class="af-btn af-cta" style="flex:1;min-width:200px;text-align:center;padding:16px 0;background:#fff;border:2px solid #16271c;color:#16271c;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">💧 이 제품 사용량 계산하기</a>
           </sc-if>
           <sc-if value="{{ pHasGuide }}" hint-placeholder-val="{{ false }}">
             <a href="guide/uni-nk.html" class="af-btn af-cta" style="flex:1;min-width:200px;text-align:center;padding:16px 0;background:#fff;border:2px solid #4a7c59;color:#4a7c59;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none">📄 작물별 살포 안내서</a>
@@ -749,6 +749,19 @@
       <span class="af-btn" onClick="{{ catClose }}" style="flex:none;white-space:nowrap;padding:9px 18px;background:#fff;color:#16241a;border-radius:10px;font-weight:800;font-size:14px">닫기 ✕</span>
     </div>
     <iframe src="catalog/index.html" title="에이블팜 제품 카다로그" style="flex:1;width:100%;border:0;border-radius:14px;background:#f6f1df"></iframe>
+  </div>
+</sc-if>
+
+<!-- ===== 희석 계산기 (화면 안에서 열기) ===== -->
+<sc-if value="{{ calcShow }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:80;background:rgba(15,28,20,.78);display:flex;justify-content:center;padding:16px">
+    <div style="width:100%;max-width:640px;display:flex;flex-direction:column">
+      <div style="flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px 10px">
+        <span style="color:#eaf1e2;font-weight:800;font-size:15px">💧 희석·사용량 계산기</span>
+        <span class="af-btn" onClick="{{ calcClose }}" style="flex:none;white-space:nowrap;padding:9px 18px;background:#fff;color:#16241a;border-radius:10px;font-weight:800;font-size:14px">닫기 ✕</span>
+      </div>
+      <iframe src="{{ calcSrc }}" title="에이블팜 희석·사용량 계산기" style="flex:1;width:100%;border:0;border-radius:14px;background:#faf7ef"></iframe>
+    </div>
   </div>
 </sc-if>
 
@@ -1532,6 +1545,15 @@ class Component extends DCLogic {
       catShow: !!this.state.catOpen,
       catOpen: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ catOpen: true }); },
       catClose: () => this.setState({ catOpen: false }),
+      // 희석 계산기도 화면 안에서 연다. 링크의 주소(calc/?p=제품명)를 그대로 iframe 에 넘긴다
+      calcShow: !!this.state.calcSrc,
+      calcSrc: this.state.calcSrc || 'about:blank',
+      calcOpen: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const href = (e && e.currentTarget && e.currentTarget.getAttribute && e.currentTarget.getAttribute('href')) || 'calc/';
+        this.setState({ calcSrc: href + (href.indexOf('?') >= 0 ? '&' : '?') + 'embed=1' });
+      },
+      calcClose: () => this.setState({ calcSrc: null }),
       ...(() => {
         const open = this.state.botOpen ?? (typeof window !== 'undefined' && window.innerWidth > 760);
         return { botOpen: open, botLabel: open ? '상담 닫기' : '작물 고민 상담', botToggle: () => this.setState({ botOpen: !open }) };

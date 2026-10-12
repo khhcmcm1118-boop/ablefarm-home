@@ -75,6 +75,54 @@
   .contact a.tel{font-weight:800;font-size:17px;text-decoration:none;white-space:nowrap}
   footer{text-align:center;font-size:14px;color:var(--sub);margin-top:22px}
   [hidden]{display:none!important}
+
+  /* ---------- 에이블 연구원 (계산 결과를 말로 알려 주는 캐릭터) ---------- */
+  /* 결과 카드 = 말풍선 + [연구원(왼쪽, 오른쪽을 가리킴) | 결과 숫자] */
+  .stage{display:flex;align-items:center;gap:14px;margin-top:14px}
+  .host{position:relative;flex:none;width:44%;max-width:210px}
+  .host video{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:16px;background:#d6e4b4 url(researcher-idle.jpg) center/cover;box-shadow:0 10px 24px -12px rgba(0,0,0,.6)}
+  .host .name{position:absolute;left:8px;bottom:8px;font-size:13px;font-weight:800;color:var(--deep);background:rgba(255,255,255,.88);border-radius:8px;padding:2px 8px}
+  .answer{flex:1;min-width:0}
+  .answer .big{font-size:clamp(26px,7.5vw,44px);word-break:keep-all}
+  .result.empty .answer .big{font-size:20px}
+  .disc{margin:12px 0 0;font-size:15px;color:#dbe8d2}
+  .legal h2{font-size:18px;margin:0 0 8px}
+  .legal ul{margin:0;padding-left:20px;font-size:15px;color:var(--sub);line-height:1.6}
+  .legal li+li{margin-top:6px}
+  .legal b{color:var(--ink)}
+  .bubble{position:relative;background:#fff;color:var(--ink);border:2px solid var(--line);border-radius:18px;padding:12px 14px;font-size:17px;font-weight:700;line-height:1.45;min-height:52px;transition:background .25s,border-color .25s}
+  .bubble::after{content:"";position:absolute;left:22%;bottom:-11px;width:18px;height:18px;background:inherit;border-right:2px solid;border-bottom:2px solid;border-color:inherit;transform:rotate(45deg);border-radius:0 0 4px 0}
+  .bubble.warn{background:var(--warn);border-color:#f0d49a;color:var(--warn-ink)}
+  .bubble.pop{animation:pop .35s ease-out}
+  .bubble .caret{display:inline-block;width:2px;height:1em;background:currentColor;vertical-align:-2px;margin-left:2px;animation:blink .8s steps(1) infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes blink{50%{opacity:0}}
+
+  /* ---------- 결과 그림: 물통 · 계량컵 · 병 ---------- */
+  .viz{display:flex;align-items:flex-end;justify-content:center;gap:18px;margin:16px 0 4px;padding:14px 8px 10px;border-radius:14px;background:rgba(255,255,255,.06)}
+  .viz .it{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+  .viz .cap{font-size:14px;font-weight:800;color:#e6f0dc;text-align:center}
+  .viz .plus{align-self:center;font-size:26px;font-weight:900;color:var(--leaf);margin-bottom:24px}
+  .viz svg{display:block}
+  .viz .lvl{transition:y .7s cubic-bezier(.3,.8,.3,1),height .7s cubic-bezier(.3,.8,.3,1)}
+  .drops{position:relative;width:0;height:0}
+  .drops i{position:absolute;left:-5px;top:-40px;width:10px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#d8b94a;opacity:0}
+  .viz.go .drops i{animation:drop .7s ease-in forwards}
+  .viz.go .drops i:nth-child(2){animation-delay:.18s}
+  .viz.go .drops i:nth-child(3){animation-delay:.36s}
+  @keyframes drop{0%{opacity:0;transform:translateY(0)}15%{opacity:1}100%{opacity:0;transform:translateY(46px)}}
+  .bottles{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:300px}
+  .bottles svg{animation:popin .35s backwards}
+  .bottles .maybe{opacity:.38}
+  @keyframes popin{0%{opacity:0;transform:translateY(8px) scale(.7)}100%{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){
+    .bubble.pop,.bottles svg,.viz.go .drops i{animation:none}
+    .viz .lvl{transition:none}
+  }
+  /* 홈페이지 안에서 열 때(?embed=1): 머리말은 바깥 창이 대신한다 */
+  body.embed header{display:none}
+  body.embed .tabs{margin-top:14px}
 </style>
 </head>
 <body>
@@ -142,10 +190,23 @@
     <p class="hint" id="areaHint"></p>
   </div>
 
-  <div class="result empty" id="result" aria-live="polite">
-    <p class="lead" id="rLead">계산 결과</p>
-    <p class="big" id="rBig">제품을 골라 주세요</p>
+  <div class="result empty" id="result">
+    <div class="bubble" id="say" aria-hidden="true"></div>
+    <div class="stage">
+      <div class="host">
+        <video id="hostVid" muted playsinline preload="auto" poster="researcher-idle.jpg" aria-hidden="true">
+          <source src="researcher-point.mp4" type="video/mp4">
+        </video>
+        <span class="name">에이블 연구원</span>
+      </div>
+      <div class="answer" aria-live="polite">
+        <p class="lead" id="rLead">계산 결과</p>
+        <p class="big" id="rBig">제품을 골라 주세요</p>
+      </div>
+    </div>
+    <div class="viz" id="viz" hidden></div>
     <div class="more" id="rMore" hidden></div>
+    <p class="disc">참고용 계산입니다. 실제 사용량은 제품 라벨·사용설명서를 따르세요.</p>
   </div>
 
   <div class="card info" id="infoCard" hidden>
@@ -169,7 +230,19 @@
     <div class="p"><div>고객센터 <span>평일 09:00–17:00</span></div><a class="tel" href="tel:028586229">02-858-6229</a></div>
   </div>
 
-  <footer>(주)에이블팜 · <a href="../">www.ablefarm.co.kr</a></footer>
+  <div class="card legal">
+    <h2>이용 안내</h2>
+    <ul>
+      <li>이 계산기는 회사가 안내하는 <b>일반적인 희석배수·사용량을 바탕으로 한 참고용 계산</b>입니다. 계산 결과가 특정 효과나 수확량을 보장하지 않습니다.</li>
+      <li>알맞은 양은 작물·품종, 생육 단계, 토양, 날씨, 함께 쓰는 자재에 따라 달라집니다. 실제로 쓰실 때는 반드시 <b>제품 라벨과 사용설명서를 확인</b>하시고, 내용이 다르면 라벨을 따르세요.</li>
+      <li>농약·다른 비료와 섞어 쓰거나 처음 쓰는 작물에는 좁은 면적에 먼저 시험해 이상이 없는지 확인한 뒤 쓰세요.</li>
+      <li>권장 배수보다 진하게 쓰거나, 라벨의 사용 방법·주의사항을 지키지 않아 생긴 약해·생육 피해에 대해서는 회사의 고의 또는 중대한 과실이 없는 한 책임을 지기 어렵습니다. 다만 제품 결함 등 법령에 따라 회사의 책임이 인정되는 경우는 그에 따릅니다.</li>
+      <li>제품은 어린이 손이 닿지 않는 곳에 두고, 라벨에 적힌 보관 방법과 취급 주의사항을 따르세요.</li>
+      <li>사용량이 헷갈리면 위의 담당자나 고객센터(02-858-6229)에 먼저 물어보세요.</li>
+    </ul>
+  </div>
+
+  <footer>(주)에이블팜 · <a href="../" target="_top">www.ablefarm.co.kr</a></footer>
 </div>
 
 <script>
@@ -392,12 +465,181 @@ function showInfo(name){
   $("infoCard").hidden = false;
 }
 
-function setResult(lead, big, more){
+// o: { say: 연구원이 할 말, warn: 노란 말풍선, viz: 결과 그림 }
+function setResult(lead, big, more, o){
+  o = o || {};
   $("result").classList.toggle("empty", !more && !/\d/.test(big));
   $("rLead").textContent = lead;
   $("rBig").innerHTML = big;
   $("rMore").hidden = !more;
   $("rMore").innerHTML = more || "";
+  drawViz(o.viz);
+  var s = o.say || defaultSay(lead, big, more);
+  if (s !== sayText && /\d/.test(big)) point();
+  speak(s, o.warn);
+}
+
+/* 연구원 영상: 팔을 내린 자세 → 팔을 들어 오른쪽 결과를 가리키는 자세 (한 번 틀고 마지막 장면에서 멈춤).
+   결과가 바뀔 때마다 처음부터 다시 틀어 다시 가리키게 한다. 되감는 순간은 살짝 흐리게 넘긴다.
+   모션 줄이기 설정이면 가리키는 정지 사진(poster)만 보인다 */
+var pointTimer = null;
+function point(){
+  var v = $("hostVid");
+  if (REDUCED || !v || !v.play) return;
+  clearTimeout(pointTimer);
+  pointTimer = setTimeout(function(){ // 숫자를 연달아 칠 때는 마지막 한 번만
+    var go = function(){
+      try { v.currentTime = 0; } catch (e) {}
+      var p = v.play(); if (p && p.catch) p.catch(function(){});
+      v.style.opacity = 1;
+    };
+    if (v.currentTime > 0.1){ v.style.opacity = .35; setTimeout(go, 140); } else go();
+  }, 250);
+}
+
+/* ---------- 에이블 연구원 말풍선 ---------- */
+var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function plain(h){ return String(h || "").replace(/<[^>]+>/g, "").replace(/\s+(㎖|ℓ|kg|g)(?![A-Za-z])/g, "$1").replace(/\s+/g, " ").trim(); }
+function defaultSay(lead, big, more){
+  var b = plain(big);
+  if (b === "제품을 골라 주세요") return "안녕하세요, 에이블 연구원이에요! 먼저 어떤 제품을 쓰실지 골라 주세요.";
+  if (!/\d/.test(b)){
+    var first = more ? plain((more.match(/<div>(.*?)<\/div>/) || [,""])[1]) : "";
+    return b + "." + (first ? " " + first : "");
+  }
+  return lead.replace(/\s*\(.*?\)/, "") + "은 " + b + "이에요."; // 결과 제목은 모두 「…양」으로 끝난다
+}
+var sayText = "", sayTimer = null;
+function speak(text, warn){
+  var el = $("say");
+  el.classList.toggle("warn", !!warn);
+  if (text === sayText) return;
+  sayText = text;
+  clearTimeout(sayTimer);
+  el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+  if (REDUCED){ el.textContent = text; return; }
+  var i = 0;
+  (function type(){
+    i = Math.min(text.length, i + 2);
+    el.innerHTML = "";
+    el.appendChild(document.createTextNode(text.slice(0, i)));
+    if (i < text.length){ var c = document.createElement("span"); c.className = "caret"; el.appendChild(c); sayTimer = setTimeout(type, 28); }
+  })();
+}
+
+/* ---------- 결과 그림 ----------
+   v.tank {L, name}         물통 — 고른 통 크기에 물이 차오른다
+   v.cup {ml}               계량컵 — 1ℓ 이하일 때 눈금까지 찬다
+   v.bottles {n, size}      물에 탈 때: 병 n개(끝 병은 덜 참) / {lo, hi, size} 밭 넓이: 흐린 병은 넉넉히 줄 때
+   v.bags {lo, hi, size}    포대 제품 */
+var LIQ = "#d8b94a", WATER = "#7cc2e8", LINE = "#cfe3bf";
+var TANKS = [[1,"분무기"],[16,"등짐"],[20,"말통"],[100,"100ℓ 통"],[200,"드럼"],[500,"500ℓ 통"],[1000,"1톤 통"]];
+var CUPS = [10,20,50,100,200,500,1000];
+var MAX_ICONS = 24;
+var vizSig = null, vizMl = null;
+
+function lvlRect(x, y, w, h, color, clip, cls){
+  return '<rect class="lvl'+(cls ? " "+cls : "")+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'" clip-path="url(#'+clip+')" style="transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .7s cubic-bezier(.3,.8,.3,1)"/>';
+}
+function tankSvg(){
+  var body = "M8 26a10 10 0 0 1 10-10h48a10 10 0 0 1 10 10v62a10 10 0 0 1-10 10H18a10 10 0 0 1-10-10z";
+  return '<svg width="84" height="100" viewBox="0 0 84 100" aria-hidden="true"><defs><clipPath id="vtank"><path d="'+body+'"/></clipPath></defs>'
+    + '<rect x="50" y="4" width="16" height="13" rx="3" fill="'+LINE+'"/><path d="M16 16v-6a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v6" fill="none" stroke="'+LINE+'" stroke-width="4"/>'
+    + '<path d="'+body+'" fill="rgba(255,255,255,.08)"/>' + lvlRect(8, 16, 68, 82, WATER, "vtank", "t")
+    + '<path d="'+body+'" fill="none" stroke="'+LINE+'" stroke-width="3"/></svg>';
+}
+function cupSvg(cap){
+  var body = "M14 12h46l-5 76a4 4 0 0 1-4 4H23a4 4 0 0 1-4-4z";
+  var t = "";
+  [0.25,0.5,0.75,1].forEach(function(k){
+    var y = 92 - 80 * k;
+    t += '<line x1="'+(k===0.5||k===1 ? 40 : 46)+'" y1="'+y+'" x2="54" y2="'+y+'" stroke="'+LINE+'" stroke-width="2"/>';
+    if (k === 0.5 || k === 1) t += '<text x="62" y="'+(y+5)+'" font-size="14" font-weight="800" fill="#e6f0dc">'+fmtNum(cap*k,0)+'</text>';
+  });
+  return '<svg width="104" height="100" viewBox="0 0 104 100" aria-hidden="true"><defs><clipPath id="vcup"><path d="'+body+'"/></clipPath></defs>'
+    + '<path d="'+body+'" fill="rgba(255,255,255,.08)"/>' + lvlRect(10, 12, 54, 80, LIQ, "vcup", "c")
+    + '<path d="'+body+'" fill="none" stroke="'+LINE+'" stroke-width="3"/><path d="M14 12l-6-4" stroke="'+LINE+'" stroke-width="3" stroke-linecap="round"/>' + t + '</svg>';
+}
+function bottleSvg(i, maybe){
+  var body = "M9 16V12h8v4l4 6v24a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V22z";
+  return '<svg width="26" height="52" viewBox="0 0 26 52" aria-hidden="true" class="'+(maybe ? "maybe" : "")+'" style="animation-delay:'+(i*0.04)+'s"><defs><clipPath id="vb'+i+'"><path d="'+body+'"/></clipPath></defs>'
+    + '<rect x="8" y="5" width="10" height="7" rx="1.5" fill="#a9d18a"/><path d="'+body+'" fill="rgba(255,255,255,.08)"/>'
+    + lvlRect(4, 12, 18, 38, LIQ, "vb"+i, "b") + '<path d="'+body+'" fill="none" stroke="'+LINE+'" stroke-width="2"/></svg>';
+}
+function bagSvg(i, maybe){
+  return '<svg width="32" height="40" viewBox="0 0 32 40" aria-hidden="true" class="'+(maybe ? "maybe" : "")+'" style="animation-delay:'+(i*0.04)+'s">'
+    + '<path d="M8 6h16l-2 4 6 24a4 4 0 0 1-4 5H6a4 4 0 0 1-4-5l6-24z" fill="#e9dcb5" stroke="'+LINE+'" stroke-width="2"/><path d="M9 10h14" stroke="#4a7c59" stroke-width="2.5"/>'
+    + '<text x="16" y="29" text-anchor="middle" font-size="8" font-weight="900" fill="#4a7c59">AF</text></svg>';
+}
+function icons(n){ return Math.min(MAX_ICONS, Math.max(1, n)); }
+
+function drawViz(v){
+  var box = $("viz");
+  if (!v){ box.hidden = true; box.innerHTML = ""; vizSig = null; vizMl = null; return; }
+  box.hidden = false;
+  var b = v.bottles, g = v.bags;
+  var nb = b ? (b.n != null ? icons(Math.ceil(b.n - 0.001)) : icons(b.hi)) : 0;
+  var ng = g ? icons(g.hi) : 0;
+  var sig = [v.tank ? "t" : "", v.cup ? "c"+v.cup.cap : "", b ? "b"+nb+"/"+(b.n != null ? "" : b.lo) : "", g ? "g"+ng+"/"+g.lo : ""].join("|");
+  if (sig !== vizSig){
+    var h = "";
+    var src = v.cup || (b && b.n != null);
+    if (v.cup) h += '<div class="it">'+cupSvg(v.cup.cap)+'<div class="cap" data-k="cup"></div></div>';
+    if (b){
+      var bs = ""; for (var i = 0; i < nb; i++) bs += bottleSvg(i, b.n == null && i >= b.lo);
+      h += '<div class="it"><div class="bottles">'+bs+'</div><div class="cap" data-k="bot"></div></div>';
+    }
+    if (g){
+      var gs = ""; for (var j = 0; j < ng; j++) gs += bagSvg(j, j >= g.lo);
+      h += '<div class="it"><div class="bottles">'+gs+'</div><div class="cap" data-k="bag"></div></div>';
+    }
+    if (v.tank) h += (src ? '<div class="plus">→</div>' : "") + '<div class="it"><div class="drops"><i></i><i></i><i></i></div>'+tankSvg()+'<div class="cap" data-k="tank"></div></div>';
+    box.innerHTML = h;
+    vizSig = sig;
+    void box.offsetWidth; // 빈 상태에서 차오르게
+  }
+  var q = function(s){ return box.querySelector(s); };
+  var set = function(el, f){ if (el) el.style.transform = "scaleY(" + Math.max(0, Math.min(1, f)) + ")"; };
+  // 위에서 강제 리플로우를 했으므로 바로 바꿔도 차오르는 전환이 일어난다 (rAF 는 숨은 탭에서 멈춘다)
+  (function(){
+    if (v.tank){
+      set(q(".lvl.t"), v.tank.f);
+      q('[data-k="tank"]').textContent = v.tank.name;
+    }
+    if (v.cup){
+      set(q(".lvl.c"), v.cup.ml / v.cup.cap);
+      q('[data-k="cup"]').textContent = "계량컵 " + fmtVolText(v.cup.ml);
+    }
+    if (b){
+      var lv = box.querySelectorAll(".lvl.b");
+      for (var k = 0; k < lv.length; k++){
+        var f = b.n != null ? Math.min(1, b.n - k) : 1;
+        set(lv[k], f > 0 ? Math.max(0.12, f) : 0);
+      }
+      var sz = (b.size >= 1000 ? fmtNum(b.size/1000,1)+"ℓ" : b.size+"㎖") + " 병 ";
+      var more = (b.n != null ? Math.ceil(b.n - 0.001) : b.hi) > MAX_ICONS ? " (그림은 " + MAX_ICONS + "병까지)" : "";
+      q('[data-k="bot"]').textContent = sz + (b.n != null ? fmtNum(b.n, b.n < 10 ? 1 : 0) + "병" : b.lo === b.hi ? b.hi + "병" : b.lo + "~" + b.hi + "병 · 흐린 병은 넉넉히 줄 때") + more;
+    }
+    if (g){
+      q('[data-k="bag"]').textContent = g.size + "kg 포대 " + (g.lo === g.hi ? g.hi : g.lo + "~" + g.hi) + "개" + (g.hi > MAX_ICONS ? " (그림은 " + MAX_ICONS + "개까지)" : "");
+    }
+  })();
+  var ml = v.cup ? v.cup.ml : b && b.n != null ? b.n : null;
+  if (v.tank && ml != null && ml !== vizMl){ box.classList.remove("go"); void box.offsetWidth; box.classList.add("go"); }
+  vizMl = ml;
+}
+function tankFor(L){
+  for (var i = 0; i < TANKS.length; i++) if (TANKS[i][0] === L) return {L:L, f:1, name:TANKS[i][1] + " " + fmtNum(L,1) + "ℓ"};
+  for (var j = 0; j < TANKS.length; j++) if (TANKS[j][0] >= L) return {L:L, f:L / TANKS[j][0], name:"물 " + fmtNum(L,1) + "ℓ"};
+  return {L:L, f:1, name:"물 " + fmtNum(L,1) + "ℓ"};
+}
+function cupFor(ml){
+  for (var i = 0; i < CUPS.length; i++) if (CUPS[i] >= ml) return {ml:ml, cap:CUPS[i]};
+  return null;
+}
+function bagsSpec(loKg, hiKg){
+  var lo = Math.max(1, Math.ceil(loKg / gran.bag - 0.05)), hi = Math.max(1, Math.ceil(hiKg / gran.bag - 0.05));
+  return {lo:lo, hi:hi, size:gran.bag};
 }
 
 function calc(){
@@ -420,17 +662,18 @@ function calcGranArea(){
   var bagTxt = gran.bag+"kg 포대 "+(bags(r[1]*u)===bags(r[2]*u) ? bags(r[1]*u) : bags(r[1]*u)+"~"+bags(r[2]*u))+"개";
   if (r[3] == null){ // 총 시비량만 있는 제품
     setResult("이 넓이에 줄 비료 양 (한 철)", kgRange(r[1]*u, r[2]*u) + "<small> kg</small>",
-      "<div>"+r[0]+" · "+where+" · 기준 300평(10a)당 "+r[1]+"~"+r[2]+"kg</div><div>"+bagTxt+"</div><div>나눠 주는 횟수와 시기는 담당자에게 물어보세요</div>");
+      "<div>"+r[0]+" · "+where+" · 기준 300평(10a)당 "+r[1]+"~"+r[2]+"kg</div><div>"+bagTxt+"</div><div>나눠 주는 횟수와 시기는 담당자에게 물어보세요</div>",
+      {viz:{bags:bagsSpec(r[1]*u, r[2]*u)}});
     return;
   }
   var more = "<div>"+r[0]+" · "+where+" · "+r[6]+"</div>";
   more += "<div>한 철 전체 "+kgRange(r[1]*u, r[2]*u)+"kg → "+bagTxt+"</div>";
   if (r[7] === "관주"){
     more += "<div>물 "+fmtNum(Math.max(1, u),1)+"톤 이상에 녹여서 주세요 (10a당 3~5kg을 물 1톤 이상)</div>";
-    setResult("한 번 관주할 때 녹일 양", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more);
+    setResult("한 번 관주할 때 녹일 양", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more, {viz:{bags:bagsSpec(r[1]*u, r[2]*u)}});
   } else {
     more += "<div>포기 사이·이랑 옆에 뿌리고 흙을 덮거나 물을 주세요</div>";
-    setResult("한 번에 뿌릴 양 (흙에)", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more);
+    setResult("한 번에 뿌릴 양 (흙에)", kgRange(r[3]*u, r[4]*u) + "<small> kg</small>", more, {viz:{bags:bagsSpec(r[1]*u, r[2]*u)}});
   }
 }
 
@@ -441,14 +684,16 @@ function calcPerBag(r, a){
   if (r[3] > 0){ // 나무 수 기준
     var kgv = a * gran.bag / r[3];
     setResult("나무 "+fmtNum(a,0)+"그루에 줄 양", kg(kgv) + "<small> kg</small>",
-      "<div>"+r[0]+" · 한 포("+gran.bag+"kg)로 "+r[3]+"그루</div><div>"+bagTxt(a / r[3], a / r[3])+"</div><div>"+r[4]+"</div>");
+      "<div>"+r[0]+" · 한 포("+gran.bag+"kg)로 "+r[3]+"그루</div><div>"+bagTxt(a / r[3], a / r[3])+"</div><div>"+r[4]+"</div>",
+      {viz:{bags:bagsSpec(kgv, kgv)}});
     return;
   }
   var pyeong = unit === "pyeong" ? a : a / M2_PER_PYEONG;
   var where = unit === "pyeong" ? fmtNum(a,0)+"평" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)";
   var hiKg = pyeong / r[1] * gran.bag, loKg = pyeong / r[2] * gran.bag; // 한 포가 덮는 넓이가 넓을수록 적게 든다
   setResult("이 넓이에 줄 비료 양", kgRange(loKg, hiKg) + "<small> kg</small>",
-    "<div>"+r[0]+" · "+where+" · 기준 한 포("+gran.bag+"kg)당 "+(r[1]===r[2] ? fmtNum(r[1],0) : fmtNum(r[1],0)+"~"+fmtNum(r[2],0))+"평</div><div>"+bagTxt(loKg / gran.bag, hiKg / gran.bag)+"</div><div>"+r[4]+"</div>");
+    "<div>"+r[0]+" · "+where+" · 기준 한 포("+gran.bag+"kg)당 "+(r[1]===r[2] ? fmtNum(r[1],0) : fmtNum(r[1],0)+"~"+fmtNum(r[2],0))+"평</div><div>"+bagTxt(loKg / gran.bag, hiKg / gran.bag)+"</div><div>"+r[4]+"</div>",
+    {viz:{bags:bagsSpec(loKg, hiKg)}});
 }
 
 function syncAreaInput(){ // 과수는 나무 수로 받는다
@@ -484,7 +729,17 @@ function calcWater(){
   var bottle = cur ? cur.bottle : 500;
   var perBottle = bottle * rate / 1000; // 한 병으로 탈 수 있는 물 ℓ
   more += "<div>"+(bottle>=1000 ? fmtNum(bottle/1000,1)+"ℓ" : bottle+"㎖")+" 한 병이면 물 "+fmtNum(perBottle,0)+"ℓ (말통 "+fmtNum(perBottle/20,1)+"통)까지 탈 수 있습니다</div>";
-  setResult("제품을 이만큼 넣으세요", fmtVol(ml), more);
+  var tank = tankFor(L), cup = cupFor(ml);
+  var say = tank.name + "에 " + (cur ? cur.n + " " : "") + fmtVolText(ml).replace(" ", "") + " 넣으세요!";
+  if (!cup) say += " " + (bottle>=1000 ? fmtNum(bottle/1000,1)+"ℓ" : bottle+"㎖") + " 병으로 " + fmtNum(ml/bottle, ml/bottle < 10 ? 1 : 0) + "병이에요.";
+  var warn = false;
+  if (cur){
+    var lo = cur.rates[0], hi = cur.rates[cur.rates.length-1];
+    if (rate < lo && !(cur.extra && cur.extra.indexOf(rate) >= 0)){ say += " 권장보다 진하니 좁은 곳에 먼저 시험해 보세요."; warn = true; }
+    else if (rate > hi){ say += " 권장보다 연해서 효과가 약할 수 있어요."; warn = true; }
+  }
+  setResult("제품을 이만큼 넣으세요", fmtVol(ml), more, {say:say, warn:warn,
+    viz: cup ? {tank:tank, cup:cup} : {tank:tank, bottles:{n:ml/bottle, size:bottle}}});
 }
 
 function calcArea(){
@@ -510,7 +765,10 @@ function calcArea(){
   var bLo = Math.ceil(lo*1000 / cur.bottle - 0.05), bHi = Math.ceil(hi*1000 / cur.bottle - 0.05); // 평↔㎡ 반올림 오차로 한 병 더 나오지 않게
   var more = "<div>"+(unit==="pyeong" ? fmtNum(a,0)+"평 (약 "+fmtNum(m2,0)+"㎡)" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)")+" · 기준 "+base+"</div>";
   more += "<div>"+cur.bottle+"㎖ 병으로 "+(bLo===bHi ? bLo+"병" : bLo+"~"+bHi+"병")+"이 듭니다</div>";
-  setResult("관주로 줄 제품 양", big, more);
+  var where = unit==="pyeong" ? fmtNum(a,0)+"평" : fmtNum(a,0)+"㎡";
+  setResult("관주로 줄 제품 양", big, more, {
+    say: where + "이면 " + cur.n + " " + plain(big) + ", " + cur.bottle + "㎖ 병 " + (bLo===bHi ? bLo : bLo+"~"+bHi) + "병 준비하세요!",
+    viz: {bottles:{lo:Math.max(1,bLo), hi:Math.max(1,bHi), size:cur.bottle}}});
 }
 function fmtL(L){ return L[0]===L[1] ? (L[0]<1 ? L[0]*1000+"㎖" : L[0]+"ℓ") : L[0]+"~"+L[1]+"ℓ"; }
 
@@ -552,8 +810,11 @@ $("customRate").oninput = function(){ rate = Number(this.value) || null; drawRat
 $("water").oninput = function(){ drawWaterChips(); calc(); };
 $("area").oninput  = function(){ drawAreaChips(); calc(); };
 
+if (/[?&]embed=1/.test(location.search)) document.body.classList.add("embed");
 syncAreaInput.tree = false;
 buildSelect(); drawWaterChips(); drawAreaChips(); calc();
+if (REDUCED) $("hostVid").poster = "researcher-point.jpg"; // 움직이지 않을 때는 가리키는 사진
+point(); // 처음 열 때부터 움직인다
 
 // 제품 설명은 홈페이지 제품 데이터에서 가져온다 (없어도 계산은 된다)
 fetch("../data/products.json").then(function(r){ return r.json(); }).then(function(d){
