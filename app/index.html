@@ -283,9 +283,11 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
     position:sticky; top:52px; z-index:19; display:flex; gap:6px; background:var(--bg);
     padding:10px 14px; border-bottom:1px solid var(--line);
     max-width:560px; margin:0 auto;
+    overflow-x:auto; scrollbar-width:none;   /* 탭이 6개라 좁은 폰에서는 옆으로 밀어 본다 (2026-10-14 순위 탭 추가) */
   }
+  nav.tabs::-webkit-scrollbar{display:none}
   nav.tabs button{
-    flex:1; min-height:44px; border-radius:10px; border:1px solid var(--line);
+    flex:1 0 auto; min-height:44px; border-radius:10px; border:1px solid var(--line); padding:0 12px; white-space:nowrap;
     background:var(--card); color:var(--ink2); font-weight:600; font-size:15px;
   }
   nav.tabs button.on{background:var(--navy); color:var(--on-navy); border-color:var(--navy)}
@@ -569,6 +571,58 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   a{color:var(--blue)}
   :root[data-skin="dark"] a{color:#7fc0ff}
   :root[data-skin="sun"] a{color:#1d4ed8; font-weight:700}
+  /* ══════════ 🏆 영업 순위 (영업·관리만) — 이름이 겹치지 않게 rk- 를 붙인다 ══════════ */
+  .rk-period{display:flex; align-items:center; gap:8px; margin-bottom:12px}
+  .rk-mnav{display:flex; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .rk-mnav button{border:0; background:none; font-size:20px; width:40px; height:42px; color:var(--ink2)}
+  .rk-mnav button:disabled{opacity:.25}
+  .rk-mnav b{min-width:96px; text-align:center; font-size:15px}
+  .rk-seg{display:flex; margin-left:auto; background:var(--line); border-radius:12px; padding:3px}
+  .rk-seg button{border:0; background:none; padding:9px 14px; border-radius:9px; font-weight:800; font-size:14px; color:var(--ink2)}
+  .rk-seg button.on{background:var(--card); color:var(--blue); box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .rk-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:12px}
+  .rk-card h2{margin:0 0 10px; font-size:16px; display:flex; align-items:center; gap:6px}
+  .rk-card h2 small{margin-left:auto; font-size:12px; color:var(--ink3); font-weight:600}
+  .rk-hero{background:linear-gradient(135deg,#0f172a,#1e3a8a); color:#fff; border:0}
+  .rk-hero .k{font-size:13px; color:#bfdbfe; font-weight:700}
+  .rk-hero .big{font-size:30px; font-weight:900; letter-spacing:-.5px; margin:2px 0}
+  .rk-hero .big small{font-size:15px; font-weight:700; color:#bfdbfe}
+  .rk-gauge{position:relative; height:16px; background:rgba(255,255,255,.18); border-radius:99px; overflow:hidden; margin:10px 0 6px}
+  .rk-gauge i{position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#22d3ee,#4ade80); border-radius:99px}
+  .rk-hero .row{display:flex; justify-content:space-between; font-size:12.5px; color:#dbeafe}
+  .rk-hero .msg{margin-top:10px; background:rgba(255,255,255,.12); border-radius:12px; padding:9px 11px; font-size:13.5px; line-height:1.5}
+  .rk-legend{display:flex; gap:14px; font-size:12px; color:var(--ink2); margin:-4px 0 4px}
+  .rk-legend i{display:inline-block; width:18px; vertical-align:middle; margin-right:5px; border-radius:4px; background:#94a3b8}
+  .rk-legend .l1{height:12px} .rk-legend .l2{height:6px; background:#cbd5e1}
+  .rk-row{display:flex; align-items:center; gap:8px; margin:12px 0}
+  .rk-row.me{background:var(--sel-bg); border-radius:12px; padding:6px 8px; margin-left:-8px; margin-right:-8px}
+  .rk-medal{flex:none; width:34px; height:34px; display:grid; place-items:center; font-size:22px}
+  .rk-body{flex:1; min-width:0}
+  .rk-nm{display:flex; align-items:baseline; gap:6px; font-weight:800; font-size:15px; flex-wrap:wrap}
+  .rk-nm .me{font-size:11px; background:var(--blue); color:#fff; border-radius:6px; padding:1px 6px}
+  .rk-nm .amt{margin-left:auto; font-size:15px; font-variant-numeric:tabular-nums}
+  .rk-chip{display:inline-block; border-radius:99px; padding:1px 8px; font-size:11.5px; font-weight:800}
+  .rk-chip.up{background:var(--green-bg); color:var(--green)} .rk-chip.dn{background:var(--red-bg); color:var(--red)}
+  .rk-bar{height:22px; background:var(--slate-bg); border:1px solid var(--line); border-radius:8px; margin-top:5px; position:relative; overflow:hidden}
+  .rk-bar i{position:absolute; left:0; top:0; bottom:0; border-radius:7px}
+  .rk-bar.pay{height:11px; margin-top:4px; border-radius:6px}      /* 수금 막대 — 매출 막대의 절반 두께 */
+  .rk-pay{font-size:12.5px; color:var(--ink2); margin-top:4px; font-variant-numeric:tabular-nums}
+  .rk-pay .ok{color:var(--green)} .rk-pay .mid{color:var(--amber)} .rk-pay .low{color:var(--red)}
+  .rk-gap{font-size:12.5px; color:var(--amber); font-weight:700; margin-top:3px}
+  .rk-gap.lead{color:var(--green)}
+  .rk-mine{border-color:var(--what-line); background:var(--sel-bg)}
+  .rk-yoy{margin:12px 0}
+  .rk-yoy .top{display:flex; justify-content:space-between; font-size:13.5px; font-weight:700}
+  .rk-yoy .track{position:relative; height:14px; background:var(--slate-bg); border:1px solid var(--line); border-radius:99px; margin-top:6px}
+  .rk-yoy .track i{position:absolute; left:0; top:0; bottom:0; border-radius:99px}
+  .rk-yoy .track u{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ink)}
+  .rk-yoy .sub{font-size:12px; color:var(--ink2); margin-top:4px; font-variant-numeric:tabular-nums}
+  .rk-badges{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .rk-badge{border:1px solid var(--line); border-radius:12px; padding:9px 10px; background:var(--slate-bg)}
+  .rk-badge .e{font-size:24px} .rk-badge b{display:block; font-size:13.5px; margin-top:2px} .rk-badge span{font-size:12px; color:var(--ink2)}
+  .rk-badge.got{background:var(--amber-bg); border-color:var(--amber-line)}
+  .rk-badge.lock{opacity:.55}
+  .rk-svg text{font-family:inherit}
 </style>
 <script>
 /* 고른 화면 색을 그리기 전에 입혀야 깜빡임이 없다. 그래서 여기(머리)에서 한 번 적용한다. */
@@ -958,6 +1012,16 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
     <div id="inList"></div>
   </div>
 
+  <!-- ─── 🏆 영업 순위 (영업·관리만 — 물류는 탭이 없고 서버도 막는다) ─── -->
+  <div class="wrap view hidden" id="v-rank">
+    <div class="rk-period">
+      <div class="rk-mnav"><button id="rkPrev" aria-label="이전 달">‹</button><b id="rkLabel"></b><button id="rkNext" aria-label="다음 달">›</button></div>
+      <div class="rk-seg" id="rkSeg"><button data-mode="month" class="on">월별</button><button data-mode="ytd">누계</button></div>
+    </div>
+    <div id="rkRoot"><div class="card muted tiny">불러오는 중…</div></div>
+    <div class="tiny muted" id="rkFoot" style="text-align:center; margin:4px 0 20px"></div>
+  </div>
+
   <!-- ─── 재고 ─── -->
   <div class="wrap view hidden" id="v-stock">
     <div class="card">
@@ -1302,6 +1366,7 @@ function start(){
     show(d.me.role === '물류' ? 'ship' : 'write');
     pushSync();   // 휴대폰 알림 — 홈페이지 출하앱에서만
     if (PUSH.note){ var nt = PUSH.note; PUSH.note = null; showNote(nt); }   // 알림을 눌러 열었으면 그 내용
+    else if (/(\?|&)rank\b/.test(location.search) && d.me.role !== '물류') show('rank');   // 순위 알림 링크
   }).catch(function(e){
     LS.del('af_token');
     S.token = '';
@@ -1314,7 +1379,7 @@ function start(){
 
 function buildTabs(role){
   var t = [];
-  if (role !== '물류') t.push(['write','주문 입력'], ['mine','내 주문'], ['close','일일 마감']);
+  if (role !== '물류') t.push(['write','주문 입력'], ['mine','내 주문'], ['close','일일 마감'], ['rank','🏆 순위']);   // 순위는 영업·관리만
   if (role !== '영업') t.push(['ship','오늘 출고'], ['in','입고']);
   t.push(['stock','재고']);
   // 정산은 영업·관리만. 물류는 남의 거래처 돈을 볼 일이 없다 (서버도 막는다)
@@ -1341,6 +1406,7 @@ function show(v){
   if (v === 'in'){ loadReceipts(); loadMoves(); }
   if (v === 'stock') loadStock();
   if (v === 'settle') loadSettle();
+  if (v === 'rank') loadRank();
 }
 
 /* ═══════════════════ 재고없음 알림 ═══════════════════ */
@@ -3956,6 +4022,8 @@ if (PUSH.ok) navigator.serviceWorker.addEventListener('message', function(e){
 function showNote(n){
   if (!n) return;
   var tag = String(n.tag || ''), test = tag.indexOf('t-') === 0;
+  // 순위 알림(rank-…)은 창 대신 순위 탭을 연다 — 물류는 탭이 없으니 그냥 둔다
+  if (tag.indexOf('rank') === 0){ if (S.me && S.me.role !== '물류') show('rank'); return; }
   var kind = (test ? tag.slice(2) : tag).charAt(0);          // o · r · d
   var oid = test ? '' : tag.slice(2);
   var order = kind === 'o' || kind === 'r';
@@ -3974,6 +4042,188 @@ function showNote(n){
       }).catch(function(e){ toast(e.message, 'err'); });
     });
 }
+
+/* ═══════════════════ 🏆 영업 순위 (영업·관리만) ═══════════════════
+   서버 api_ranking 이 올해·작년·수금·미수를 월별로 한 번에 내려준다 (5분 캐시). 기간 바꾸기는 받은 자료로만 다시 그린다.
+   올해 = 일자별전체 샘플 제외 + 이관 전 출고완료 / 목표 = 작년 같은 기간 (24~25년실적 정상, 양길호→박태진)
+   수금 = 「수금」 탭 입금(개인 포함) + 농협 출고 / 수금율 = 1월~고른 달 누계 / 미수 = 정산 화면과 같은 잔액 */
+var RK = { d: null, m: 0, mode: 'month', busy: false };
+var RK_COLOR = ['#0891b2', '#2563eb', '#f59e0b', '#7c3aed', '#16a34a'];
+var RK_LIGHT = ['#67e8f9', '#93c5fd', '#fcd34d', '#c4b5fd', '#86efac'];
+
+function rkMan(n){
+  if (Math.abs(n) >= 100000000) return (Math.round(n / 1000000) / 100) + '억';
+  return Math.round(n / 10000).toLocaleString('ko-KR') + '만';
+}
+function rkSum(o, a, b){ var s = 0; o = o || {}; for (var k = a; k <= b; k++) s += Number(o[k]) || 0; return s; }
+function rkPct(a, b){ return b > 0 ? Math.round(a / b * 1000) / 10 : 0; }
+
+function loadRank(fresh){
+  if (RK.busy) return;
+  RK.busy = true;
+  if (!RK.d) $('#rkRoot').innerHTML = '<div class="card muted tiny">순위를 계산하는 중… (처음엔 10초쯤 걸립니다)</div>';
+  call('api_ranking', S.token, !!fresh).then(function(d){
+    RK.d = d;
+    if (!RK.m) RK.m = d.m;
+    renderRank();
+  }).catch(function(e){
+    $('#rkRoot').innerHTML = '<div class="card tiny" style="color:var(--red)">' + esc(e.message) + '</div>';
+  }).then(function(){ RK.busy = false; });
+}
+
+function renderRank(){
+  var D = RK.d;
+  if (!D) return;
+  var ytd = RK.mode === 'ytd', cur = RK.m === D.m;
+  var from = ytd ? 1 : RK.m, to = RK.m;
+  var label = ytd ? '1~' + RK.m + '월 누계' : RK.m + '월';
+  var lyLabel = ytd ? '작년 1~' + RK.m + '월' : '작년 ' + RK.m + '월';
+  var ME = (S.me && S.me.role === '영업') ? (S.me.tab || S.me.name) : '';
+  $('#rkLabel').textContent = D.y + '년 ' + RK.m + '월';
+  $('#rkPrev').disabled = RK.m <= 1;
+  $('#rkNext').disabled = RK.m >= D.m;
+  $$('#rkSeg button').forEach(function(b){ b.classList.toggle('on', b.dataset.mode === RK.mode); });
+
+  var col = {}, light = {};
+  D.reps.forEach(function(n, i){ col[n] = RK_COLOR[i % RK_COLOR.length]; light[n] = RK_LIGHT[i % RK_LIGHT.length]; });
+  var reps = D.reps.map(function(n){
+    var cumIn = rkSum(D.PAY[n], 1, to) + rkSum(D.NH[n], 1, to);
+    var cumBill = rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to);
+    return { n: n, amt: rkSum(D.Y[n], from, to), ly: rkSum(D.LY[n], from, to),
+             bank: rkSum(D.PAY[n], from, to), nh: rkSum(D.NH[n], from, to),
+             paid: rkSum(D.PAY[n], from, to) + rkSum(D.NH[n], from, to),
+             rate: rkPct(cumIn, cumBill), ar: Number(D.AR[n]) || 0 };
+  }).sort(function(a, b){ return b.amt - a.amt; });
+  var team = reps.reduce(function(s, r){ return s + r.amt; }, 0);
+  var teamLy = reps.reduce(function(s, r){ return s + r.ly; }, 0);
+  var teamIn = 0, teamBill = 0;
+  D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(D.NH[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
+  var teamAr = D.reps.reduce(function(s, n){ return s + (Number(D.AR[n]) || 0); }, 0);
+  var meIdx = -1;
+  reps.forEach(function(r, i){ if (r.n === ME) meIdx = i; });
+  var html = '';
+
+  /* ① 팀 목표 — 작년 같은 기간 대비 */
+  var tp = rkPct(team, teamLy);
+  html += '<div class="rk-card rk-hero"><div class="k">🚩 팀 목표 · ' + lyLabel + ' 넘기기</div>' +
+    '<div class="big">' + tp + '% <small>' + (cur ? '달성 중' : '달성') + '</small></div>' +
+    '<div class="rk-gauge"><i style="width:' + Math.min(100, Math.max(0, tp)) + '%"></i></div>' +
+    '<div class="row"><span>올해 ' + rkMan(team) + '</span><span>' + lyLabel + ' ' + rkMan(teamLy) + '</span></div>' +
+    '<div class="row" style="margin-top:6px"><span>💰 팀 수금율(누계) <b>' + rkPct(teamIn, teamBill) + '%</b></span>' +
+      '<span>남은 미수 <b>' + rkMan(teamAr) + '</b></span></div>' +
+    (cur ? (team < teamLy
+        ? '<div class="msg">남은 평일 <b>' + D.daysLeft + '일</b>' + (D.daysLeft ? ' · 하루 <b>' + rkMan((teamLy - team) / D.daysLeft) + '원</b>씩이면 작년을 넘습니다 💪' : '') + '</div>'
+        : '<div class="msg">🎉 작년을 이미 넘었습니다! 이대로 신기록 가자!</div>')
+      : '<div class="msg">' + (tp >= 100 ? '🎉 이 기간은 작년을 넘었습니다' : '이 기간은 작년의 ' + tp + '%로 마감했습니다') + '</div>') +
+  '</div>';
+
+  /* ② 순위 — 매출 막대 + 수금 막대(절반 두께) */
+  var max = Math.max(1, reps[0] ? reps[0].amt : 1, Math.max.apply(null, reps.map(function(r){ return r.paid; })));
+  html += '<div class="rk-card"><h2>🏆 ' + label + ' 매출 순위 <small>출고완료 · 샘플 제외</small></h2>' +
+    '<div class="rk-legend"><span><i class="l1"></i>매출</span><span><i class="l2"></i>수금 (통장 입금 + 농협)</span></div>';
+  reps.forEach(function(r, i){
+    var p = rkPct(r.amt, r.ly), gap = i > 0 ? reps[i - 1].amt - r.amt : 0;
+    html += '<div class="rk-row' + (r.n === ME ? ' me' : '') + '"><div class="rk-medal">' + (['🥇','🥈','🥉'][i] || (i + 1)) + '</div><div class="rk-body">' +
+      '<div class="rk-nm">' + esc(r.n) + (r.n === ME ? '<span class="me">나</span>' : '') +
+        ' <span class="rk-chip ' + (p >= 100 ? 'up' : 'dn') + '">작년비 ' + p + '%</span><span class="amt">' + won(r.amt) + '</span></div>' +
+      '<div class="rk-bar"><i style="width:' + Math.max(3, r.amt / max * 100) + '%; background:' + col[r.n] + '"></i></div>' +
+      '<div class="rk-bar pay"><i style="width:' + Math.max(2, r.paid / max * 100) + '%; background:' + light[r.n] + '"></i></div>' +
+      // 통장 입금과 농협분을 나눠 적는다 — 합쳐만 두면 모두 통장에 들어온 돈으로 오해한다 (R18)
+      '<div class="rk-pay">수금 <b>' + won(r.paid) + '</b> <span class="tiny">(통장 ' + rkMan(r.bank) + ' · 농협 ' + rkMan(r.nh) + ')</span></div>' +
+      '<div class="rk-pay">수금율 <b class="' + (r.rate >= 80 ? 'ok' : r.rate >= 60 ? 'mid' : 'low') + '">' + r.rate + '%</b> <span class="tiny">(누계)</span> · 미수 <b>' + rkMan(r.ar) + '</b></div>' +
+      (i > 0 ? '<div class="rk-gap">↑ ' + i + '위까지 ' + won(gap) + '</div>'
+             : '<div class="rk-gap lead">👑 ' + (cur ? '지금 선두!' : '이 기간 1위') + '</div>') +
+    '</div></div>';
+  });
+  html += '</div>';
+
+  /* ③ 내 상황 (영업만) */
+  if (meIdx >= 0){
+    var me = reps[meIdx];
+    html += '<div class="rk-card rk-mine"><h2>🙋 ' + esc(ME) + ' 님은 ' + (meIdx + 1) + '위</h2><div style="font-size:14.5px; line-height:1.7">' +
+      (meIdx > 0 ? '· <b>' + esc(reps[meIdx - 1].n) + '</b> 님까지 <b>' + won(reps[meIdx - 1].amt - me.amt) + '</b><br>'
+                 : (reps[1] ? '· 2위 <b>' + esc(reps[1].n) + '</b> 님과 <b>' + won(me.amt - reps[1].amt) + '</b> 차이로 앞서는 중<br>' : '')) +
+      (me.amt >= me.ly ? '· ' + lyLabel + '(' + rkMan(me.ly) + ')을 <b>넘었습니다 🎉</b>'
+                       : '· ' + lyLabel + '(' + rkMan(me.ly) + ')까지 <b>' + won(me.ly - me.amt) + '</b>' +
+                         (cur && D.daysLeft ? '<br>· 남은 ' + D.daysLeft + '일 동안 하루 <b>' + rkMan((me.ly - me.amt) / D.daysLeft) + '원</b>이면 작년 돌파 🎯' : '')) +
+      '</div></div>';
+  }
+
+  /* ④ 작년 대비 — 세로선 = 작년 100% */
+  var ps = reps.map(function(r){ return rkPct(r.amt, r.ly); });
+  var scale = Math.max(120, Math.ceil(Math.max.apply(null, ps.concat([0])) / 20) * 20);
+  html += '<div class="rk-card"><h2>📈 ' + lyLabel + ' 대비 <small>세로선 = 작년 100%</small></h2>';
+  reps.forEach(function(r, i){
+    var p = ps[i];
+    html += '<div class="rk-yoy"><div class="top"><span>' + esc(r.n) + '</span><span>' + p + '%</span></div>' +
+      '<div class="track"><i style="width:' + Math.min(100, Math.max(0, p) / scale * 100) + '%; background:' + col[r.n] + '"></i><u style="left:' + (100 / scale * 100) + '%"></u></div>' +
+      '<div class="sub">올해 ' + won(r.amt) + ' / 작년 ' + won(r.ly) + (r.n === '박태진' ? ' (양길호 포함)' : '') + (p >= 100 ? ' · 🎉 작년 돌파!' : '') + '</div></div>';
+  });
+  html += '</div>';
+
+  /* ⑤ 레이스 — 월별(이번 달): 날짜별 누적 / 누계: 월별 누적 */
+  var series = null, xmax, xlab;
+  if (ytd){
+    xmax = RK.m; xlab = function(x){ return x + '월'; };
+    series = D.reps.map(function(n){ var s = 0, pts = []; for (var k = 1; k <= RK.m; k++){ s += Number(D.Y[n][k]) || 0; pts.push([k, s]); } return { n: n, pts: pts }; });
+  } else if (cur){
+    xmax = D.d; xlab = function(x){ return x + '일'; };
+    series = D.reps.map(function(n){ var s = 0, pts = []; for (var d = 1; d <= D.d; d++){ s += Number(D.DAYS[n][d]) || 0; pts.push([d, s]); } return { n: n, pts: pts }; });
+  }
+  if (series && xmax > 1){
+    var W = 360, H = 210, L = 44, R = 78, T = 14, B = 26, ymax = 0;
+    series.forEach(function(l){ ymax = Math.max(ymax, l.pts[l.pts.length - 1][1]); });
+    var step = ymax > 200000000 ? 100000000 : ymax > 20000000 ? 10000000 : 1000000;
+    ymax = Math.max(step, Math.ceil(ymax / step) * step);
+    var X = function(x){ return L + (x - 1) / (xmax - 1) * (W - L - R); };
+    var Y = function(v){ return T + (1 - v / ymax) * (H - T - B); };
+    var svg = '<svg class="rk-svg" viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="누적 매출 레이스">';
+    for (var g = 0; g <= ymax; g += step)
+      svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(g) + '" y2="' + Y(g) + '" stroke="#e2e8f0"/>' +
+             '<text x="' + (L - 6) + '" y="' + (Y(g) + 4) + '" font-size="10" text-anchor="end" fill="#94a3b8">' + rkMan(g) + '</text>';
+    var ticks = ytd ? series[0].pts.map(function(p){ return p[0]; }) : [1, Math.ceil(D.d / 2), D.d];
+    ticks.forEach(function(x){ svg += '<text x="' + X(x) + '" y="' + (H - 8) + '" font-size="10" text-anchor="middle" fill="#94a3b8">' + xlab(x) + '</text>'; });
+    series.forEach(function(l){
+      svg += '<polyline points="' + l.pts.map(function(q){ return X(q[0]) + ',' + Y(q[1]); }).join(' ') +
+             '" fill="none" stroke="' + col[l.n] + '" stroke-width="' + (l.n === ME ? 3.5 : 2.2) + '" stroke-linejoin="round"/>';
+    });
+    var ends = series.map(function(l){ var e = l.pts[l.pts.length - 1]; return { n: l.n, x: X(e[0]), y: Y(e[1]), v: e[1] }; })
+                     .sort(function(a, b){ return a.y - b.y; });
+    ends.forEach(function(e){ e.ly = e.y; });
+    for (var i = 1; i < ends.length; i++) if (ends[i].ly - ends[i - 1].ly < 13) ends[i].ly = ends[i - 1].ly + 13;   // 이름표 겹침 피하기
+    ends.forEach(function(e){
+      svg += '<circle cx="' + e.x + '" cy="' + e.y + '" r="4" fill="' + col[e.n] + '"/>' +
+             '<text x="' + (e.x + 7) + '" y="' + (e.ly + 4) + '" font-size="11" font-weight="700" fill="' + col[e.n] + '">' + esc(e.n) + ' ' + rkMan(e.v) + '</text>';
+    });
+    svg += '</svg>';
+    html += '<div class="rk-card"><h2>🏁 ' + (ytd ? '올해 누계 레이스' : RK.m + '월 레이스') + ' <small>' + (ytd ? '월별 누적 매출' : '날짜별 누적 매출') + '</small></h2>' + svg + '</div>';
+  }
+
+  /* ⑥ 배지 */
+  var broke = reps.filter(function(r){ return r.amt >= r.ly && r.amt > 0; }).map(function(r){ return r.n; });
+  var best = null;
+  D.reps.forEach(function(n){ for (var k = 1; k <= D.m; k++){ var v = Number(D.Y[n][k]) || 0; if (!best || v > best.v) best = { n: n, k: k, v: v }; } });
+  var wk = D.reps.slice().sort(function(a, b){ return (D.WEEK[b] || 0) - (D.WEEK[a] || 0); })[0];
+  html += '<div class="rk-card"><h2>🎖️ 배지 <small>' + label + '</small></h2><div class="rk-badges">' +
+    '<div class="rk-badge ' + (broke.length ? 'got' : 'lock') + '"><div class="e">🎯</div><b>작년 돌파</b><span>' + esc(broke.join(', ') || '아직 없음 — 도전!') + '</span></div>' +
+    (reps[0] ? '<div class="rk-badge got"><div class="e">👑</div><b>' + (cur && !ytd ? '이번 달 선두' : '이 기간 1위') + '</b><span>' + esc(reps[0].n) + ' · ' + rkMan(reps[0].amt) + '</span></div>' : '') +
+    (best ? '<div class="rk-badge got"><div class="e">🚀</div><b>올해 최고의 달</b><span>' + esc(best.n) + ' · ' + best.k + '월 ' + rkMan(best.v) + '</span></div>' : '') +
+    (cur && !ytd
+      ? '<div class="rk-badge ' + ((D.WEEK[wk] || 0) > 0 ? 'got' : 'lock') + '"><div class="e">⚡</div><b>이번 주 MVP</b><span>' +
+          ((D.WEEK[wk] || 0) > 0 ? esc(wk) + ' · ' + rkMan(D.WEEK[wk]) + ' (' + D.weekFrom.slice(5).replace('-', '/') + '~)' : '아직 없음') + '</span></div>'
+      : '<div class="rk-badge lock"><div class="e">🔥</div><b>3달 연속 작년 돌파</b><span>도전 중</span></div>') +
+  '</div></div>';
+
+  $('#rkRoot').innerHTML = html;
+  $('#rkFoot').textContent = '계산 ' + D.at + ' · 5분마다 새로 계산 · 미수는 정산 화면과 같은 기준 · 작년 실적 ' + (D.lyRows || 0) + '줄' +
+    (D.payOut && D.payOut.n ? ' · 올해 매출 없는 거래처 입금 ' + D.payOut.n + '건 ' + rkMan(D.payOut.amt) + '은 수금에서 뺌' : '');
+}
+
+$('#rkPrev').addEventListener('click', function(){ if (RK.d && RK.m > 1){ RK.m--; renderRank(); } });
+$('#rkNext').addEventListener('click', function(){ if (RK.d && RK.m < RK.d.m){ RK.m++; renderRank(); } });
+$$('#rkSeg button').forEach(function(b){
+  b.addEventListener('click', function(){ RK.mode = b.dataset.mode; renderRank(); });
+});
 
 /* ═══════════════════ 부팅 ═══════════════════ */
 syncTrade();
