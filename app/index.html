@@ -4061,7 +4061,8 @@ function showNote(n){
   var kind = (test ? tag.slice(2) : tag).charAt(0);          // o · r · d
   var oid = test ? '' : tag.slice(2);
   var order = kind === 'o' || kind === 'r';
-  var canAck = order && S.me && S.me.role !== '영업';
+  // 「준비중」으로 넘기는 건 물류만 — 관리자 폰은 「확인」만 (물류보다 먼저 눌러 상태가 바뀌면 안 된다)
+  var canAck = order && S.me && S.me.role === '물류';
   ask({ title: n.t || '알림', text: n.b || '', ok: canAck ? '확인 — 준비중으로' : '확인', kind: canAck ? 'green' : 'dark' })
     .then(function(v){
       if (v === null || !canAck) return;
