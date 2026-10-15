@@ -1667,7 +1667,7 @@ function renderHist(){
       var h = list[Number(b.dataset.h)];
       $('#fAddr').value = h.addr || '';
       $('#fRcpt').value = h.rcpt || '';
-      $('#fTel').value = h.tel || '';
+      $('#fTel').value = telHyphen(h.tel);
       $('#fNh').value = h.nh || '';
       $('#fFax').value = h.fax || '';
       $('#fDelivery').checked = !!h.nh;
@@ -1701,7 +1701,7 @@ function renderRcptChips(list){
     b.addEventListener('click', function(){
       var p = people[Number(b.dataset.r)];
       $('#fRcpt').value = p.rcpt;
-      if (p.tel) $('#fTel').value = p.tel;
+      if (p.tel) $('#fTel').value = telHyphen(p.tel);
       if (p.addr && !$('#fAddr').value.trim()) $('#fAddr').value = p.addr;
       renderShipTo();
       toast(p.rcpt + ' 앞으로 보냅니다.');
@@ -1782,6 +1782,36 @@ function renderShipTo(){
     (tel ? '<div>📞 ' + esc(tel) + '</div>' : '') +
     (addr ? '<div>📍 ' + esc(addr) + '</div>' : '');
 }
+/**
+ * 연락처에 숫자만 쳐도 하이픈을 넣는다 — 01012345678 → 010-1234-5678.
+ * 02 서울 2-3/4-4 · 그 밖 3-3/4-4 · 1588-0000 같은 대표번호 4-4.
+ * 하이픈이 있어야 시트가 숫자로 바꿔 맨 앞 0 을 떼지 않는다 (서버 telText_ 도 한 번 더 맞춘다).
+ */
+function telHyphen(v){
+  v = String(v == null ? '' : v);
+  if (/[^\d\s\-().]/.test(v)) return v;                     // 「없음」·번호 두 개(,) 같은 글은 건드리지 않는다
+  var d = v.replace(/\D/g, '').slice(0, 11);
+  if (/^1[016789]\d{8}$/.test(d)) d = '0' + d;            // 예전에 0 이 떨어져 저장된 번호
+  if (/^1[5-9]\d{2}/.test(d) && d.length <= 8)             // 대표번호 1588-0000
+    return d.length > 4 ? d.slice(0, 4) + '-' + d.slice(4) : d;
+  var a = /^02/.test(d) ? 2 : 3;
+  if (d.length <= a) return d;
+  if (d.length <= a + 3) return d.slice(0, a) + '-' + d.slice(a);
+  var m = d.length - a - 4;                                 // 가운데 자리 — 끝 4자리를 남긴다
+  if (m < 3) return d.slice(0, a) + '-' + d.slice(a, a + 3) + '-' + d.slice(a + 3);
+  return d.slice(0, a) + '-' + d.slice(a, a + m) + '-' + d.slice(a + m);
+}
+$('#fTel').addEventListener('input', function(){
+  var el = this;
+  // 가운데를 고치는 중에는 커서가 튀지 않게 그대로 두고, 칸을 떠날 때 맞춘다
+  if (el.selectionStart !== el.value.length) return;
+  var f = telHyphen(el.value);
+  if (f !== el.value) el.value = f;
+});
+$('#fTel').addEventListener('blur', function(){
+  var f = telHyphen(this.value);
+  if (f !== this.value){ this.value = f; renderShipTo(); }
+});
 ['#fRcpt', '#fTel', '#fAddr'].forEach(function(sel){
   $(sel).addEventListener('input', renderShipTo);
 });
@@ -2176,7 +2206,7 @@ function fillForm(g, keepDates){
   renderItems();
   $('#fAddr').value = g.addr || '';
   $('#fRcpt').value = g.rcpt || '';
-  $('#fTel').value = g.tel || '';
+  $('#fTel').value = telHyphen(g.tel);
   $('#fNh').value = g.nh || '';
   $('#fFax').value = g.fax || '';
   $('#fDelivery').checked = g.trade === '농협';
