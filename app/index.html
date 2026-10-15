@@ -622,7 +622,15 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   .rk-badge .e{font-size:24px} .rk-badge b{display:block; font-size:13.5px; margin-top:2px} .rk-badge span{font-size:12px; color:var(--ink2)}
   .rk-badge.got{background:var(--amber-bg); border-color:var(--amber-line)}
   .rk-badge.lock{opacity:.55}
-  .rk-svg text{font-family:inherit}
+  .rk-row.pick{cursor:pointer}
+  .rk-row.sel{background:var(--sel-bg); outline:2px solid var(--blue); border-radius:12px; padding:6px 8px; margin-left:-8px; margin-right:-8px}
+  .rk-arhead{display:flex; justify-content:space-between; font-size:13px; color:var(--ink2); margin-bottom:6px}
+  .rk-arlist{max-height:320px; overflow-y:auto; border:1px solid var(--line); border-radius:12px; -webkit-overflow-scrolling:touch}
+  .rk-ar{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid var(--line); font-size:14.5px}
+  .rk-ar:last-child{border-bottom:0}
+  .rk-ar:nth-child(even){background:var(--slate-bg)}
+  .rk-ar b{flex:none; font-variant-numeric:tabular-nums}
+  .rk-ar small{color:var(--ink3); margin-left:6px; font-size:12px}
 </style>
 <script>
 /* 고른 화면 색을 그리기 전에 입혀야 깜빡임이 없다. 그래서 여기(머리)에서 한 번 적용한다. */
@@ -4082,7 +4090,7 @@ function showNote(n){
    서버 api_ranking 이 올해·작년·수금·미수를 월별로 한 번에 내려준다 (5분 캐시). 기간 바꾸기는 받은 자료로만 다시 그린다.
    올해 = 일자별전체 샘플 제외 + 이관 전 출고완료 / 목표 = 작년 같은 기간 (24~25년실적 정상, 양길호→박태진)
    수금 = 「수금」 탭 입금(개인 포함) + 농협 출고 / 수금율 = 1월~고른 달 누계 / 미수 = 정산 화면과 같은 잔액 */
-var RK = { d: null, m: 0, mode: 'month', busy: false };
+var RK = { d: null, m: 0, mode: 'month', busy: false, sel: '' };   // sel = 관리가 고른 담당자 (미수 목록)
 var RK_COLOR = ['#0891b2', '#2563eb', '#f59e0b', '#7c3aed', '#16a34a'];
 var RK_LIGHT = ['#67e8f9', '#93c5fd', '#fcd34d', '#c4b5fd', '#86efac'];
 
@@ -4109,6 +4117,7 @@ function loadRank(fresh){
 function renderRank(){
   var D = RK.d;
   if (!D) return;
+  var CASH = D.CASH || {};   // 「수금」 탭 오른쪽 현금입금 (서버가 통장과 중복·매출 없는 이름은 뺐다)
   var ytd = RK.mode === 'ytd', cur = RK.m === D.m;
   var from = ytd ? 1 : RK.m, to = RK.m;
   var label = ytd ? '1~' + RK.m + '월 누계' : RK.m + '월';
@@ -4122,17 +4131,17 @@ function renderRank(){
   var col = {}, light = {};
   D.reps.forEach(function(n, i){ col[n] = RK_COLOR[i % RK_COLOR.length]; light[n] = RK_LIGHT[i % RK_LIGHT.length]; });
   var reps = D.reps.map(function(n){
-    var cumIn = rkSum(D.PAY[n], 1, to) + rkSum(D.NH[n], 1, to);
+    var cumIn = rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to);
     var cumBill = rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to);
     return { n: n, amt: rkSum(D.Y[n], from, to), ly: rkSum(D.LY[n], from, to),
-             bank: rkSum(D.PAY[n], from, to), nh: rkSum(D.NH[n], from, to),
-             paid: rkSum(D.PAY[n], from, to) + rkSum(D.NH[n], from, to),
+             bank: rkSum(D.PAY[n], from, to), cash: rkSum(CASH[n], from, to), nh: rkSum(D.NH[n], from, to),
+             paid: rkSum(D.PAY[n], from, to) + rkSum(CASH[n], from, to) + rkSum(D.NH[n], from, to),
              rate: rkPct(cumIn, cumBill), ar: Number(D.AR[n]) || 0 };
   }).sort(function(a, b){ return b.amt - a.amt; });
   var team = reps.reduce(function(s, r){ return s + r.amt; }, 0);
   var teamLy = reps.reduce(function(s, r){ return s + r.ly; }, 0);
   var teamIn = 0, teamBill = 0;
-  D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(D.NH[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
+  D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
   var teamAr = D.reps.reduce(function(s, n){ return s + (Number(D.AR[n]) || 0); }, 0);
   var meIdx = -1;
   reps.forEach(function(r, i){ if (r.n === ME) meIdx = i; });
@@ -4155,16 +4164,18 @@ function renderRank(){
   /* ② 순위 — 매출 막대 + 수금 막대(절반 두께) */
   var max = Math.max(1, reps[0] ? reps[0].amt : 1, Math.max.apply(null, reps.map(function(r){ return r.paid; })));
   html += '<div class="rk-card"><h2>🏆 ' + label + ' 매출 순위 <small>출고완료 · 샘플 제외</small></h2>' +
-    '<div class="rk-legend"><span><i class="l1"></i>매출</span><span><i class="l2"></i>수금 (통장 입금 + 농협)</span></div>';
+    '<div class="rk-legend"><span><i class="l1"></i>매출</span><span><i class="l2"></i>수금 (통장 + 현금 + 농협)</span></div>';
   reps.forEach(function(r, i){
     var p = rkPct(r.amt, r.ly), gap = i > 0 ? reps[i - 1].amt - r.amt : 0;
-    html += '<div class="rk-row' + (r.n === ME ? ' me' : '') + '"><div class="rk-medal">' + (['🥇','🥈','🥉'][i] || (i + 1)) + '</div><div class="rk-body">' +
+    // 관리·관제는 줄을 누르면 아래 「거래처별 미수금」이 그 사람으로 바뀐다
+    html += '<div class="rk-row' + (r.n === ME ? ' me' : '') + (!ME ? ' pick' : '') + (!ME && RK.sel === r.n ? ' sel' : '') +
+      '" data-rep="' + esc(r.n) + '"><div class="rk-medal">' + (['🥇','🥈','🥉'][i] || (i + 1)) + '</div><div class="rk-body">' +
       '<div class="rk-nm">' + esc(r.n) + (r.n === ME ? '<span class="me">나</span>' : '') +
         ' <span class="rk-chip ' + (p >= 100 ? 'up' : 'dn') + '">작년비 ' + p + '%</span><span class="amt">' + won(r.amt) + '</span></div>' +
       '<div class="rk-bar"><i style="width:' + Math.max(3, r.amt / max * 100) + '%; background:' + col[r.n] + '"></i></div>' +
       '<div class="rk-bar pay"><i style="width:' + Math.max(2, r.paid / max * 100) + '%; background:' + light[r.n] + '"></i></div>' +
       // 통장 입금과 농협분을 나눠 적는다 — 합쳐만 두면 모두 통장에 들어온 돈으로 오해한다 (R18)
-      '<div class="rk-pay">수금 <b>' + won(r.paid) + '</b> <span class="tiny">(통장 ' + rkMan(r.bank) + ' · 농협 ' + rkMan(r.nh) + ')</span></div>' +
+      '<div class="rk-pay">수금 <b>' + won(r.paid) + '</b> <span class="tiny">(통장 ' + rkMan(r.bank) + ' · 현금 ' + rkMan(r.cash) + ' · 농협 ' + rkMan(r.nh) + ')</span></div>' +
       '<div class="rk-pay">수금율 <b class="' + (r.rate >= 80 ? 'ok' : r.rate >= 60 ? 'mid' : 'low') + '">' + r.rate + '%</b> <span class="tiny">(누계)</span> · 미수 <b>' + rkMan(r.ar) + '</b></div>' +
       (i > 0 ? '<div class="rk-gap">↑ ' + i + '위까지 ' + won(gap) + '</div>'
              : '<div class="rk-gap lead">👑 ' + (cur ? '지금 선두!' : '이 기간 1위') + '</div>') +
@@ -4196,43 +4207,35 @@ function renderRank(){
   });
   html += '</div>';
 
-  /* ⑤ 레이스 — 월별(이번 달): 날짜별 누적 / 누계: 월별 누적 */
-  var series = null, xmax, xlab;
-  if (ytd){
-    xmax = RK.m; xlab = function(x){ return x + '월'; };
-    series = D.reps.map(function(n){ var s = 0, pts = []; for (var k = 1; k <= RK.m; k++){ s += Number(D.Y[n][k]) || 0; pts.push([k, s]); } return { n: n, pts: pts }; });
-  } else if (cur){
-    xmax = D.d; xlab = function(x){ return x + '일'; };
-    series = D.reps.map(function(n){ var s = 0, pts = []; for (var d = 1; d <= D.d; d++){ s += Number(D.DAYS[n][d]) || 0; pts.push([d, s]); } return { n: n, pts: pts }; });
+  /* ⑤ 거래처별 미수금 (2026-10-15 — 레이스 그래프 대신)
+     영업: 내 거래처만 (서버가 남의 목록은 아예 안 보낸다) / 관리·관제: 위 순위에서 사람을 누르면 그 사람, 안 누르면 전체
+     금액은 정산 화면 「미수 현황」과 같은 오늘 기준 잔액 — 기간(월·누계)과 상관없다 */
+  var arWho = ME || RK.sel, arList = [];
+  if (!D.ARC){
+    arList = null;
+  } else if (arWho){
+    arList = (D.ARC[arWho] || []).map(function(x){ return { c: x.c, v: x.v }; });
+  } else {
+    D.reps.forEach(function(n){ (D.ARC[n] || []).forEach(function(x){ arList.push({ c: x.c, v: x.v, n: n }); }); });
+    arList.sort(function(a, b){ return b.v - a.v; });
   }
-  if (series && xmax > 1){
-    var W = 360, H = 210, L = 44, R = 78, T = 14, B = 26, ymax = 0;
-    series.forEach(function(l){ ymax = Math.max(ymax, l.pts[l.pts.length - 1][1]); });
-    var step = ymax > 200000000 ? 100000000 : ymax > 20000000 ? 10000000 : 1000000;
-    ymax = Math.max(step, Math.ceil(ymax / step) * step);
-    var X = function(x){ return L + (x - 1) / (xmax - 1) * (W - L - R); };
-    var Y = function(v){ return T + (1 - v / ymax) * (H - T - B); };
-    var svg = '<svg class="rk-svg" viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="누적 매출 레이스">';
-    for (var g = 0; g <= ymax; g += step)
-      svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(g) + '" y2="' + Y(g) + '" stroke="#e2e8f0"/>' +
-             '<text x="' + (L - 6) + '" y="' + (Y(g) + 4) + '" font-size="10" text-anchor="end" fill="#94a3b8">' + rkMan(g) + '</text>';
-    var ticks = ytd ? series[0].pts.map(function(p){ return p[0]; }) : [1, Math.ceil(D.d / 2), D.d];
-    ticks.forEach(function(x){ svg += '<text x="' + X(x) + '" y="' + (H - 8) + '" font-size="10" text-anchor="middle" fill="#94a3b8">' + xlab(x) + '</text>'; });
-    series.forEach(function(l){
-      svg += '<polyline points="' + l.pts.map(function(q){ return X(q[0]) + ',' + Y(q[1]); }).join(' ') +
-             '" fill="none" stroke="' + col[l.n] + '" stroke-width="' + (l.n === ME ? 3.5 : 2.2) + '" stroke-linejoin="round"/>';
-    });
-    var ends = series.map(function(l){ var e = l.pts[l.pts.length - 1]; return { n: l.n, x: X(e[0]), y: Y(e[1]), v: e[1] }; })
-                     .sort(function(a, b){ return a.y - b.y; });
-    ends.forEach(function(e){ e.ly = e.y; });
-    for (var i = 1; i < ends.length; i++) if (ends[i].ly - ends[i - 1].ly < 13) ends[i].ly = ends[i - 1].ly + 13;   // 이름표 겹침 피하기
-    ends.forEach(function(e){
-      svg += '<circle cx="' + e.x + '" cy="' + e.y + '" r="4" fill="' + col[e.n] + '"/>' +
-             '<text x="' + (e.x + 7) + '" y="' + (e.ly + 4) + '" font-size="11" font-weight="700" fill="' + col[e.n] + '">' + esc(e.n) + ' ' + rkMan(e.v) + '</text>';
-    });
-    svg += '</svg>';
-    html += '<div class="rk-card"><h2>🏁 ' + (ytd ? '올해 누계 레이스' : RK.m + '월 레이스') + ' <small>' + (ytd ? '월별 누적 매출' : '날짜별 누적 매출') + '</small></h2>' + svg + '</div>';
-  }
+  var arSum = (arList || []).reduce(function(s, x){ return s + x.v; }, 0);
+  html += '<div class="rk-card" id="rkAr"><h2>💳 거래처별 미수금 <small>' + esc(arWho || '전체 담당자') + ' · 오늘 기준</small></h2>' +
+    (arList === null ? '<div class="tiny muted">서버를 새 버전으로 배포하면 보입니다.</div>'
+     : !arList.length ? '<div class="tiny muted" style="padding:8px 0">남은 미수가 없습니다 🎉</div>'
+     : '<div class="rk-arhead"><span>' + arList.length + '곳</span><span>합계 <b>' + won(arSum) + '</b></span></div>' +
+       '<div class="rk-arlist">' + arList.map(function(x){
+          return '<div class="rk-ar"><span>' + esc(x.c) + (x.n ? '<small>' + esc(x.n) + '</small>' : '') + '</span><b>' + won(x.v) + '</b></div>';
+        }).join('') + '</div>') +
+    // 위 카드의 「미수」는 더 받은 돈(선수금)이 있는 거래처를 빼고 더한 값이라 목록 합계보다 작을 수 있다 — 차이를 적어 둔다
+    (function(){
+      if (!arList) return '';
+      var card = arWho ? (Number(D.AR[arWho]) || 0) : D.reps.reduce(function(s, n){ return s + (Number(D.AR[n]) || 0); }, 0);
+      var gap = Math.round(arSum - card);
+      return gap >= 1 ? '<div class="tiny muted" style="margin-top:6px">더 받은 돈(선수금) ' + won(gap) + '이 있는 거래처가 있어, 위 순위 카드의 미수(' + rkMan(card) + ')는 이만큼 작게 나옵니다.</div>' : '';
+    })() +
+    (!ME ? '<div class="tiny muted" style="margin-top:6px">위 매출 순위에서 이름을 누르면 그 사람 거래처만 봅니다. 한 번 더 누르면 전체.</div>' : '') +
+  '</div>';
 
   /* ⑥ 배지 */
   var broke = reps.filter(function(r){ return r.amt >= r.ly && r.amt > 0; }).map(function(r){ return r.n; });
@@ -4250,8 +4253,16 @@ function renderRank(){
   '</div></div>';
 
   $('#rkRoot').innerHTML = html;
-  $('#rkFoot').textContent = '계산 ' + D.at + ' · 5분마다 새로 계산 · 미수는 정산 화면과 같은 기준 · 작년 실적 ' + (D.lyRows || 0) + '줄' +
-    (D.payOut && D.payOut.n ? ' · 올해 매출 없는 거래처 입금 ' + D.payOut.n + '건 ' + rkMan(D.payOut.amt) + '은 수금에서 뺌' : '');
+  $$('#rkRoot .rk-row.pick').forEach(function(el){
+    el.addEventListener('click', function(){
+      RK.sel = RK.sel === el.dataset.rep ? '' : el.dataset.rep;
+      renderRank();
+      var box = document.getElementById('rkAr');
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+  $('#rkFoot').textContent = '계산 ' + D.at + ' · 5분마다 새로 계산 · 미수 = 정산 화면 계산 + 현금입금 반영 · 작년 실적 ' + (D.lyRows || 0) + '줄' +
+    (D.payOut && D.payOut.n ? ' · 올해 매출 없는 거래처 입금 ' + D.payOut.n + '건 ' + rkMan(D.payOut.amt) + '은 수금에서 뺌' + (D.payOut.names && D.payOut.names.length ? ' (현금 표: ' + D.payOut.names.join(', ') + ')' : '') : '');
 }
 
 $('#rkPrev').addEventListener('click', function(){ if (RK.d && RK.m > 1){ RK.m--; renderRank(); } });
