@@ -2362,7 +2362,8 @@ function shipMatch(st, f){
 function shipFiltered(){
   var d = S.ship;
   if (!d) return [];
-  return (d.groups || []).filter(function(g){ return shipMatch(g.status, S.filter); });
+  // 취소된 주문은 물류 목록·인쇄에 넣지 않는다 — 택배로 잘못 보낼 수 있다 (서버도 빼지만 옛 서버 대비)
+  return (d.groups || []).filter(function(g){ return g.status !== '취소' && shipMatch(g.status, S.filter); });
 }
 
 /* 인쇄 — 앱 화면은 구글 안쪽 틀에 들어 있어 폰에서 window.print() 가 먹지 않는다.
@@ -2402,8 +2403,11 @@ function shipPrintHtml(){
       '<td><b>' + esc2(g.cust) + '</b>' + (g.nh ? '<br><span class="s">농협 ' + esc2(g.nh) + '</span>' : '') +
         (g.rep ? '<br><span class="s">' + esc2(g.rep) + '</span>' : '') + '</td>' +
       '<td>' + esc2(g.rcpt) + (g.tel ? '<br><span class="s">' + esc2(g.tel) + '</span>' : '') + '</td>' +
-      '<td>' + esc2(g.addr) +
-        (g.memo ? '<br><span class="s">📝 ' + esc2(g.memo) + '</span>' : '') +
+      // 주소가 비면 빈칸 대신 빨간 표시 — 택배사로 넘기기 전에 눈에 띄게
+      '<td>' + (String(g.addr || '').trim() ? esc2(g.addr) : '<b class="rd">⚠ 주소 없음</b>') +
+        // 영업메모가 주소와 똑같으면 한 번만 (「이준희 직접출고」가 두 줄로 나오던 것)
+        (g.memo && String(g.memo).trim() !== String(g.addr || '').trim()
+          ? '<br><span class="s">📝 ' + esc2(g.memo) + '</span>' : '') +
         (g.lmemo ? '<br><span class="s">🚚 ' + esc2(g.lmemo) + '</span>' : '') + '</td>' +
       '<td>' + g.items.map(function(it){
         return esc2(it.prod) + ' ' + esc2(it.size) + ' <b>' + it.qty + '</b>' + (it.sample ? ' (샘플)' : '');
