@@ -1346,6 +1346,7 @@ function renderRank(){
   var D = RK.d;
   if (!D) return;
   var CASH = D.CASH || {};   // 「수금」 탭 오른쪽 현금입금 (서버가 통장과 중복·매출 없는 이름은 뺐다)
+  var DED  = D.DED  || {};   // 「정산공제」 — 대리점수수료·할인·상계. 현금은 아니지만 받을 돈이 사라진 것이라 수금으로 친다
   var ytd = RK.mode === 'ytd', cur = RK.m === D.m;
   var from = ytd ? 1 : RK.m, to = RK.m;
   var label = ytd ? '1~' + RK.m + '월 누계' : RK.m + '월';
@@ -1359,17 +1360,18 @@ function renderRank(){
   var col = {}, light = {};
   D.reps.forEach(function(n, i){ col[n] = RK_COLOR[i % RK_COLOR.length]; light[n] = RK_LIGHT[i % RK_LIGHT.length]; });
   var reps = D.reps.map(function(n){
-    var cumIn = rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to);
+    var cumIn = rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to) + rkSum(DED[n], 1, to);
     var cumBill = rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to);
     return { n: n, amt: rkSum(D.Y[n], from, to), ly: rkSum(D.LY[n], from, to),
              bank: rkSum(D.PAY[n], from, to), cash: rkSum(CASH[n], from, to), nh: rkSum(D.NH[n], from, to),
-             paid: rkSum(D.PAY[n], from, to) + rkSum(CASH[n], from, to) + rkSum(D.NH[n], from, to),
+             ded: rkSum(DED[n], from, to),
+             paid: rkSum(D.PAY[n], from, to) + rkSum(CASH[n], from, to) + rkSum(D.NH[n], from, to) + rkSum(DED[n], from, to),
              rate: rkPct(cumIn, cumBill), ar: Number(D.AR[n]) || 0 };
   }).sort(function(a, b){ return b.amt - a.amt; });
   var team = reps.reduce(function(s, r){ return s + r.amt; }, 0);
   var teamLy = reps.reduce(function(s, r){ return s + r.ly; }, 0);
   var teamIn = 0, teamBill = 0;
-  D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
+  D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to) + rkSum(DED[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
   var teamAr = D.reps.reduce(function(s, n){ return s + (Number(D.AR[n]) || 0); }, 0);
   var meIdx = -1;
   reps.forEach(function(r, i){ if (r.n === ME) meIdx = i; });
@@ -1609,7 +1611,10 @@ function loadDashOrders(){
       '<thead><tr><th>주문일</th><th>담당자</th><th>거래처</th><th>품목</th><th class="num">수량</th>' +
       '<th class="num">금액</th><th>창고</th><th>구분</th><th>상태</th></tr></thead><tbody>' +
       (d.groups.length ? d.groups.map(function(g){
-        return '<tr><td class="tiny">' + esc(g.date) + '</td><td>' + esc(g.rep) + '</td>' +
+        return '<tr><td class="tiny">' + esc(g.date) +
+            // 주문이 들어온 시각 — 같은 날 주문이 여럿일 때 순서를 보려고 (2026-10-16)
+            (g.received ? '<br><span class="muted">접수 ' + esc(g.received) + '</span>' : '') + '</td>' +
+          '<td>' + esc(g.rep) + '</td>' +
           '<td><b>' + esc(g.cust) + '</b></td>' +
           '<td class="tiny">' + g.items.map(function(it){
             return esc(it.prod) + ' ' + esc(it.size) + ' <b>' + it.qty + '</b>' + (it.sample ? ' <span class="badge b-재고없음">샘플</span>' : '');
@@ -1696,7 +1701,9 @@ function renderOrders(){
     return '<tr data-oid="' + esc(g.oid) + '"' + (S.sel[g.oid] ? ' class="picked"' : '') + '>' +
       '<td><input type="checkbox" class="pick" data-oid="' + esc(g.oid) + '"' +
         (S.sel[g.oid] ? ' checked' : '') + '></td>' +
-      '<td class="tiny">' + esc(g.date) + '<br><span class="muted">→ ' + esc(g.shipDate) + '</span></td>' +
+      '<td class="tiny">' + esc(g.date) + '<br><span class="muted">→ ' + esc(g.shipDate) + '</span>' +
+        // 주문이 들어온 시각 — 같은 날 주문이 여럿일 때 순서를 보려고 (2026-10-16)
+        (g.received ? '<br><span class="muted">접수 ' + esc(g.received) + '</span>' : '') + '</td>' +
       '<td>' + esc(g.rep) + '</td>' +
       '<td><b>' + esc(g.cust) + '</b>' + dlvBadge(g) +
         '<br><span class="tiny muted">' + esc(g.si) + ' ' + esc(g.gun) + '</span></td>' +
