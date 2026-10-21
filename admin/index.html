@@ -514,6 +514,7 @@
     <button data-v="stock">재고 · 입고</button>
     <button data-v="region">지역별 실적</button>
     <button data-v="moves">창고 이동</button>
+    <button data-v="dlvlog">🚚 농협배송정보</button>
     <button data-v="settle">정산내역서</button>
     <button data-v="refs">기준자료</button>
     <button data-v="rank">🏆 순위</button>
@@ -604,6 +605,43 @@
             <button class="btn sm dark" id="btnBulk">적용</button>
           </div>
           <div class="scroll"><table id="ordTable"></table></div>
+        </div>
+      </div>
+
+      <!-- ───────── 농협배송정보등록 ───────── -->
+      <div class="view" id="v-dlvlog" style="display:none">
+        <div class="card">
+          <div class="row">
+            <div><label class="f">기준</label>
+              <select id="lBasis" style="width:132px">
+                <option value="date">주문일</option>
+                <option value="ship">출하예정일</option>
+              </select>
+            </div>
+            <div><label class="f">시작일</label><input id="lFrom" type="date"></div>
+            <div><label class="f">종료일</label><input id="lTo" type="date"></div>
+            <div><label class="f">보기</label>
+              <select id="lOnly" style="width:150px">
+                <option value="wait" selected>아직 안 한 것</option>
+                <option value="all">전체</option>
+                <option value="done">끝낸 것</option>
+              </select>
+            </div>
+            <div style="align-self:end"><button class="btn dark" id="btnLogLoad">조회</button></div>
+            <div style="align-self:end"><button class="btn sm" id="btnLogMonth">이번 달</button></div>
+          </div>
+          <div class="tiny muted" style="margin-top:10px">
+            영업이 <b>「배송정보 등록」</b>을 켠 주문 — <b>농협이 착지</b>인 건입니다. 배송 표시가 없는 일반 거래는 나오지 않습니다.<br>
+            농협 전산에 들어가 등록 → 거래명세서 출력 → 그 농협으로 팩스. 끝내면 <b>「등록 · 팩스 끝」</b>을 누르세요.<br>
+            누를 때까지 관리자 폰으로 10분마다 알림이 갑니다. 알림창을 닫아도 이 표에서 다시 볼 수 있습니다.
+          </div>
+        </div>
+        <div class="card">
+          <div class="row" style="margin-bottom:12px">
+            <b id="logCount">—</b><span class="grow"></span>
+            <span class="tiny muted" id="logWait"></span>
+          </div>
+          <div class="scroll"><table id="logTable"></table></div>
         </div>
       </div>
 
@@ -769,7 +807,7 @@
 <div class="drawer" id="drawer"><div class="panel" id="drawerPanel"></div></div>
 <div id="modal"></div>
 <div id="dlvBack"><div id="dlvBox">
-  <div class="hd"><h3>배송정보 등록 확인</h3>
+  <div class="hd"><h3>🚚 농협배송정보등록</h3>
     <div class="tiny muted" id="dlvSub"></div></div>
   <div class="body" id="dlvBody"></div>
   <div class="ft">
@@ -924,7 +962,7 @@ function dlvCheck(){
 function dlvOpen(ring){
   if (ring && BELL.on) ding();
   DLV.open = true;
-  $('#dlvSub').textContent = '확인하지 않은 주문 ' + DLV.list.length + '건입니다. 배송정보를 보내신 뒤 「확인 완료」를 누르세요.';
+  $('#dlvSub').textContent = '농협배송정보등록이 남은 주문 ' + DLV.list.length + '건입니다. 농협 전산 등록과 팩스까지 끝내고 누르세요.';
   $('#dlvBody').innerHTML = DLV.list.map(function(g){
     var items = g.items.map(function(it){
       return esc(it.prod) + ' ' + esc(it.size) + ' <b>' + num(it.qty) + '</b>' +
@@ -946,7 +984,7 @@ function dlvOpen(ring){
         row('농협명', g.nh) + row('팩스', g.fax) + row('메모', g.memo) +
       '</dl>' +
       '<div class="items">' + items + '</div>' +
-      '<div class="act"><button class="btn sm green" data-dlv="' + esc(g.oid) + '">확인 완료</button></div>' +
+      '<div class="act"><button class="btn sm green" data-dlv="' + esc(g.oid) + '">등록 · 팩스 끝</button></div>' +
     '</div>';
   }).join('');
   $$('#dlvBody [data-dlv]').forEach(function(b){
@@ -1063,6 +1101,83 @@ function autoStart(){
   AUTO.timer = setInterval(autoTick, AUTO.EVERY);
   setInterval(dayWatch, 60000);   // 날짜만 보는 가벼운 시계 — 자동이 꺼져 있어도 돈다
 }
+
+/* ═══════════════ 농협배송정보등록 내역 ═══════════════
+ * 알림창을 닫은 뒤에도 「언제 몇 번 알렸는지 · 누가 언제 끝냈는지」를 보는 자리.
+ * 배송등록(AC) 칸 한 곳에 둘 다 적혀 있다 —
+ *   아직:  「알림 3회 · 10-22 08:04~09:14」
+ *   끝남:  「완료 10-22 09:20 홍길동 · 알림 3회 · 10-22 08:04~09:14」
+ */
+function loadDlvLog(){
+  $('#logTable').innerHTML = '<tbody><tr><td class="muted">불러오는 중…</td></tr></tbody>';
+  call('api_adminDeliveryLog', S.token, {
+    from: $('#lFrom').value, to: $('#lTo').value,
+    byShipDate: $('#lBasis').value === 'ship', only: $('#lOnly').value
+  }).then(function(d){
+    S.dlvlog = d.groups;
+    $('#logCount').textContent = d.from + ' ~ ' + d.to + ' · ' + d.count + '건';
+    $('#logWait').textContent = d.wait ? ('아직 안 한 것 ' + d.wait + '건') : '모두 끝남';
+    renderDlvLog();
+  }).catch(function(e){
+    $('#logTable').innerHTML = '<tbody><tr><td class="muted">' + esc(e.message) + '</td></tr></tbody>';
+    toast(e.message, 'err');
+  });
+}
+function renderDlvLog(){
+  var list = S.dlvlog || [];
+  var rows = list.map(function(g){
+    // 「완료 … · 알림 …」 을 둘로 가른다
+    var raw = String(g.deliv || '').trim();
+    var done = /^완료/.test(raw);
+    var note = done ? raw.replace(/^완료[^·]*·?\s*/, '') : raw;
+    var who  = done ? raw.replace(/\s*·.*$/, '').replace(/^완료\s*/, '') : '';
+    return '<tr>' +
+      '<td class="tiny">' + esc(g.received || '') + '<br><span class="muted">' + esc(g.oid) + '</span></td>' +
+      '<td><b>' + esc(g.cust) + '</b><br><span class="tiny muted">' + esc(g.si) + ' ' + esc(g.gun) +
+        ' · ' + esc(g.rep) + '</span></td>' +
+      '<td class="tiny">' + esc(g.shipDate) + '<br><span class="muted">' + esc(g.wh) + '</span></td>' +
+      '<td class="tiny">' + (g.nh ? esc(g.nh) + '<br>' : '') +
+        '<span class="muted">' + esc(g.fax || '') + '</span></td>' +
+      // 농협 전산에 등록하려면 제품·용량·수량이 있어야 한다 (2026-10-22 사장님 설명)
+      '<td class="tiny">' + g.items.map(function(it){
+          return esc(it.prod) + ' ' + esc(it.size) + ' <b>' + num(it.qty) + '</b>' +
+            (it.sample ? ' <span class="badge b-재고없음">샘플</span>' : '');
+        }).join('<br>') + '</td>' +
+      '<td class="tiny">' + esc(g.rcpt || '') + (g.tel ? '<br><span class="muted">' + esc(g.tel) + '</span>' : '') +
+        (g.addr ? '<br><span class="muted">' + esc(g.addr) + '</span>' : '') + '</td>' +
+      '<td><span class="badge b-' + esc(g.status) + '">' + esc(g.status) + '</span></td>' +
+      '<td class="tiny">' + (note ? esc(note) : '<span class="muted">보낸 기록 없음</span>') + '</td>' +
+      '<td class="tiny">' + (done
+          ? '<span class="badge b-출고완료">끝남</span><br><span class="muted">' + esc(who) + '</span>'
+          : '<button class="btn sm green" data-logdone="' + esc(g.oid) + '">등록 · 팩스 끝</button>') + '</td>' +
+    '</tr>';
+  }).join('');
+  $('#logTable').innerHTML =
+    '<thead><tr><th>접수시각<br>주문ID</th><th>거래처 · 담당</th><th>출하예정<br>창고</th>' +
+    '<th>농협<br>팩스</th><th>품목 · 수량</th><th>받는분 · 연락처 · 주소</th><th>상태</th>' +
+    '<th>알림 보낸 때</th><th>처리</th></tr></thead>' +
+    '<tbody>' + (rows || '<tr><td colspan="9" class="muted">해당하는 주문이 없습니다.</td></tr>') + '</tbody>';
+  $$('#logTable [data-logdone]').forEach(function(b){
+    b.addEventListener('click', function(){
+      b.disabled = true; b.textContent = '처리 중…';
+      call('api_adminDeliveryDone', S.token, b.dataset.logdone).then(function(){
+        toast('농협배송정보등록 끝 · ' + b.dataset.logdone, 'ok');
+        loadDlvLog();
+        if (DLV.list.length) dlvCheck();      // 떠 있는 알림창도 같이 줄인다
+      }).catch(function(e){
+        b.disabled = false; b.textContent = '등록 · 팩스 끝';
+        toast(e.message, 'err');
+      });
+    });
+  });
+}
+$('#btnLogLoad').addEventListener('click', loadDlvLog);
+$('#lOnly').addEventListener('change', loadDlvLog);
+$('#btnLogMonth').addEventListener('click', function(){
+  var t = ymd(new Date());
+  $('#lFrom').value = t.slice(0, 8) + '01'; $('#lTo').value = t;
+  loadDlvLog();
+});
 
 /** 주문 목록에서 배송등록 건을 한눈에 — 팩스번호가 있으면 배송등록 주문이다 */
 function dlvBadge(g){
@@ -1322,6 +1437,12 @@ $$('#tabs button').forEach(function(b){
     $$('.view').forEach(function(v){ v.style.display = 'none'; });
     $('#v-' + b.dataset.v).style.display = 'block';
     if (b.dataset.v === 'orders' && !S.orders.length) loadOrders();
+    if (b.dataset.v === 'dlvlog' && !S.dlvlog){
+      // 처음 열 때는 이번 달로 — 배송 건은 드물어서 하루치만 보면 거의 비어 있다
+      var t0 = ymd(new Date());
+      if (!$('#lFrom').value){ $('#lFrom').value = t0.slice(0, 8) + '01'; $('#lTo').value = t0; }
+      loadDlvLog();
+    }
     // 셋을 따로 본다 — 「현황」이 먼저 재고를 불러오면 S.stock 이 차서,
     // 한 덩어리로 묶어 두면 입고 품목 목록(기준자료)과 최근 입고가 영영 안 불러와진다.
     if (b.dataset.v === 'stock'){
