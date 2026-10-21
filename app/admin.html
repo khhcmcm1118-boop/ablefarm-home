@@ -1000,8 +1000,35 @@ function autoBusy(){
   if (document.hidden) return '다른 탭';
   return '';
 }
+/* 날짜 넘김 — 화면을 밤새 켜 두면 「오늘」이 어제에 멈춘다 (2026-10-21 사장님 지적).
+ * 날이 바뀌었으면 오른쪽 「오늘」 칸을 고치고,
+ * **어제 날짜 그대로였던 조회칸만** 새 날짜로 옮긴다 (사람이 따로 고른 기간은 건드리지 않는다).
+ * 바뀌었으면 true.
+ */
+function rollDay(){
+  var t = ymd(new Date());
+  if (!S.today){ S.today = t; return false; }
+  if (t === S.today) return false;
+  var old = S.today;
+  S.today = t;
+  $('#railToday').textContent = dayText(t);
+  if ($('#dFrom').value === old) $('#dFrom').value = t;
+  if ($('#dTo').value === old) $('#dTo').value = t;
+  if ($('#oTo').value === old){
+    $('#oTo').value = t;
+    if ($('#oFrom').value === addDays(old, -7)) $('#oFrom').value = addDays(t, -7);
+  }
+  if ($('#inDate').value === old) $('#inDate').value = t;
+  return true;
+}
+/* 1분마다 날짜만 본다 — 자동 새로고침을 꺼 두어도 「오늘」은 맞게 둔다 (서버를 부르지 않는다) */
+function dayWatch(){
+  if (autoBusy()) return;
+  if (rollDay() && AUTO.on) autoTick();
+}
 function autoTick(){
   if (!AUTO.on || autoBusy()) return;
+  rollDay();
   var b = $$('#tabs button.on')[0];
   var kind = b ? b.dataset.v : '';
   if (kind === 'dash') loadDash();
@@ -1024,7 +1051,9 @@ $('#btnAuto').addEventListener('click', function(){
 });
 // 다른 탭을 보다가 돌아오면 바로 한 번 읽는다 — 오래된 화면을 그대로 두지 않도록
 document.addEventListener('visibilitychange', function(){
-  if (!document.hidden) autoTick();
+  if (document.hidden) return;
+  rollDay();       // 밤새 다른 탭에 있다 돌아왔을 수도 있다
+  autoTick();
 });
 function autoStart(){
   if (AUTO.timer) return;
@@ -1032,6 +1061,7 @@ function autoStart(){
   AUTO.on = saved ? saved === '1' : true;
   renderAuto();
   AUTO.timer = setInterval(autoTick, AUTO.EVERY);
+  setInterval(dayWatch, 60000);   // 날짜만 보는 가벼운 시계 — 자동이 꺼져 있어도 돈다
 }
 
 /** 주문 목록에서 배송등록 건을 한눈에 — 팩스번호가 있으면 배송등록 주문이다 */
@@ -1272,6 +1302,7 @@ function start(){
   $('#login').style.display = 'none';
   $('#app').style.display = 'block';
   var t = ymd(new Date());
+  S.today = t;                      // 날이 바뀌었는지 rollDay() 가 이 값과 견준다
   $('#dFrom').value = t; $('#dTo').value = t;
   $('#oFrom').value = addDays(t, -7); $('#oTo').value = t;
   $('#inDate').value = t;
