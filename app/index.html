@@ -445,8 +445,64 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
     .stStage{ max-height:calc(100vh - 250px) }
   }
 
+  /* ══════════ 태블릿 ══════════
+     700~999px — 태블릿 가로·세로가 여기 든다 (안드로이드 태블릿 가로는 800~1024px).
+     전에는 이 구간이 비어 있어 폰 폭(560px) 그대로 쓰고 양옆이 휑했다 (2026-10-22 사장님 지적).
+     컴퓨터만큼 벌리지는 않고 **두 칸**까지만 — 손가락으로 누르기 좋은 크기를 지킨다. */
+  @media (min-width:700px) and (max-width:999px){
+    .wrap{max-width:920px}
+    nav.tabs{max-width:920px}
+    .bar .inner{max-width:920px}
+    #login .wrap{max-width:460px}
+
+    /* 주문 카드·입고·창고이동을 두 칸으로 */
+    #shipList, #mineList, #closeList, #closeByCust, #inList, #moveList{
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+      gap:12px; align-items:start;
+    }
+    #shipList > .ord, #mineList > .ord, #closeList > .ord,
+    #closeByCust > .ord, #inList > .ord, #moveList > .ord,
+    #shipList > .card, #mineList > .card, #closeList > .card,
+    #closeByCust > .card, #inList > .card, #moveList > .card{margin:0}
+    #shipList > .card.muted, #mineList > .card.muted, #closeList > .card.muted,
+    #closeByCust > .card.muted, #inList > .card.muted, #moveList > .card.muted{grid-column:1/-1}
+
+    #lateBox > .card{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:12px}
+    #lateBox > .card > .row:first-child{grid-column:1/-1}
+    #lateBox > .card > .ord{margin:0}
+
+    /* 「오늘 출고」 머리의 숫자칩 — 컴퓨터와 같은 타일로. 알약보다 멀리서 잘 읽힌다 */
+    #shipKpi.tiles{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px}
+    #shipKpi.tiles .k{
+      display:flex; flex-direction:column; align-items:flex-start; gap:1px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14);
+      border-radius:12px; padding:9px 11px; font-size:13px;
+    }
+    #shipKpi.tiles .k i{font-size:12px; opacity:.72; letter-spacing:-.01em}
+    #shipKpi.tiles .k b{font-size:23px; line-height:1.15; font-weight:800; font-variant-numeric:tabular-nums}
+    #shipKpi.tiles .k b em{font-size:12px; opacity:.6; margin-left:2px}
+    #shipKpi.tiles .k.wh{
+      grid-column:1 / -1; flex-direction:row; align-items:baseline; gap:8px;
+      background:transparent; border:0; padding:0 2px 2px;
+    }
+    #shipKpi.tiles .k.wh b{font-size:17px; font-weight:800}
+    #shipKpi.tiles .t-open b{color:#fdba74}
+    #shipKpi.tiles .t-prep b{color:#93c5fd}
+    #shipKpi.tiles .t-done b{color:#6ee7b7}
+    #shipKpi.tiles .t-no   b{color:#fca5a5}
+  }
+
+  /* 태블릿 가로에서만 주문 입력을 두 칸으로 — 세로(768px)에서는 한 칸이 읽기 편하다 */
+  @media (min-width:820px) and (max-width:999px){
+    #v-write, #v-in, #v-close{column-count:2; column-gap:16px}
+    #v-write > *, #v-in > *, #v-close > *{
+      break-inside:avoid; -webkit-column-break-inside:avoid; page-break-inside:avoid;
+    }
+    #v-write > #alertBox, #v-in > #moveAlerts{column-span:all}
+  }
+
   /* ══════════ 컴퓨터로 열었을 때 ══════════
-     폰은 지금 그대로 한 줄. 1000px 이상(컴퓨터·태블릿 가로)에서만
+     폰은 지금 그대로 한 줄. 1000px 이상(컴퓨터·큰 태블릿 가로)에서만
      화면을 넓게 쓰고 카드를 여러 칸으로 늘어놓는다 — 대시보드처럼 한눈에 본다.
      로그인 화면과 바닥 저장줄은 가운데 좁게 두는 게 읽기 편해 그대로 둔다. */
   @media (min-width:1000px){
