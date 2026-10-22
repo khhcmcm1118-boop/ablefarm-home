@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /field/
 
 Sitemap: https://www.ablefarm.co.kr/sitemap.xml

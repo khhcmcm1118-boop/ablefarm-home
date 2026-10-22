@@ -155,6 +155,11 @@
       </div>
       <p class="hint">원하는 희석배수를 숫자로 넣으세요</p>
     </div>
+    <div id="sizeBox" hidden>
+      <p class="step" style="margin:16px 0 0">가지고 계신 병(통) 크기</p>
+      <div class="chips" id="sizeChips"></div>
+      <p class="hint">용량이 달라도 희석배수는 같습니다. 병 크기는 「몇 병 필요한지」 계산에만 씁니다.</p>
+    </div>
     <p class="hint" id="noData" hidden></p>
     <div id="cropBox" hidden>
       <label class="q" for="crop" style="margin-top:18px">어떤 작물에 주세요?</label>
@@ -249,7 +254,7 @@
 /*
   제품별 사용량 — data/products.json 의 희석배수·사용횟수 칸에서 옮긴 값.
   products.json 이 바뀌면 여기도 같이 고친다. 홈페이지에 사용량이 안 적힌 제품은 넣지 않는다.
-  rates: 고를 수 있는 희석배수 / area: 관주량 (perPyeong 평당 L 범위) / bottle: 한 병 용량(㎖)
+  rates: 고를 수 있는 희석배수 / area: 관주량 (perPyeong 평당 L 범위) / bottle: 한 병 용량(㎖) / sizes: 여러 용량으로 나오는 제품의 용량들
 */
 var P = [
   {n:"구근짱",      rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
@@ -258,8 +263,8 @@ var P = [
   {n:"아미루트",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
   {n:"엔피칼마",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
   {n:"일소가드",    rates:[500],      bottle:1000, foliarOnly:true},
-  {n:"임팩트골드",  rates:[1000],     bottle:500, areaNote:"임팩트골드는 엽면살포나 관주 둘 다 됩니다. 관주량은 홈페이지에 아직 없으니 담당자에게 물어보세요. 5ℓ 제품은 하우스 관주 전용입니다.", tip:"5ℓ 제품은 하우스 관주 전용입니다. 관주량은 담당자에게 물어보세요."},
-  {n:"임팩트원",    rates:[1000],     bottle:500, area:{perM2:1000, L:[1,1.5]}, tip:"벼는 1차 유수형성기, 2차 출수개화기에 씁니다."},
+  {n:"임팩트골드",  rates:[1000],     bottle:500, sizes:[500,5000], areaNote:"임팩트골드는 엽면살포나 관주 둘 다 됩니다. 관주량은 홈페이지에 아직 없으니 담당자에게 물어보세요. 5ℓ 제품은 하우스 관주 전용입니다.", tip:"5ℓ 제품은 하우스 관주 전용입니다. 관주량은 담당자에게 물어보세요."},
+  {n:"임팩트원",    rates:[1000],     bottle:500, sizes:[500,3000], area:{perM2:1000, L:[1,1.5]}, tip:"벼는 1차 유수형성기, 2차 출수개화기에 씁니다."},
   {n:"칼슘탄",      rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
   {n:"토탈그로",    rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}, tip:"생육 초기에는 1,000배로 연하게, 중기부터 500~1,000배로 씁니다."},
   {n:"파이널솔루션",rates:[500,1000], bottle:500, area:{per:300, L:[1,1.5]}},
@@ -268,7 +273,7 @@ var P = [
   // 아래 5종은 홈페이지에 사용량이 없어 500·1,000배를 권장으로 둔다 (2026-10-10 사용자 지정). 관주량은 없음
   {n:"산소탱크",    rates:[500,1000], bottle:500},
   {n:"엔피씰",      rates:[500,1000], bottle:500},
-  {n:"임팩트",      rates:[500,1000], bottle:500},
+  {n:"임팩트",      rates:[500,1000], bottle:500, sizes:[500,3000]},
   {n:"임팩트규산",  rates:[500,1000], bottle:500},
   {n:"임팩트규산 골드", rates:[500,1000], bottle:500},
   {n:"히미업",      rates:[800,1000], bottle:500, foliarOnly:true, tip:"평소에는 1,000배, 피해가 심할 때만 800배로 씁니다."}
@@ -386,7 +391,7 @@ var customOn = false;
 function onProduct(){
   var v = $("product").value;
   $("rateBox").hidden = true; $("customBox").hidden = true; $("noData").hidden = true; $("infoCard").hidden = true;
-  cur = null; rate = null; customOn = false; gran = null; $("cropBox").hidden = true;
+  cur = null; rate = null; customOn = false; gran = null; bottleSel = null; $("cropBox").hidden = true;
   if (v.indexOf("g:") === 0){
     gran = G[v.slice(2)];
     $("crop").innerHTML = gran.rows.map(function(r,i){ return '<option value="'+i+'">'+r[0]+'</option>'; }).join("");
@@ -405,11 +410,25 @@ function onProduct(){
   else if (v !== ""){
     cur = P[Number(v)];
     rate = cur.rates[cur.rates.length-1]; // 기본은 권장 중 연한 쪽
+    bottleSel = cur.bottle;
     drawRates();
     showInfo(cur.n);
   }
+  drawSizes();
   syncAreaInput();
   calc();
+}
+
+/* 병 크기 — 같은 제품이 500㎖·3ℓ처럼 여러 용량으로 나오면 고르게 한다 (희석배수는 그대로, 병 수만 바뀐다) */
+var bottleSel = null;
+function bl(){ return bottleSel || (cur && cur.bottle) || 500; }
+function sizeTxt(ml){ return ml >= 1000 ? fmtNum(ml/1000, 1) + "ℓ" : ml + "㎖"; }
+function drawSizes(){
+  var sizes = cur && cur.sizes;
+  $("sizeBox").hidden = !sizes;
+  if (!sizes) return;
+  chips("sizeChips", sizes.map(function(s){ return {label: sizeTxt(s) + " 제품", value: s}; }), "",
+    function(s){ bottleSel = s; drawSizes(); calc(); }, bl());
 }
 
 function recRates(){ return cur ? cur.rates : []; }
@@ -726,12 +745,13 @@ function calcWater(){
     var other = cur.rates.filter(function(r){ return r !== rate; }).map(function(r){ return "권장 "+r.toLocaleString("ko-KR")+"배면 "+fmtVolText(L*1000/r); });
     if (other.length) more += "<div>"+other.join(" · ")+"</div>";
   }
-  var bottle = cur ? cur.bottle : 500;
-  var perBottle = bottle * rate / 1000; // 한 병으로 탈 수 있는 물 ℓ
-  more += "<div>"+(bottle>=1000 ? fmtNum(bottle/1000,1)+"ℓ" : bottle+"㎖")+" 한 병이면 물 "+fmtNum(perBottle,0)+"ℓ (말통 "+fmtNum(perBottle/20,1)+"통)까지 탈 수 있습니다</div>";
+  var bottle = bl();
+  var perBottle = bottle * rate / 1000; // 한 병으로 탈 수 있는 물 ℓ = 병 용량 × 희석배수
+  // 「한 병이면 물 몇 ℓ」는 병 크기와 희석배수 둘 다에 달렸다 (예: 500㎖×1,000배 = 1ℓ×500배 = 500ℓ). 헷갈리지 않게 배수를 같이 적는다
+  more += "<div>"+rate.toLocaleString("ko-KR")+"배로 타면 "+sizeTxt(bottle)+" 한 병으로 물 "+fmtNum(perBottle,0)+"ℓ (말통 "+fmtNum(perBottle/20,1)+"통)까지 탈 수 있습니다</div>";
   var tank = tankFor(L), cup = cupFor(ml);
   var say = tank.name + "에 " + (cur ? cur.n + " " : "") + fmtVolText(ml).replace(" ", "") + " 넣으세요!";
-  if (!cup) say += " " + (bottle>=1000 ? fmtNum(bottle/1000,1)+"ℓ" : bottle+"㎖") + " 병으로 " + fmtNum(ml/bottle, ml/bottle < 10 ? 1 : 0) + "병이에요.";
+  if (!cup) say += " " + sizeTxt(bottle) + " 병으로 " + fmtNum(ml/bottle, ml/bottle < 10 ? 1 : 0) + "병이에요.";
   var warn = false;
   if (cur){
     var lo = cur.rates[0], hi = cur.rates[cur.rates.length-1];
@@ -762,13 +782,14 @@ function calcArea(){
   var big = lo === hi ? fmtVol(lo*1000)
           : hi >= 1 ? fmtNum(lo, lo >= 10 ? 1 : 2) + " ~ " + fmtNum(hi, hi >= 10 ? 1 : 2) + "<small> ℓ</small>"
           : fmtNum(lo*1000, 0) + " ~ " + fmtNum(hi*1000, 0) + "<small> ㎖</small>";
-  var bLo = Math.ceil(lo*1000 / cur.bottle - 0.05), bHi = Math.ceil(hi*1000 / cur.bottle - 0.05); // 평↔㎡ 반올림 오차로 한 병 더 나오지 않게
+  var bottle = bl();
+  var bLo = Math.max(1, Math.ceil(lo*1000 / bottle - 0.05)), bHi = Math.max(1, Math.ceil(hi*1000 / bottle - 0.05)); // 평↔㎡ 반올림 오차로 한 병 더 나오지 않게
   var more = "<div>"+(unit==="pyeong" ? fmtNum(a,0)+"평 (약 "+fmtNum(m2,0)+"㎡)" : fmtNum(a,0)+"㎡ (약 "+fmtNum(pyeong,0)+"평)")+" · 기준 "+base+"</div>";
-  more += "<div>"+cur.bottle+"㎖ 병으로 "+(bLo===bHi ? bLo+"병" : bLo+"~"+bHi+"병")+"이 듭니다</div>";
+  more += "<div>"+sizeTxt(bottle)+" 병으로 "+(bLo===bHi ? bLo+"병" : bLo+"~"+bHi+"병")+"이 듭니다</div>";
   var where = unit==="pyeong" ? fmtNum(a,0)+"평" : fmtNum(a,0)+"㎡";
   setResult("관주로 줄 제품 양", big, more, {
-    say: where + "이면 " + cur.n + " " + plain(big) + ", " + cur.bottle + "㎖ 병 " + (bLo===bHi ? bLo : bLo+"~"+bHi) + "병 준비하세요!",
-    viz: {bottles:{lo:Math.max(1,bLo), hi:Math.max(1,bHi), size:cur.bottle}}});
+    say: where + "이면 " + cur.n + " " + plain(big) + ", " + sizeTxt(bottle) + " 병 " + (bLo===bHi ? bLo : bLo+"~"+bHi) + "병 준비하세요!",
+    viz: {bottles:{lo:bLo, hi:bHi, size:bottle}}});
 }
 function fmtL(L){ return L[0]===L[1] ? (L[0]<1 ? L[0]*1000+"㎖" : L[0]+"ℓ") : L[0]+"~"+L[1]+"ℓ"; }
 
