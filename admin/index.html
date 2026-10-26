@@ -479,6 +479,86 @@
     #v-settle .card:first-child{display:none}
   }
   @page{ size:A4 portrait; margin:0 }
+
+  /* ═══════════════════ 오늘 출고 ═══════════════════
+   * 출하앱(index.html) 「오늘 출고」 화면을 관제로 옮긴 것 — 같은 서버 함수(api_shipments ·
+   * api_setStatus · api_setStatusBulk · api_shipmentExport · api_mailShipmentList)를 쓴다.
+   * 화면 조각(.ord · .kpi 타일 · 마감줄 · 고르기)은 출하앱에서 가져왔고 색만 관제 것으로 맞췄다.
+   * ⚠ 같은 화면이 두 파일에 있다 — 이 화면을 고칠 때는 index.html 쪽도 같이 고쳐야 한다. */
+  #v-today .f{display:block; font-size:11px; font-weight:800; color:var(--ink2); margin-bottom:4px}
+  #v-today{
+    --memo-bg:#fffbeb; --red-bg:#ffe4e6; --info-bg:#f0f9ff;
+    --nostock-bg:#fff7f7; --nostock-line:#fca5a5;
+  }
+  #v-today .btn.ghost{background:transparent}
+  #v-today .btn.amber{background:var(--amber); border-color:var(--amber); color:#fff}
+  #v-today .btn.on{background:var(--violet); border-color:var(--violet); color:var(--on-dark)}
+  #v-today .hidden{display:none}
+
+  /* 숫자 타일 — 멀리서도 읽히게 */
+  #v-today .kpi{display:grid; grid-template-columns:repeat(auto-fit,minmax(102px,1fr)); gap:10px; margin-top:14px}
+  #v-today .kpi .k{background:var(--neutral-bg); border:1px solid var(--line); border-radius:12px;
+                   padding:9px 12px; display:flex; flex-direction:column; gap:1px}
+  #v-today .kpi .k i{font-style:normal; font-size:11px; font-weight:800; color:var(--ink2); letter-spacing:.3px}
+  #v-today .kpi .k b{font-size:23px; font-weight:800; line-height:1.15; letter-spacing:-.6px;
+                     font-variant-numeric:tabular-nums}
+  #v-today .kpi .k b em{font-style:normal; font-size:12px; font-weight:700; color:var(--ink3); margin-left:2px}
+  #v-today .kpi .k.wh{grid-column:1/-1; flex-direction:row; align-items:baseline; gap:8px;
+                      background:transparent; border:0; padding:0 2px}
+  #v-today .kpi .k.wh b{font-size:17px}
+  #v-today .kpi .t-open b{color:var(--c-o)}
+  #v-today .kpi .t-prep b{color:var(--c-b)}
+  #v-today .kpi .t-done b{color:var(--c-g)}
+  #v-today .kpi .t-no   b{color:var(--c-r)}
+
+  /* 마감해도 되는지 한 줄 — 퇴근 전에 보는 칸 */
+  #v-today .closebar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px;
+                     padding:10px 14px; border-radius:12px; font-size:13px; font-weight:700}
+  #v-today .closebar.ok{background:var(--g-bg); color:var(--c-g2)}
+  #v-today .closebar.left{background:var(--o-bg); color:var(--c-o2)}
+  #v-today .closebar.none{background:var(--neutral-bg); color:var(--neutral)}
+  #v-today .closebar .cbt{flex:1; min-width:220px}
+  #v-today .closebar .pg{display:block; width:130px; height:8px; border-radius:999px;
+                         background:rgba(0,0,0,.13); overflow:hidden; flex:none}
+  #v-today .closebar .pg i{display:block; height:100%; background:currentColor}
+  #v-today .closebar .pgn{font-variant-numeric:tabular-nums}
+
+  /* 고른 칸 (전체 · 미출고 · 준비중 · 출고완료) */
+  #v-today .filter b{margin-left:5px; font-variant-numeric:tabular-nums}
+
+  /* 주문 카드 */
+  #v-today #shipList, #v-today #lateBox > .card{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px; align-items:start}
+  #v-today #lateBox > .card{padding:14px; border:1px solid var(--nostock-line); background:var(--nostock-bg)}
+  #v-today #lateBox > .card > .row:first-child{grid-column:1/-1}
+  #v-today .ord{border:1px solid var(--line); border-radius:14px; padding:12px 14px;
+                background:var(--card); box-shadow:var(--shadow)}
+  #v-today .ord.done{background:var(--g-bg)}
+  #v-today .ord.nostock{background:var(--nostock-bg); border-color:var(--nostock-line)}
+  #v-today .ord.picked{outline:2px solid var(--violet); outline-offset:1px}
+  #v-today .ord h3{margin:0; font-size:15px; font-weight:800; text-align:left}
+  #v-today .ord ul{margin:9px 0 0; padding:0; list-style:none}
+  #v-today .ord ul li{display:flex; justify-content:space-between; gap:10px; padding:4px 0;
+                      border-bottom:1px dashed var(--line); font-size:13px}
+  #v-today .ord ul li:last-child{border-bottom:0}
+  #v-today .ord .qty{font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums}
+  #v-today .ord .info{margin-top:8px; background:var(--info-bg); border-radius:10px; padding:8px 10px;
+                      font-size:13px; line-height:1.55}
+  #v-today .ord .info a{color:var(--c-b2); font-weight:700}
+  #v-today .ord .acts{display:flex; gap:7px; flex-wrap:wrap; margin-top:10px}
+  #v-today .ord .pick{display:grid; place-items:center; width:26px; height:26px; flex:none; cursor:pointer}
+  #v-today .ord .pick input{width:18px; height:18px; cursor:pointer}
+  #v-today .b-nh{background:var(--b-bg); color:var(--c-b2)}
+  #v-today .b-sample{background:var(--p-bg); color:var(--c-p)}
+  #v-today .b-late{background:var(--r-bg); color:var(--c-r)}
+
+  /* 여러 건 한꺼번에 */
+  #v-today .bulkbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  #v-today .pickall{display:flex; align-items:center; gap:6px; font-size:13px; font-weight:700; cursor:pointer}
+  #v-today .pickall input{width:17px; height:17px; cursor:pointer}
+  #v-today .whatbar{margin-top:8px; padding:8px 11px; border-radius:10px; font-size:12.5px;
+                    line-height:1.55; background:var(--b-bg); color:var(--c-b2)}
+  #v-today #bulkBar.live{background:var(--v-bg); border-radius:12px; padding:9px 11px; margin:-9px -11px 14px}
 </style>
 </head>
 <body>
@@ -510,6 +590,7 @@
 
   <nav class="tabs" id="tabs">
     <button data-v="dash" class="on">현황</button>
+    <button data-v="today">오늘 출고</button>
     <button data-v="orders">주문</button>
     <button data-v="stock">재고 · 입고</button>
     <button data-v="region">지역별 실적</button>
@@ -576,6 +657,82 @@
         </div>
       </div>
 
+
+      <!-- ───────── 오늘 출고 (출하앱 「오늘 출고」와 같은 화면·기능) ───────── -->
+      <div class="view" id="v-today" style="display:none">
+        <div class="card" style="padding:14px 18px">
+          <div class="row">
+            <button class="btn sm ghost" id="dPrev" title="앞 기간">◀</button>
+            <div style="min-width:210px; text-align:center">
+              <div style="font-size:17px; font-weight:800; letter-spacing:-.3px" id="shipDateLabel">—</div>
+              <div class="tiny muted" id="shipAgo"></div>
+            </div>
+            <button class="btn sm ghost" id="dNext" title="뒤 기간">▶</button>
+            <div><label class="f">시작일</label><input id="shipDateFrom" type="date" aria-label="조회 시작일"></div>
+            <div><label class="f">종료일</label><input id="shipDateTo" type="date" aria-label="조회 종료일"></div>
+            <div style="align-self:end" class="row">
+              <button class="btn sm" id="dToday">오늘</button>
+              <button class="btn sm" id="dWeek">최근 7일</button>
+              <button class="btn sm dark" id="btnShipReload">새로고침</button>
+            </div>
+            <span class="grow"></span>
+            <button class="btn sm" id="btnPrint">인쇄 · 저장</button>
+            <button class="btn sm" id="btnExportBox">파일 · 메일 ▾</button>
+          </div>
+          <div class="kpi" id="shipKpi"></div>
+          <div id="shipCloseBar" class="closebar none" aria-live="polite"></div>
+        </div>
+
+        <!-- 출하현황 파일 · 메일 -->
+        <div id="exportBox" class="card hidden">
+          <div class="row">
+            <b class="grow">출하현황 파일 · 메일</b>
+            <button class="btn sm ghost" id="exportClose">닫기</button>
+          </div>
+          <div id="exWhat" class="whatbar"></div>
+          <div class="row" style="margin-top:10px">
+            <div><label class="f">시작일</label><input id="exFrom" type="date"></div>
+            <div><label class="f">종료일</label><input id="exTo" type="date"></div>
+            <div style="align-self:end" class="row">
+              <button class="btn sm" data-ex="0">오늘</button>
+              <button class="btn sm" data-ex="1">어제</button>
+              <button class="btn sm" data-ex="7">최근 7일</button>
+            </div>
+            <span class="grow"></span>
+            <div style="align-self:end"><button class="btn dark" id="btnExportCsv">엑셀(CSV) 파일로 받기</button></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="grow"><label class="f">메일로 바로 보내기 (택배업체 · 영업 · 사장님)</label>
+              <input id="exMail" type="email" inputmode="email" placeholder="예: courier@example.com" autocomplete="off"></div>
+            <div style="align-self:end"><button class="btn green" id="btnExportMail">메일로 보내기</button></div>
+          </div>
+          <div id="exWhat2" class="whatbar"></div>
+          <div class="tiny muted" style="margin-top:8px">
+            메일에는 첨부 파일과 <b>같은 내용이 글자로도</b> 들어갑니다 — 그대로 긁어서 카톡에 붙여넣으면 됩니다.<br>
+            <b>금액·단가는 들어가지 않습니다.</b> 나가는 것: 출하일 · 창고 · 거래처 · 농협명 · 받는분 ·
+            연락처 · 배송지 · 팩스 · 제품 · 수량 · 상태 · 영업메모 · 물류메모 · 담당자.
+            택배업체처럼 바깥으로 보낼 때는 한 번 확인하고 보내세요.
+          </div>
+        </div>
+
+        <div id="lateBox"></div>
+
+        <div class="card">
+          <div class="row bulkbar" id="bulkBar" style="margin-bottom:14px">
+            <button class="btn sm filter on" data-f="all">전체</button>
+            <button class="btn sm filter" data-f="open">미출고</button>
+            <button class="btn sm filter" data-f="prep">준비중</button>
+            <button class="btn sm filter" data-f="done">출고완료</button>
+            <span class="grow"></span>
+            <label class="pickall"><input type="checkbox" id="bulkAll"><span>전체 선택</span></label>
+            <span class="tiny muted" id="bulkCount">고른 것 없음</span>
+            <span class="tiny muted">→ 한꺼번에</span>
+            <button class="btn sm" id="bulkPrep" disabled>준비중</button>
+            <button class="btn sm green" id="bulkDone" disabled>출고완료</button>
+          </div>
+          <div id="shipList"></div>
+        </div>
+      </div>
       <!-- ───────── 주문 ───────── -->
       <div class="view" id="v-orders" style="display:none">
         <div class="card">
@@ -1436,6 +1593,7 @@ $$('#tabs button').forEach(function(b){
     $$('#tabs button').forEach(function(x){ x.classList.toggle('on', x === b); });
     $$('.view').forEach(function(v){ v.style.display = 'none'; });
     $('#v-' + b.dataset.v).style.display = 'block';
+    if (b.dataset.v === 'today') tsOpen();   // 오늘 출고 — 열 때마다 그날 것을 새로 불러온다
     if (b.dataset.v === 'orders' && !S.orders.length) loadOrders();
     if (b.dataset.v === 'dlvlog' && !S.dlvlog){
       // 처음 열 때는 이번 달로 — 배송 건은 드물어서 하루치만 보면 거의 비어 있다
@@ -2657,6 +2815,752 @@ $('#stPrint').addEventListener('click', function(){ window.print(); });
 /* ═══════════════ 시작 ═══════════════ */
 var saved = LS.get('af_admin_token');
 if (saved){ S.token = saved; start(); } else { initLogin(); }
+
+/* ═══════════════════ 오늘 출고 ═══════════════════
+ * 출하앱(index.html) 「오늘 출고」 화면을 관제로 옮긴 것. 서버 함수도 같은 것을 쓴다 —
+ * api_shipments · api_setStatus · api_setStatusBulk · api_shipmentExport · api_mailShipmentList.
+ * 관제 토큰도 출하앱과 같은 사용자 토큰이라 서버는 고칠 것이 없다 (auth_ 가 「관리」를 통과시킨다).
+ *
+ * ⚠ 같은 화면이 두 파일에 있다 — 이 화면을 고칠 때는 index.html 쪽도 같이 고쳐야 한다.
+ * 이름이 관제 쪽과 섞이지 않게 통째로 함수 안에 넣었다. 밖으로 내보내는 것은 window.tsOpen 하나뿐이다.
+ */
+(function(){
+  var T = { ship:null, shipDate:'', shipTo:'', filter:'all', picked:{}, seen:null, lastLoad:0 };
+  var ROOT = '#v-today ';
+  function $(s){ return document.querySelector(ROOT + s); }
+  function $$(s){ return Array.prototype.slice.call(document.querySelectorAll(ROOT + s)); }
+
+  function isDone(s){ return s === '출고완료' || s === '출하완료'; }
+  function badge(status){ return '<span class="badge b-' + esc(status) + '">' + esc(status) + '</span>'; }
+  function dayLabel(s){ return dayText(s); }
+  function checkNew(){}            /* 새 주문 소리·알림창은 관제가 따로 한다 (bellStart · dlvStart) */
+
+  /* 확인창 — 관제의 ask() 를 쓴다. 출하앱 쪽 이름(confirmBox)을 그대로 쓸 수 있게 감싼다 */
+  function confirmBox(msg, o){
+    o = o || {};
+    return window.ask(msg, { title: '확인', yes: o.ok || '확인', danger: o.kind === 'red' });
+  }
+
+  /* 글자를 받는 확인창 — 「재고없음」 사유를 적는 칸. 확인하면 적은 글자, 취소하면 null */
+  function ask(opt){
+    opt = opt || {};
+    return new Promise(function(resolve){
+      var m = document.querySelector('#modal');
+      m.innerHTML = '<div class="box" role="dialog" aria-modal="true">' +
+        '<h3>' + esc(opt.title || '확인') + '</h3>' +
+        '<div class="msg">' + esc(opt.text || '').replace(/\n/g, '<br>') + '</div>' +
+        (opt.input ? '<input id="tsAskIn" type="text" style="width:100%; margin-top:10px" placeholder="' +
+                     esc(opt.placeholder || '') + '">' : '') +
+        '<div class="btns">' +
+          '<button class="btn" id="tsAskNo">취소</button>' +
+          '<button class="btn dark" id="tsAskYes">' + esc(opt.ok || '확인') + '</button>' +
+        '</div></div>';
+      m.classList.add('on');
+      function done(v){ m.classList.remove('on'); m.innerHTML = ''; resolve(v); }
+      m.querySelector('#tsAskYes').addEventListener('click', function(){
+        var el = m.querySelector('#tsAskIn');
+        done(el ? el.value.trim() : true);
+      });
+      m.querySelector('#tsAskNo').addEventListener('click', function(){ done(null); });
+      var first = m.querySelector('#tsAskIn');
+      if (first) first.focus();
+    });
+  }
+
+  function tickAgo(){
+    if (!T.lastLoad) return;
+    var sec = Math.round((Date.now() - T.lastLoad) / 1000);
+    $('#shipAgo').textContent = sec < 60 ? sec + '초 전 갱신' : Math.round(sec / 60) + '분 전 갱신';
+  }
+
+  function orderCard(g, forShip){
+    var cls = 'ord' + (isDone(g.status) ? ' done' : '') + (g.status === '재고없음' ? ' nostock' : '');
+    var where = [g.si, g.gun].filter(String).join(' ');
+    var items = g.items.map(function(it){
+      return '<li><span>' + esc(it.prod) + (it.size ? ' <span class="muted tiny">' + esc(it.size) + '</span>' : '') +
+             (it.sample ? ' <span class="badge b-sample">샘플</span>' : '') +
+             '</span><span class="qty">' + it.qty + '개' +
+             (forShip ? '' : ' <span class="muted tiny">' + won(it.amt) + '</span>') + '</span></li>';
+    }).join('');
+
+    var info = '';
+    if (g.nh || g.addr || g.fax || g.tel || g.rcpt){
+      // 택배 송장에 쓰는 순서 — 받는분 · 연락처 · 주소
+      info = '<div class="info">' +
+        (g.rcpt ? '<div style="font-size:15px">👤 <b>' + esc(g.rcpt) + '</b></div>'
+                : (g.addr ? '<div style="color:var(--red)">👤 받는 분 이름 없음</div>' : '')) +
+        (g.tel ? '<div>📞 <a href="tel:' + esc(String(g.tel).replace(/[^0-9+]/g,'')) + '">' + esc(g.tel) + '</a></div>' : '') +
+        (g.addr ? '<div>📍 ' + esc(g.addr) + '</div>' : '') +
+        (g.nh ? '<div>🏢 ' + esc(g.nh) + (g.trade === '농협' ? ' <span class="badge b-nh">농협</span>' : '') + '</div>' : '') +
+        (g.fax ? '<div>📠 ' + esc(g.fax) + '</div>' : '') +
+      '</div>';
+    }
+
+    var acts;
+    if (forShip){
+      acts = '<div class="acts noprint">' +
+        (g.status !== '준비중' ? '<button class="btn sm" data-st="준비중" data-oid="' + esc(g.oid) + '">준비중</button>' : '') +
+        (!isDone(g.status) ? '<button class="btn sm green" data-st="출고완료" data-oid="' + esc(g.oid) + '">출고완료</button>' : '') +
+        (g.status !== '재고없음' ? '<button class="btn sm amber" data-nostock="' + esc(g.oid) + '">재고없음</button>' : '') +
+        (isDone(g.status) || g.status === '재고없음'
+          ? '<button class="btn sm ghost" data-st="대기" data-oid="' + esc(g.oid) + '">되돌리기</button>' : '') +
+        '</div>';
+    } else {
+      // 「대기」 주문은 「수정」 — 같은 주문번호 그대로 품목을 더하고 빼서 다시 저장한다.
+      // 물류가 손댄 뒤(준비중·출고완료 등)는 단추를 두지 않는다.
+      // 예전 「같은 내용 다시」(새 주문으로 복사)는 2026-10-12 뺐다 — 두 번 등록한 것처럼 보여 헷갈린다는 요청.
+      var src = JSON.stringify({
+        oid:g.oid, rep:g.rep, date:g.date, shipDate:g.shipDate, memo:g.memo,
+        cust:g.cust, wh:g.wh, items:g.items, addr:g.addr, rcpt:g.rcpt, tel:g.tel, nh:g.nh, fax:g.fax, trade:g.trade
+      });
+      acts = g.status === '대기'
+        ? '<div class="acts">' +
+            '<button class="btn sm ghost" data-edit=\'' + esc(src) + '\'>✏️ 수정</button>' +
+            '<button class="btn sm ghost" data-cancel="' + esc(g.oid) + '" style="color:var(--red)">취소</button>' +
+          '</div>'
+        : '';
+    }
+
+    // 물류 화면에서는 카드마다 체크칸을 둔다 — 여러 건을 한 번에 출고완료로 바꾸려고
+    var pick = (forShip && g.status !== '취소')
+      ? '<label class="pick noprint" title="고르기"><input type="checkbox" class="pickOne" data-pick="' + esc(g.oid) + '"></label>'
+      : '';
+
+    return '<div class="' + cls + '" data-card="' + esc(g.oid) + '">' +
+      '<div class="row wrap-" style="gap:6px">' + pick +
+        '<h3 class="grow">' + esc(g.cust) + '</h3>' + badge(g.status) +
+        (g.trade === '농협' ? ' <span class="badge b-nh">농협</span>' : '') +
+        (g.sample ? ' <span class="badge b-sample">샘플 ' + g.sample + '</span>' : '') +
+      '</div>' +
+      '<div class="tiny muted" style="margin-top:3px">' +
+        esc(where) + (g.wh ? ' · ' + esc(g.wh) : '') + ' · ' + esc(g.rep) +
+        // 주문이 들어온 시각 — 같은 날 주문이 여럿일 때 순서를 보려고 (2026-10-16)
+        (g.received ? ' · 접수 ' + esc(g.received) : '') +
+        // 기간으로 볼 수 있으니 예정일을 늘 적는다. 늦게 나간 건은 실제 나간 날도 같이 보여준다
+        ' · 출하예정 ' + esc(g.shipDate) +
+        ((g.handler || g.handledDay)
+          ? ' · ' + (isDone(g.status) ? '출고' : '처리') +
+            (g.handledDay && g.handledDay !== g.shipDate
+              ? ' <b style="color:var(--green)">' + esc(g.handledDay) + '</b>' : '') +
+            (g.handler ? ' ' + esc(g.handler) : '')
+          : '') +
+      '</div>' +
+      '<ul>' + items + '</ul>' +
+      '<div class="row tiny muted" style="margin-top:8px">' +
+        '<span class="grow">' + g.items.length + '품목 · <b style="color:var(--ink)">' + g.qty + '개</b></span>' +
+        // 물류 화면에는 금액을 띄우지 않는다 (서버도 내려보내지 않는다)
+        (forShip ? '' : '<b style="color:var(--ink)">' + won(g.total) + '</b>') +
+      '</div>' +
+      info +
+      (g.memo ? '<div class="tiny" style="margin-top:7px; background:var(--memo-bg); border-radius:8px; padding:7px">📝 ' + esc(g.memo) + '</div>' : '') +
+      (g.lmemo ? '<div class="tiny" style="margin-top:6px; background:var(--red-bg); border-radius:8px; padding:7px">🚚 ' + esc(g.lmemo) + '</div>' : '') +
+      acts +
+    '</div>';
+  }
+
+  /* ═══════════════════ 물류 출하 ═══════════════════ */
+  /* 기간으로 본다. 하루만 볼 때는 시작일과 종료일이 같다 (T.shipDate = 시작일) */
+  function shipSpan(){
+    var a = new Date(T.shipDate + 'T00:00:00'), b = new Date((T.shipTo || T.shipDate) + 'T00:00:00');
+    return Math.round((b - a) / 86400000) + 1;          // 며칠치를 보고 있나
+  }
+  function shipShift(dir){
+    var n = shipSpan();
+    T.seen = null;                       // 날짜를 옮기면 「새 주문」 기준을 다시 잡는다
+    T.shipDate = addDays(T.shipDate, dir * n);
+    T.shipTo = addDays(T.shipTo || T.shipDate, dir * n);
+    loadShip();
+  }
+  function shipRangeLabel(){
+    if (!T.shipTo || T.shipTo === T.shipDate) return dayLabel(T.shipDate);
+    return md(T.shipDate) + ' ~ ' + md(T.shipTo) + ' (' + shipSpan() + '일간)';
+  }
+  function md(s){ var p = String(s).split('-'); return Number(p[1]) + '월 ' + Number(p[2]) + '일'; }
+
+  $('#dPrev').addEventListener('click', function(){ shipShift(-1); });
+  $('#dNext').addEventListener('click', function(){ shipShift(1); });
+  $('#dToday').addEventListener('click', function(){
+    T.seen = null; T.shipDate = ymd(new Date()); T.shipTo = T.shipDate; loadShip();
+  });
+  $('#dWeek').addEventListener('click', function(){
+    T.seen = null; T.shipTo = ymd(new Date()); T.shipDate = addDays(T.shipTo, -6); loadShip();
+  });
+  $('#btnShipReload').addEventListener('click', loadShip);
+  /* 지금 고른 칸(전체·미출고·준비중·출고완료)에 해당하는 주문만 고른다.
+     화면과 인쇄가 똑같은 목록을 쓰도록 여기 한 군데서만 판단한다. */
+  function shipMatch(st, f){
+    if (f === 'open') return st === '대기' || st === '재고없음';   // 아직 손도 안 댄 것
+    if (f === 'prep') return st === '준비중';
+    if (f === 'done') return isDone(st);
+    return true;
+  }
+  function shipFiltered(){
+    var d = T.ship;
+    if (!d) return [];
+    // 취소된 주문은 물류 목록·인쇄에 넣지 않는다 — 택배로 잘못 보낼 수 있다 (서버도 빼지만 옛 서버 대비)
+    return (d.groups || []).filter(function(g){ return g.status !== '취소' && shipMatch(g.status, T.filter); });
+  }
+
+  /* 인쇄 — 앱 화면은 구글 안쪽 틀에 들어 있어 폰에서 window.print() 가 먹지 않는다.
+     그래서 A4 종이 모양의 인쇄용 페이지를 새 탭으로 띄운다.
+     그 탭에서 종이 인쇄 · PDF 저장 · 그림(PNG) 저장이 전부 된다. */
+  function shipPrintHtml(){
+    var d = T.ship || { groups: [], late: [], summary: {} };
+    var esc2 = function(s){ return esc(String(s == null ? '' : s)); };
+    var fname = {all:'출하목록', open:'미출고목록', prep:'준비중목록', done:'출고완료목록'}[T.filter] || '출하목록';
+    var what  = {all:'전체', open:'미출고', prep:'준비중', done:'출고완료'}[T.filter] || '전체';
+    var late  = (T.filter === 'all' || T.filter === 'open') ? (d.late || []) : [];
+    var rows  = late.map(function(g){ return { g: g, late: true }; })
+        .concat(shipFiltered().map(function(g){ return { g: g, late: false }; }));
+    var span = (!T.shipTo || T.shipTo === T.shipDate) ? T.shipDate : T.shipDate + ' ~ ' + T.shipTo;
+    var title = fname + '_' + (d.warehouse || '전체창고') + '_' + String(T.shipDate).replace(/-/g, '') +
+                (T.shipTo && T.shipTo !== T.shipDate ? '_' + String(T.shipTo).replace(/-/g, '') : '');
+
+    var qty = rows.reduce(function(s, r){ return s + r.g.qty; }, 0);
+    var head =
+      '<div class="hd">' +
+        '<div class="t">' + esc2(d.warehouse || '전체 창고') + ' ' + esc2(what) + ' 출하목록</div>' +
+        '<div class="pg"></div>' +
+      '</div>' +
+      '<div class="sb">출하일 ' + esc2(span) + ' · 주문 ' + rows.length + '건 · 수량 ' + qty + '개' +
+        (late.length ? ' · 지난 미출고 ' + late.length + '건 포함' : '') + ' · 금액 없음</div>';
+    var thead = '<thead><tr><th style="width:68px">상태</th><th style="width:66px">출하일</th>' +
+                '<th>거래처</th><th style="width:104px">받는분</th>' +
+                '<th>주소</th><th style="width:180px">품목 · 수량</th><th style="width:48px">확인</th></tr></thead>';
+
+    var body = rows.length ? rows.map(function(r){
+      var g = r.g;
+      return '<tr>' +
+        '<td class="c">' + (r.late ? '<b class="rd">지난</b><br>' : '') + esc2(g.status) + '</td>' +
+        '<td class="c">' + esc2(String(g.shipDate).slice(5)) +
+          (isDone(g.status) && g.handledDay && g.handledDay !== g.shipDate
+            ? '<br><span class="s">출고 ' + esc2(String(g.handledDay).slice(5)) + '</span>' : '') + '</td>' +
+        '<td><b>' + esc2(g.cust) + '</b>' + (g.nh ? '<br><span class="s">농협 ' + esc2(g.nh) + '</span>' : '') +
+          (g.rep ? '<br><span class="s">' + esc2(g.rep) + '</span>' : '') + '</td>' +
+        '<td>' + esc2(g.rcpt) + (g.tel ? '<br><span class="s">' + esc2(g.tel) + '</span>' : '') + '</td>' +
+        // 주소가 비면 빈칸 대신 빨간 표시 — 택배사로 넘기기 전에 눈에 띄게
+        '<td>' + (String(g.addr || '').trim() ? esc2(g.addr) : '<b class="rd">⚠ 주소 없음</b>') +
+          // 영업메모가 주소와 똑같으면 한 번만 (「이준희 직접출고」가 두 줄로 나오던 것)
+          (g.memo && String(g.memo).trim() !== String(g.addr || '').trim()
+            ? '<br><span class="s">📝 ' + esc2(g.memo) + '</span>' : '') +
+          (g.lmemo ? '<br><span class="s">🚚 ' + esc2(g.lmemo) + '</span>' : '') + '</td>' +
+        '<td>' + g.items.map(function(it){
+          return esc2(it.prod) + ' ' + esc2(it.size) + ' <b>' + it.qty + '</b>' + (it.sample ? ' (샘플)' : '');
+        }).join('<br>') + '</td>' +
+        '<td class="c"></td>' +
+      '</tr>';
+    }).join('') : '<tr><td colspan="7" class="c" style="padding:30px">해당하는 건이 없습니다.</td></tr>';
+
+    var css =
+      // 앱 쪽 전역 초기화가 여기엔 없다 — 빠뜨리면 종이가 794px 이 아니라 더 넓어져 A4 비율이 깨진다
+      '*{box-sizing:border-box}' +
+      'body{margin:0; background:#e2e8f0; color:#0f172a;' +
+      ' font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕",sans-serif}' +
+      '.bar{position:sticky; top:0; z-index:5; background:#0f172a; color:#fff; padding:10px 12px;' +
+      ' display:flex; gap:8px; flex-wrap:wrap; align-items:center}' +
+      '.bar button{font-size:15px; font-weight:700; padding:10px 14px; border:0; border-radius:9px;' +
+      ' background:#fff; color:#0f172a; cursor:pointer}' +
+      '.bar button.g{background:#047857; color:#fff}' +
+      '.bar button.dim{background:#64748b; color:#e2e8f0}' +
+      '.bar .hint{flex:1 1 100%; font-size:12.5px; color:#cbd5e1; line-height:1.5}' +
+      '.stage{padding:12px; overflow:auto}' +
+      '.shPaper{width:794px; height:1123px; overflow:hidden; background:#fff; color:#000;' +
+      ' margin:0 auto 14px; padding:40px 38px; box-shadow:0 2px 12px rgba(15,23,42,.14)}' +
+      '.shPaper:last-child{margin-bottom:0}' +
+      // 10px 은 여유분 — 종이 높이에 딱 맞춰 채우면 인쇄기에서 마지막 줄이 다음 장으로 밀린다
+      '.inner{height:calc(100% - 10px); overflow:hidden}' +
+      '.hd{display:flex; align-items:flex-end; gap:12px}' +
+      '.hd .t{flex:1; font-size:19px; font-weight:800}' +
+      '.hd .pg{font-size:12px; color:#555}' +
+      '.sb{font-size:12px; color:#444; margin:3px 0 10px; padding-bottom:7px; border-bottom:1.5px solid #334155}' +
+      'table{border-collapse:collapse; width:100%; font-size:12px; table-layout:fixed}' +
+      // 한글은 break-all 로 끊으면 글자 가운데가 갈라진다 — 넘칠 때만 끊는다
+      'th,td{border:1px solid #94a3b8; padding:5px 7px; text-align:left; vertical-align:top;' +
+      ' word-break:keep-all; overflow-wrap:anywhere}' +
+      'td.c{white-space:nowrap}' +
+      'th{background:#eef2f7; font-weight:700; text-align:center}' +
+      'td.c{text-align:center}' +
+      '.s{color:#555; font-size:11px}' +
+      '.rd{color:#b91c1c}' +
+      '@page{size:A4 portrait; margin:0}' +
+      // 화면에서는 794×1123 으로 A4 모양을 보여주지만, 인쇄할 때 그대로 두면
+      // A4 인쇄영역(793.7×1122.5px)보다 0.5px 커서 장마다 빈 페이지가 끼어든다.
+      // 인쇄에서는 높이를 내용만큼만 잡고, 쪽 넘김은 page-break-after 가 맡는다.
+      '@media print{.bar{display:none} body{background:#fff} .stage{padding:0}' +
+      // 폭도 794px 로 두면 A4 인쇄폭(793.7px)을 0.3px 넘겨 옆으로 잘리거나 축소된다 — 인쇄에선 폭도 맡긴다
+      ' .shPaper{box-shadow:none; margin:0; width:auto; height:auto; page-break-after:always}' +
+      ' .shPaper .inner{height:auto; overflow:visible}' +
+      ' .shPaper:last-child{page-break-after:auto}}';
+
+    var js =
+      'var FN=' + JSON.stringify(title) + ';' +
+      'var HEAD=' + JSON.stringify(head) + ', THEAD=' + JSON.stringify(thead) + ';' +
+      'function msg(t){document.getElementById("shHint").textContent=t;}' +
+      /* 줄 높이가 제각각이라 숫자로 미리 나눌 수 없다 — 한 줄씩 넣어 보고 넘치면 새 장을 뗀다 */
+      'function paginate(){' +
+      ' var stage=document.getElementById("stage");' +
+      ' var trs=Array.prototype.slice.call(document.querySelectorAll("#src tbody>tr"));' +
+      ' stage.innerHTML=""; var inner=null,tb=null;' +
+      ' function add(){ var p=document.createElement("div"); p.className="shPaper";' +
+      '  p.innerHTML=\'<div class="inner">\'+HEAD+\'<table>\'+THEAD+\'<tbody></tbody></table></div>\';' +
+      '  stage.appendChild(p); inner=p.firstChild; tb=p.querySelector("tbody"); }' +
+      ' add();' +
+      /* scrollHeight 는 clientHeight 보다 작아지지 않는다 — 여유분은 .inner 높이에서 빼 둔다 */
+      ' trs.forEach(function(tr){ tb.appendChild(tr);' +
+      '  if(inner.scrollHeight>inner.clientHeight && tb.children.length>1){' +
+      '   tb.removeChild(tr); add(); tb.appendChild(tr); } });' +
+      ' var src=document.getElementById("src"); if(src) src.remove();' +
+      ' var ps=document.querySelectorAll(".shPaper");' +
+      ' for(var i=0;i<ps.length;i++){ ps[i].querySelector(".pg").textContent=(i+1)+" / "+ps.length; }' +
+      '}' +
+      'paginate();' +
+      'function papers(){return Array.prototype.slice.call(document.querySelectorAll(".shPaper"));}' +
+      /* 외부 라이브러리 없이 HTML 을 그림으로 — SVG foreignObject 에 넣고 canvas 에 그린다.
+         여러 장이면 한 장씩 따로 만들지 않고 **한 파일에 위아래로 이어 붙인다**.
+         카톡에 보낼 때 파일 하나만 보내면 되도록. */
+      'function imgOf(node){return new Promise(function(ok,no){' +
+      ' var w=node.offsetWidth,h=node.offsetHeight,cl=node.cloneNode(true);' +
+      ' cl.style.margin="0"; cl.style.boxShadow="none";' +
+      ' var css="";' +
+      ' for(var i=0;i<document.styleSheets.length;i++){try{var r=document.styleSheets[i].cssRules;' +
+      '  for(var j=0;j<r.length;j++) css+=r[j].cssText+"\\n";}catch(e){}}' +
+      ' var wrap=document.createElement("div"); wrap.appendChild(cl); var inner;' +
+      ' try{inner=new XMLSerializer().serializeToString(wrap);}catch(e){no(new Error("문서를 옮기지 못했습니다.")); return;}' +
+      ' var safe=css.replace(/[<>&]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c];});' +
+      ' var svg=' +
+      '  \'<svg xmlns="http://www.w3.org/2000/svg" width="\'+w+\'" height="\'+h+\'">\'+' +
+      '  \'<foreignObject width="100%" height="100%">\'+' +
+      '  \'<div xmlns="http://www.w3.org/1999/xhtml"><style>\'+safe+\'</style>\'+inner+\'</div>\'+' +
+      '  \'</foreignObject></svg>\';' +
+      ' var img=new Image();' +
+      ' img.onload=function(){ ok({img:img, w:w, h:h}); };' +
+      ' img.onerror=function(){ no(new Error("그림으로 바꾸지 못했습니다.")); };' +
+      ' img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);});}' +
+      'function allPng(){ var ps=papers();' +
+      ' return Promise.all(ps.map(imgOf)).then(function(list){' +
+      '  var w=0, h=0;' +
+      '  list.forEach(function(x){ if(x.w>w) w=x.w; h+=x.h; });' +
+      /* 2배로 키워 또렷하게. 다만 캔버스가 너무 커지면 브라우저가 못 그리므로 높이를 16000px 로 묶는다 */
+      '  var s=2; if(h*s>16000) s=16000/h;' +
+      '  var cv=document.createElement("canvas");' +
+      '  cv.width=Math.round(w*s); cv.height=Math.round(h*s);' +
+      '  var cx=cv.getContext("2d");' +
+      '  cx.fillStyle="#fff"; cx.fillRect(0,0,cv.width,cv.height); cx.scale(s,s);' +
+      '  var y=0;' +
+      '  list.forEach(function(x,i){ cx.drawImage(x.img,0,y); y+=x.h;' +
+      /* 장과 장 사이에 옅은 선 — 어디서 끊기는지 보이게 */
+      '   if(i<list.length-1){ cx.fillStyle="#cbd5e1"; cx.fillRect(0,y-0.5,w,1); } });' +
+      '  return new Promise(function(ok,no){ cv.toBlob(function(b){' +
+      '   b ? ok([new File([b], FN+".png", {type:"image/png"})])' +
+      '     : no(new Error("그림으로 바꾸지 못했습니다.")); },"image/png"); });' +
+      ' });}' +
+      'function save(files){files.forEach(function(f){' +
+      ' var u=URL.createObjectURL(f), a=document.createElement("a");' +
+      ' a.href=u; a.download=f.name; document.body.appendChild(a); a.click();' +
+      ' setTimeout(function(){URL.revokeObjectURL(u); a.remove();},4000);});}' +
+      'document.getElementById("shPrint").onclick=function(){window.print();};' +
+      'document.getElementById("shPng").onclick=function(){' +
+      ' msg("그림을 만드는 중…");' +
+      ' allPng().then(function(f){save(f); msg("받았습니다 — "+papers().length+"장이 한 파일에 들어 있습니다. 「다운로드」 폴더를 보세요.");})' +
+      '  .catch(function(e){msg(e.message+" 「인쇄 · PDF로 저장」을 쓰세요.");});};' +
+      /* 보내기는 「누른 그 순간」에 불러야 막히지 않는다 — 그림을 미리 만들어 둔다 */
+      'var bs=document.getElementById("shShare"), bc=document.getElementById("shCopy"), READY=null, MAKING=false;' +
+      'function done(){ MAKING=false;' +
+      ' if(canFiles){ bs.textContent="카톡 등으로 보내기"; bs.disabled=false; }' +
+      ' bc.textContent="그림 복사하기"; bc.disabled=false; }' +
+      'function prep(){ if(READY||MAKING) return; MAKING=true;' +
+      ' allPng().then(function(f){ READY=f; done(); }, done); }' +
+      /* 컴퓨터는 파일 공유가 안 된다. 대신 그림을 「복사」해 두면 카톡 PC 대화창에서 Ctrl+V 로 붙는다. */
+      'var canCopy=!!(navigator.clipboard && navigator.clipboard.write && window.ClipboardItem);' +
+      'if(canCopy){ bc.style.display=""; bc.textContent="복사할 그림 만드는 중…"; bc.disabled=true; prep();' +
+      ' bc.onclick=function(){' +
+      '  if(!READY){ msg("그림을 아직 만드는 중입니다. 잠깐 뒤에 다시 눌러 주세요."); prep(); return; }' +
+      '  try{ navigator.clipboard.write([new ClipboardItem({"image/png":READY[0]})])' +
+      '   .then(function(){ msg(papers().length>1' +
+      '     ? "복사했습니다("+papers().length+"장). 카톡 대화창을 열고 Ctrl+V 하세요."' +
+      '     : "복사했습니다. 카톡 대화창을 열고 Ctrl+V 하세요."); })' +
+      '   .catch(function(){ msg("복사하지 못했습니다. 「그림(PNG)으로 저장」 뒤에 파일을 끌어다 놓으세요."); });' +
+      '  }catch(e){ msg("복사하지 못했습니다. 「그림(PNG)으로 저장」 뒤에 파일을 끌어다 놓으세요."); } };}' +
+      'var canFiles=false;' +
+      'try{ canFiles=!!(navigator.share && navigator.canShare &&' +
+      ' navigator.canShare({files:[new File([new Blob(["x"])],"t.png",{type:"image/png"})]})); }catch(e){}' +
+      /* 컴퓨터에서도 숨기지 않는다. 대신 「(폰 전용)」이라 적고, 누르면 이유와 대신할 방법을 알려준다 */
+      'bs.style.display="";' +
+      'if(!canFiles){ bs.textContent="카톡 등으로 보내기 (폰 전용)"; bs.className="dim";' +
+      ' bs.onclick=function(){ msg(canCopy' +
+      '  ? "이 기능은 폰에서만 됩니다. 컴퓨터에서는 왼쪽 「그림 복사하기」를 누르고, 카톡 PC 대화창에서 Ctrl+V 하세요."' +
+      '  : "이 기능은 폰에서만 됩니다. 컴퓨터에서는 「그림(PNG)으로 저장」 뒤에 그 파일을 카톡 대화창으로 끌어다 놓으세요."); }; }' +
+      'if(canFiles){ bs.textContent="보낼 그림 만드는 중…"; bs.disabled=true; prep();' +
+      ' bs.onclick=function(){' +
+      '  if(!READY){ msg("그림을 아직 만드는 중입니다. 잠깐 뒤에 다시 눌러 주세요."); prep(); return; }' +
+      '  try{ navigator.share({files:READY, title:FN})' +
+      '   .then(function(){msg("보냈습니다. 카톡에서 받는 사람을 고르면 됩니다.");})' +
+      '   .catch(function(e){ if(e && e.name==="AbortError"){msg("취소했습니다."); return;}' +
+      '    msg((e.message||"보내지 못했습니다.")+" 「그림(PNG)으로 저장」 뒤에 카톡에서 첨부해 주세요.");});' +
+      '  }catch(e){ msg("보내지 못했습니다. 「그림(PNG)으로 저장」 뒤에 카톡에서 첨부해 주세요."); } };}' +
+      'msg(canFiles' +
+      ' ? "「카톡 등으로 보내기」를 누르면 폰의 공유창이 뜹니다. 거기서 카톡을 고르고 받을 사람을 고르세요."' +
+      ' : (/iPhone|iPad|iPod/.test(navigator.userAgent)' +
+      '    ? "아이폰은 「그림(PNG)으로 저장」 뒤에 카톡에서 사진으로 첨부하세요. 인쇄는 공유 → 프린트 순서입니다."' +
+      '    : (canCopy' +
+      '       ? "컴퓨터에서는 「그림 복사하기」를 누른 뒤, 카톡 PC 대화창에서 Ctrl+V 하면 바로 붙습니다."' +
+      '       : "이 기기는 바로 보내기를 지원하지 않습니다. 「그림(PNG)으로 저장」 뒤에 카톡에서 첨부하세요.")));';
+
+    // 폰에서도 A4 한 장이 통째로 보이도록 폭을 종이에 맞춘다 (인쇄·PNG 는 영향 없음)
+    return '<!doctype html><html lang="ko"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=820">' +
+      '<title>' + esc2(title) + '</title><style>' + css + '</style></head><body>' +
+      '<div class="bar">' +
+        '<button id="shPrint">인쇄 · PDF로 저장</button>' +
+        '<button id="shPng" class="g">그림(PNG)으로 저장</button>' +
+        '<button id="shCopy" style="display:none">그림 복사하기</button>' +
+        '<button id="shShare" style="display:none">카톡 등으로 보내기</button>' +
+        '<span class="hint" id="shHint"></span>' +
+      '</div>' +
+      '<div class="stage" id="stage"></div>' +
+      '<table id="src" style="display:none"><tbody>' + body + '</tbody></table>' +
+      '<script>' + js + '<\/script></body></html>';
+  }
+
+  $('#btnPrint').addEventListener('click', function(){
+    if (!T.ship){ toast('먼저 목록을 불러오세요.', 'err'); return; }
+    var w;
+    try { w = window.open('', '_blank'); } catch (e) { w = null; }
+    if (w && w.document){
+      w.document.open(); w.document.write(shipPrintHtml()); w.document.close();
+      return;
+    }
+    // 새 탭이 막혔으면 이 화면을 그대로 인쇄해 본다 (컴퓨터에서는 이것도 된다)
+    try { window.print(); } catch (e2) {}
+    toast('새 탭이 막혀 있습니다. 브라우저에서 팝업을 허용해 주세요.', 'err');
+  });
+  $$('.filter').forEach(function(b){
+    b.addEventListener('click', function(){
+      T.filter = b.dataset.f;
+      $$('.filter').forEach(function(x){ x.classList.toggle('on', x === b); });
+      T.picked = {};
+      renderShip();
+    });
+  });
+  /* 기간을 직접 골라서 보는 칸 — 거꾸로 넣어도 앱이 바로잡는다 */
+  function bindShipRange(id, which){
+    $(id).addEventListener('change', function(){
+      if (!this.value) return;
+      T.seen = null;
+      if (which === "from") T.shipDate = this.value; else T.shipTo = this.value;
+      if (!T.shipTo) T.shipTo = T.shipDate;
+      if (T.shipTo < T.shipDate){ var t = T.shipDate; T.shipDate = T.shipTo; T.shipTo = t; }
+      loadShip();
+    });
+  }
+  bindShipRange('#shipDateFrom', 'from');
+  bindShipRange('#shipDateTo', 'to');
+
+  function loadShip(){
+    if (!T.shipDate) T.shipDate = ymd(new Date());
+    if (!T.shipTo) T.shipTo = T.shipDate;
+    $('#shipDateLabel').textContent = shipRangeLabel();
+    $('#shipDateFrom').value = T.shipDate;
+    $('#shipDateTo').value = T.shipTo;
+    T.picked = {};
+    $('#shipList').innerHTML = '<div class="card muted tiny">불러오는 중…</div>';
+    call('api_shipments', S.token, T.shipDate, T.shipTo).then(function(d){
+      T.ship = d; T.lastLoad = Date.now();
+      checkNew(d);
+      renderShip();
+    }).catch(function(e){
+      $('#shipList').innerHTML = '<div class="card tiny" style="color:var(--red)">' + esc(e.message) + '</div>';
+    });
+  }
+
+  function renderShip(){
+    var d = T.ship;
+    if (!d) return;
+    var s = d.summary;
+    var nOpen = s.wait + s.nostock, nPrep = s.prep, nDone = s.done;
+    var left = nOpen + nPrep;                      // 아직 안 나간 것 — 마감 판단 기준
+
+    $('#shipDateLabel').textContent = shipRangeLabel();
+    $('#shipDateFrom').value = T.shipDate;
+    $('#shipDateTo').value = T.shipTo || T.shipDate;
+    // 컴퓨터에서는 아래 CSS 가 이 조각들을 큰 숫자 타일로 바꾼다. 폰에서는 지금처럼 알약이다.
+    function tile(label, n, unit, tone){
+      return '<span class="k' + (tone ? ' ' + tone : '') + '"><i>' + label + '</i>' +
+             '<b>' + n + (unit ? '<em>' + unit + '</em>' : '') + '</b></span>';
+    }
+    $('#shipKpi').className = 'kpi tiles';
+    $('#shipKpi').innerHTML =
+      '<span class="k wh"><i>창고</i><b>' + esc(d.warehouse || '전체 창고') + '</b></span>' +
+      tile('주문', s.orders, '건') +
+      tile('거래처', s.custs, '곳') +
+      tile('품목', s.items, '') +
+      tile('수량', s.qty, '개') +
+      tile('미출고', nOpen, '', 't-open') +
+      tile('준비중', nPrep, '', 't-prep') +
+      tile('출고완료', nDone, '', 't-done') +
+      (s.nostock ? tile('재고없음', s.nostock, '', 't-no') : '');
+
+    // 이 날짜를 마감해도 되는지 한 줄로 — 물류가 퇴근 전에 보는 칸이다
+    var cb = $('#shipCloseBar');
+    var one = !T.shipTo || T.shipTo === T.shipDate;
+    // 얼마나 나갔는지 막대로 — 숫자보다 먼저 눈에 들어온다
+    var pct = s.orders ? Math.round(nDone / s.orders * 100) : 0;
+    var bar = '<span class="pg"><i style="width:' + pct + '%"></i></span>' +
+              '<span class="pgn">' + pct + '%</span>';
+    if (!s.orders){
+      cb.className = 'closebar none';
+      cb.innerHTML = '<span class="cbt">' + esc(shipRangeLabel()) + ' — ' +
+        (one ? '이 날짜에' : '이 기간에') + ' 나갈 주문이 없습니다.</span>';
+    } else if (left){
+      cb.className = 'closebar left';
+      cb.innerHTML = '<span class="cbt">아직 안 나간 주문 <b>' + left + '건</b> (미출고 ' + nOpen +
+        ' · 준비중 ' + nPrep + ')' +
+        (d.late.length ? ' · 지난 미출고 <b>' + d.late.length + '건</b>' : '') +
+        ' — 마감 전에 확인하세요.</span>' + bar;
+    } else {
+      cb.className = 'closebar ok';
+      cb.innerHTML = '<span class="cbt"><b>' + s.orders + '건 모두 출고완료</b> — ' +
+        (one ? '이 날짜는' : '이 기간은') + ' 마감해도 됩니다.' +
+        (d.late.length ? ' (지난 미출고 ' + d.late.length + '건은 따로 남아 있습니다)' : '') +
+        '</span>' + bar;
+    }
+
+    // 고른 칸마다 건수를 같이 띄운다 — 색만으로는 어디가 눌렸는지 헷갈린다
+    var cnt = { all: s.orders, open: nOpen, prep: nPrep, done: nDone };
+    $$('.filter').forEach(function(b){
+      var name = { all:'전체', open:'미출고', prep:'준비중', done:'출고완료' }[b.dataset.f];
+      b.innerHTML = name + '<b>' + (cnt[b.dataset.f] || 0) + '</b>';
+      b.classList.toggle('on', b.dataset.f === T.filter);
+    });
+
+    // 오늘 · 최근 7일 중 지금 보고 있는 기간과 맞는 버튼에 색을 넣는다
+    var tday = ymd(new Date()), to2 = T.shipTo || T.shipDate;
+    $('#dToday').classList.toggle('on', T.shipDate === tday && to2 === tday);
+    $('#dWeek').classList.toggle('on', T.shipDate === addDays(tday, -6) && to2 === tday);
+    if (!$('#exportBox').classList.contains('hidden')) renderExWhat();
+
+    $('#lateBox').innerHTML = d.late.length
+      ? '<div class="card" style="border-color:var(--nostock-line); background:var(--nostock-bg)">' +
+          '<div class="row"><b class="grow" style="color:var(--red)">지난 미출고 ' + d.late.length + '건</b>' +
+          '<span class="badge b-late">확인 필요</span></div>' +
+          d.late.map(function(g){ return orderCard(g, true); }).join('') +
+        '</div>'
+      : '';
+
+    var list = shipFiltered();
+    $('#shipList').innerHTML = list.length
+      ? list.map(function(g){ return orderCard(g, true); }).join('')
+      : '<div class="card muted tiny">이 칸에 해당하는 건이 없습니다.</div>';
+
+    bindShipButtons();
+    bindPick();
+    tickAgo();
+  }
+
+  /* ── 여러 건 한 번에 고르기 ── */
+  function pickable(){ return $$('.pickOne'); }
+  function pickedIds(){ return Object.keys(T.picked || {}).filter(function(k){ return T.picked[k]; }); }
+
+  function renderPick(){
+    var all = pickable(), ids = pickedIds(), n = ids.length;
+    all.forEach(function(c){
+      c.checked = !!(T.picked || {})[c.dataset.pick];
+      var card = c.closest ? c.closest('.ord') : null;
+      if (card) card.classList.toggle('picked', c.checked);
+    });
+    $('#bulkCount').textContent = n ? '고른 것 ' + n + '건' : '고른 것 없음';
+    $('#bulkBar').classList.toggle('live', n > 0);
+    $('#bulkDone').disabled = !n;
+    $('#bulkPrep').disabled = !n;
+    var box = $('#bulkAll');
+    box.checked = all.length > 0 && n === all.length;
+    box.indeterminate = n > 0 && n < all.length;
+  }
+
+  function bindPick(){
+    pickable().forEach(function(c){
+      c.addEventListener('change', function(){
+        T.picked[c.dataset.pick] = c.checked;
+        renderPick();
+      });
+    });
+    renderPick();
+  }
+
+  $('#bulkAll').addEventListener('change', function(){
+    var on = this.checked;
+    T.picked = {};
+    if (on) pickable().forEach(function(c){ T.picked[c.dataset.pick] = true; });
+    renderPick();
+  });
+
+  function bulkSet(status, askText, kind){
+    var ids = pickedIds();
+    if (!ids.length){ toast('먼저 주문을 고르세요.', 'err'); return; }
+    confirmBox(ids.length + '건을 ' + askText, { ok: status, kind: kind }).then(function(ok){
+      if (!ok) return;
+      $('#bulkDone').disabled = true; $('#bulkPrep').disabled = true;
+      call('api_setStatusBulk', S.token, ids, status, null).then(function(r){
+        T.picked = {};
+        if (r.skipped && r.skipped.length){
+          toast(r.updated + '건 ' + status + ' · ' + r.skipped.length + '건은 못 바꿨습니다: ' +
+                r.skipped.join(' / '), 'err');
+        } else {
+          toast(r.updated + '건을 ' + status + '로 바꿨습니다.', 'ok');
+        }
+        loadShip();
+      }).catch(function(e){ toast(e.message, 'err'); renderPick(); });
+    });
+  }
+  $('#bulkDone').addEventListener('click', function(){
+    bulkSet('출고완료', '한꺼번에 출고완료로 바꿉니다. 택배를 다 보내셨나요?', 'green');
+  });
+  $('#bulkPrep').addEventListener('click', function(){
+    bulkSet('준비중', '한꺼번에 준비중으로 바꿉니다.', '');
+  });
+
+  function bindShipButtons(){
+    $$('[data-st]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var st = b.dataset.st, oid = b.dataset.oid;
+        function go(){
+          b.disabled = true;
+          call('api_setStatus', S.token, oid, st, null).then(function(){
+            toast(st + '로 바꿨습니다.', 'ok');
+            loadShip();
+          }).catch(function(e){ toast(e.message, 'err'); b.disabled = false; });
+        }
+        if (st !== '출고완료'){ go(); return; }
+        confirmBox('택배를 보내셨나요? 출고완료로 바꿉니다.',
+                   { ok: '출고완료', kind: 'green' }).then(function(ok){ if (ok) go(); });
+      });
+    });
+    $$('[data-nostock]').forEach(function(b){
+      b.addEventListener('click', function(){
+        ask({ title: '재고없음으로 알리기',
+              text: '어떤 제품이 얼마나 부족한가요?\n적으신 내용이 영업담당자에게 그대로 전달됩니다.',
+              input: true, placeholder: '예) 아미노팜 20L 3개 부족',
+              ok: '영업에 알리기', kind: 'amber' }).then(function(why){
+          if (why === null) return;
+          b.disabled = true;
+          call('api_setStatus', S.token, b.dataset.nostock, '재고없음', why).then(function(){
+            toast('재고없음으로 알렸습니다.', 'ok');
+            loadShip();
+          }).catch(function(e){ toast(e.message, 'err'); b.disabled = false; });
+        });
+      });
+    });
+  }
+
+  /* ═══════════════════ 출하현황 파일 ═══════════════════ */
+  var WHAT = { all: '전체', open: '미출고', prep: '준비중', done: '출고완료' };
+
+  /* 따로 고르지 않는다 — 화면에서 보고 있는 칸이 그대로 나간다 */
+  function renderExWhat(){
+    var w = WHAT[T.filter] || '전체';
+    var n = (T.ship && T.ship.summary)
+      ? ({ all: T.ship.summary.orders,
+           open: T.ship.summary.wait + T.ship.summary.nostock,
+           prep: T.ship.summary.prep,
+           done: T.ship.summary.done })[T.filter]
+      : null;
+    var from = $('#exFrom').value, to = $('#exTo').value;
+    var span = (from === to) ? from : from + ' ~ ' + to;
+    var same = (from === T.shipDate && to === (T.shipTo || T.shipDate));
+    $('#exWhat').innerHTML =
+      '지금 화면에서 고른 <b>' + w + '</b> 목록이 나갑니다' +
+      (same && n !== null && n !== undefined ? ' (주문 <b>' + n + '건</b>)' : '') +
+      '<br>다른 것을 보내려면 창을 닫고 위에서 칸을 바꿔 주세요.';
+    $('#exWhat2').innerHTML =
+      '보낼 것 — <b>' + w + '</b> · <b>' + esc(span) + '</b>' +
+      (same ? '' : ' <span class="muted">(날짜를 바꿨습니다)</span>');
+  }
+
+  /* 오늘 · 어제 · 최근 7일 중 지금 기간과 맞는 버튼에 색을 넣는다 */
+  function markExQuick(){
+    var today = ymd(new Date()), from = $('#exFrom').value, to = $('#exTo').value;
+    $$('[data-ex]').forEach(function(b){
+      var n = Number(b.dataset.ex), f, t;
+      if (n === 0){ f = today; t = today; }
+      else if (n === 1){ f = addDays(today, -1); t = addDays(today, -1); }
+      else { f = addDays(today, -(n - 1)); t = today; }
+      b.classList.toggle('on', from === f && to === t);
+    });
+  }
+
+  $('#btnExportBox').addEventListener('click', function(){
+    var box = $('#exportBox');
+    box.classList.toggle('hidden');
+    if (!box.classList.contains('hidden')){
+      // 지금 보고 있는 기간을 그대로 가져온다
+      $('#exFrom').value = T.shipDate || ymd(new Date());
+      $('#exTo').value = T.shipTo || $('#exFrom').value;
+      markExQuick(); renderExWhat();
+    }
+  });
+  $('#exportClose').addEventListener('click', function(){ $('#exportBox').classList.add('hidden'); });
+  $$('[data-ex]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var n = Number(b.dataset.ex), today = ymd(new Date());
+      if (n === 0){ $('#exFrom').value = today; $('#exTo').value = today; }
+      else if (n === 1){ $('#exFrom').value = addDays(today, -1); $('#exTo').value = addDays(today, -1); }
+      else { $('#exFrom').value = addDays(today, -(n - 1)); $('#exTo').value = today; }
+      markExQuick(); renderExWhat();
+    });
+  });
+  ['#exFrom', '#exTo'].forEach(function(id){
+    $(id).addEventListener('change', function(){ markExQuick(); renderExWhat(); });
+  });
+
+  $('#btnExportCsv').addEventListener('click', function(){
+    var b = this; b.disabled = true; b.textContent = '만드는 중…';
+    call('api_shipmentExport', S.token, $('#exFrom').value, $('#exTo').value, T.filter).then(function(d){
+      if (!d.count){ toast('그 기간에 ' + d.label + ' 건이 없습니다.', 'err'); return; }
+      // 엑셀에서 한글이 깨지지 않게 BOM을 붙인다
+      var blob = new Blob(['﻿' + d.csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = d.name; a.style.display = 'none';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1500);
+      // count 는 품목 줄 수라 그대로 「건」이라 적으면 주문 건수로 오해한다
+      toast('주문 ' + d.orders + '건 (품목 ' + d.count + '줄) 을 받았습니다 · ' + d.name, 'ok');
+    }).catch(function(e){ toast(e.message, 'err'); })
+      .then(function(){ b.disabled = false; b.textContent = '엑셀(CSV) 파일로 받기'; });
+  });
+
+  $('#btnExportMail').addEventListener('click', function(){
+    var to = $('#exMail').value.trim();
+    if (!to){ toast('받는 메일 주소를 넣으세요.', 'err'); return; }
+    var b = this;
+    var what = WHAT[T.filter] || '전체';
+    var from = $('#exFrom').value, to2 = $('#exTo').value;
+    confirmBox('「' + what + '」 목록 (' + (from === to2 ? from : from + ' ~ ' + to2) + ') 을\n' +
+               to + ' 로 보낼까요?\n첨부 파일과 같은 내용이 메일 본문에도 글자로 들어갑니다.',
+               { ok: '보내기' }).then(function(ok){
+      if (!ok) return;
+      b.disabled = true; b.textContent = '보내는 중…';
+      call('api_mailShipmentList', S.token, $('#exFrom').value, $('#exTo').value, to, T.filter).then(function(d){
+        toast('주문 ' + d.orders + '건 (품목 ' + d.count + '줄) 을 ' + d.sent + ' 로 한 통 보냈습니다.', 'ok');
+      }).catch(function(e){ toast(e.message, 'err'); })
+        .then(function(){ b.disabled = false; b.textContent = '메일로 보내기'; });
+    });
+  });
+
+  /* 「n분 전 갱신」을 고치고, 화면을 열어 둔 채 90초가 지났으면 조용히 다시 불러온다 */
+  setInterval(function(){
+    tickAgo();
+    var box = document.querySelector('#v-today');
+    var on = box && box.style.display !== 'none';
+    if (on && S.token && document.visibilityState === 'visible' && Date.now() - T.lastLoad > 90000) loadShip();
+  }, 10000);
+
+  /* 관제 탭에서 「오늘 출고」를 누르면 이것이 불린다 */
+  window.tsOpen = function(){
+    if (!T.shipDate){ T.shipDate = ymd(new Date()); T.shipTo = T.shipDate; }
+    loadShip();
+  };
+})();
 </script>
 </body>
 </html>
