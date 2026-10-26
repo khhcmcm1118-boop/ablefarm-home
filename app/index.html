@@ -400,7 +400,12 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   }
   .stList button:first-child{ border-top:0 }
   .stList button.on{ background:var(--sel-bg); box-shadow:inset 3px 0 0 var(--blue) }
-  .stList .amt{ float:right; color:var(--ink3); font-size:12px; font-variant-numeric:tabular-nums }
+  .stList .amt{ float:right; color:var(--ink3); font-size:12px; font-variant-numeric:tabular-nums; text-align:right }
+  /* 거래처를 열어보기 전에 미수금을 바로 보려고 매출 아래에 붙인다 (2026-10-26 사장님 요청).
+     남은 돈은 빨강, 다 받은 곳은 초록 — 색만 봐도 갈린다. */
+  .stList .amt b.ar{ display:block; margin-top:2px; font-size:12.5px; font-weight:800; color:var(--red) }
+  .stList .amt b.ar.zero{ color:var(--green); font-weight:700 }
+  .stList .amt b.ar.wait{ color:var(--ink3); font-weight:600 }
   .stList .who{ display:block; color:var(--ink3); font-size:11.5px }
   .stStage{
     background:var(--desk); border:1px solid var(--line); border-radius:14px;
@@ -3634,7 +3639,7 @@ function renderStock(){
    거래처 목록도 정산서도 서버(정산.gs)가 담당자별로 걸러서 준다.
    영업은 자기 담당만, 관리는 전부. 화면에서만 숨기면 거래처명을 아는 사람이 불러올 수 있으므로
    api_settleStatement 가 한 번 더 막는다. */
-var ST = { custs: [], cur: null, mode: '상세', boot: null, sent: false };
+var ST = { custs: [], cur: null, mode: '상세', boot: null, sent: false, ar: null, arAsof: '', arBusy: false };
 
 function loadSettle(){
   if (!$('#stAsof').value) $('#stAsof').value = new Date().toISOString().slice(0, 10);
@@ -3651,8 +3656,34 @@ function loadSettle(){
       return '<div class="card" style="border-color:var(--amber-line); background:var(--amber-bg)">' +
              '<div class="tiny" style="color:var(--amber)">⚠ ' + esc(w) + '</div></div>'; }).join('');
     settleList();
+    settleAR();                 // 미수금은 조금 늦게 와서 목록에 채워 넣는다
   }).catch(function(e){
     $('#stList').innerHTML = '<div class="tiny" style="color:var(--red)">' + esc(e.message) + '</div>';
+  });
+}
+
+/* ── 거래처 목록의 미수금 ──────────────────────────────────────────
+   2026-10-26 사장님 요청: 거래처를 하나씩 열어보려면 시간이 걸리니
+   목록에서 바로 미수금을 보고 싶다.
+   서버 api_settleLedger 가 기준일까지의 거래처별 「입금하실 금액(payable)」을
+   한 번에 내려준다 — 정산내역서를 열었을 때 나오는 것과 같은 값이다.
+   55곳을 다 계산하느라 몇 초 걸리므로 목록부터 띄우고 뒤에서 채운다.
+   기준일을 바꾸면 미수금도 그 날짜 기준으로 다시 받는다. */
+function settleAR(){
+  var asof = $('#stAsof').value || '';
+  if (!asof || ST.arBusy) return;
+  if (ST.ar && ST.arAsof === asof) return;         // 같은 기준일이면 다시 안 받는다
+  ST.arBusy = true;
+  settleList();                                     // 「미수 …」 로 자리를 잡아 둔다
+  call('api_settleLedger', S.token, asof, '').then(function(d){
+    var m = {};
+    (d.rows || []).forEach(function(r){ m[r.cust] = Math.round(r.payable); });
+    ST.ar = m; ST.arAsof = asof;
+  }).catch(function(){
+    ST.ar = null;                                   // 못 받으면 아무것도 안 띄운다
+  }).then(function(){
+    ST.arBusy = false;
+    settleList();
   });
 }
 
@@ -3662,8 +3693,16 @@ function settleList(){
   $('#stCount').textContent = list.length + '곳';
   if (!list.length){ $('#stList').innerHTML = '<div class="tiny muted" style="padding:12px 14px">거래처가 없습니다.</div>'; return; }
   $('#stList').innerHTML = list.map(function(c){
+    // 매출 아래에 미수금 — 빨강이면 아직 받을 돈, 초록이면 다 받은 곳
+    var ar = '';
+    if (ST.arBusy) ar = '<b class="ar wait">미수 …</b>';
+    else if (ST.ar){
+      var v = ST.ar[c.cust] || 0;                  // 목록에 없는 곳은 받을 돈이 없다
+      ar = v > 0 ? '<b class="ar">미수 ' + num(v) + '</b>'
+                 : '<b class="ar zero">미수 없음</b>';
+    }
     return '<button data-c="' + esc(c.cust) + '"' + (ST.cur === c.cust ? ' class="on"' : '') + '>' +
-      '<span class="amt">' + num(c.amt) + '</span>' + esc(c.cust) +
+      '<span class="amt">' + num(c.amt) + ar + '</span>' + esc(c.cust) +
       '<span class="who">' + esc(c.rep || '담당 미지정') + (c.last ? ' · 최근 ' + esc(c.last) : '') + '</span></button>';
   }).join('');
   $$('#stList button').forEach(function(b){
@@ -3823,7 +3862,10 @@ function settlePaper(st){
   return h;
 }
 
-$('#stAsof').addEventListener('change', settleDraw);
+$('#stAsof').addEventListener('change', function(){
+  settleDraw();      // 열어 둔 내역서
+  settleAR();        // 목록의 미수금도 그 기준일로 다시 받는다
+});
 $('#stQ').addEventListener('input', settleList);
 $('#stBrief').addEventListener('click', function(){
   ST.mode = (ST.mode === '상세') ? '요약' : '상세';
