@@ -2802,9 +2802,11 @@ function renderShip(){
 
   var list = shipFiltered();
   $('#shipList').innerHTML = list.length
-    ? list.map(function(g){ return orderCard(g, true); }).join('')
+    ? (S.filter === 'cancel'
+        ? '<div class="tiny muted" style="margin:2px 2px 6px">취소 칸은 날짜를 안 바꿔도 최근 7일 취소를 함께 보여줍니다 · 최근 취소가 위</div>'
+        : '') + list.map(function(g){ return orderCard(g, true); }).join('')
     : '<div class="card muted tiny">' + (S.filter === 'cancel'
-        ? '이 기간에 취소된 주문이 없습니다. (10월 26일 주문부터 보여줍니다)'
+        ? '최근 7일·고른 기간에 취소된 주문이 없습니다. (10월 26일 주문부터 보여줍니다)'
         : '이 칸에 해당하는 건이 없습니다.') + '</div>';
 
   bindShipButtons();
