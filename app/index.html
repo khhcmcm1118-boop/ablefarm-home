@@ -255,6 +255,7 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
   .b-prep{background:var(--amber-bg); color:var(--amber)}
   .b-done{background:var(--green-bg); color:var(--green)}
   .b-cancel{background:var(--cancel-bg); color:var(--cancel)}
+  .ord.canceled ul, .ord.canceled h3{text-decoration:line-through; text-decoration-color:var(--cancel); opacity:.75}
   .b-nostock{background:var(--red-bg); color:var(--red)}
   .b-sample{background:var(--violet-bg); color:var(--violet)}
   .b-nh{background:var(--nh-bg); color:var(--nh)}
@@ -1011,6 +1012,7 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
       <button class="btn sm ghost grow filter" data-f="open">미출고</button>
       <button class="btn sm ghost grow filter" data-f="prep">준비중</button>
       <button class="btn sm ghost grow filter" data-f="done">출고완료</button>
+      <button class="btn sm ghost grow filter" data-f="cancel">취소</button>
     </div>
     <div class="row noprint bulkbar" id="bulkBar">
       <label class="pickall"><input type="checkbox" id="bulkAll"><span>전체 선택</span></label>
@@ -2318,7 +2320,8 @@ $('#btnEditStop').addEventListener('click', function(){
 });
 
 function orderCard(g, forShip){
-  var cls = 'ord' + (isDone(g.status) ? ' done' : '') + (g.status === '재고없음' ? ' nostock' : '');
+  var cls = 'ord' + (isDone(g.status) ? ' done' : '') + (g.status === '재고없음' ? ' nostock' : '') +
+            (g.status === '취소' ? ' canceled' : '');
   var where = [g.si, g.gun].filter(String).join(' ');
   var items = g.items.map(function(it){
     return '<li><span>' + esc(it.prod) + (it.size ? ' <span class="muted tiny">' + esc(it.size) + '</span>' : '') +
@@ -2341,7 +2344,10 @@ function orderCard(g, forShip){
   }
 
   var acts;
-  if (forShip){
+  if (forShip && g.status === '취소'){
+    acts = '<div class="tiny" style="margin-top:8px; color:var(--cancel); font-weight:700">❌ 취소 ' +
+      esc(g.handledAt || g.handledDay || '') + (g.handler ? ' · ' + esc(g.handler) : '') + ' — 보내지 마세요</div>';
+  } else if (forShip){
     acts = '<div class="acts noprint">' +
       (g.status !== '준비중' ? '<button class="btn sm" data-st="준비중" data-oid="' + esc(g.oid) + '">준비중</button>' : '') +
       (!isDone(g.status) ? '<button class="btn sm green" data-st="출고완료" data-oid="' + esc(g.oid) + '">출고완료</button>' : '') +
@@ -2436,12 +2442,15 @@ function shipMatch(st, f){
   if (f === 'open') return st === '대기' || st === '재고없음';   // 아직 손도 안 댄 것
   if (f === 'prep') return st === '준비중';
   if (f === 'done') return isDone(st);
+  if (f === 'cancel') return st === '취소';
   return true;
 }
 function shipFiltered(){
   var d = S.ship;
   if (!d) return [];
-  // 취소된 주문은 물류 목록·인쇄에 넣지 않는다 — 택배로 잘못 보낼 수 있다 (서버도 빼지만 옛 서버 대비)
+  // 「취소」 칸만 취소된 주문을 따로 보여준다 (서버 d.canceled, 10/26 주문부터 — 2026-10-27 사장님 요청)
+  if (S.filter === 'cancel') return d.canceled || [];
+  // 다른 칸에는 취소된 주문을 넣지 않는다 — 택배로 잘못 보낼 수 있다 (서버도 빼지만 옛 서버 대비)
   return (d.groups || []).filter(function(g){ return g.status !== '취소' && shipMatch(g.status, S.filter); });
 }
 
@@ -2451,8 +2460,8 @@ function shipFiltered(){
 function shipPrintHtml(){
   var d = S.ship || { groups: [], late: [], summary: {} };
   var esc2 = function(s){ return esc(String(s == null ? '' : s)); };
-  var fname = {all:'출하목록', open:'미출고목록', prep:'준비중목록', done:'출고완료목록'}[S.filter] || '출하목록';
-  var what  = {all:'전체', open:'미출고', prep:'준비중', done:'출고완료'}[S.filter] || '전체';
+  var fname = {all:'출하목록', open:'미출고목록', prep:'준비중목록', done:'출고완료목록', cancel:'취소목록'}[S.filter] || '출하목록';
+  var what  = {all:'전체', open:'미출고', prep:'준비중', done:'출고완료', cancel:'취소'}[S.filter] || '전체';
   var late  = (S.filter === 'all' || S.filter === 'open') ? (d.late || []) : [];
   var rows  = late.map(function(g){ return { g: g, late: true }; })
       .concat(shipFiltered().map(function(g){ return { g: g, late: false }; }));
@@ -2770,9 +2779,9 @@ function renderShip(){
   }
 
   // 고른 칸마다 건수를 같이 띄운다 — 색만으로는 어디가 눌렸는지 헷갈린다
-  var cnt = { all: s.orders, open: nOpen, prep: nPrep, done: nDone };
+  var cnt = { all: s.orders, open: nOpen, prep: nPrep, done: nDone, cancel: (d.canceled || []).length };
   $$('.filter').forEach(function(b){
-    var name = { all:'전체', open:'미출고', prep:'준비중', done:'출고완료' }[b.dataset.f];
+    var name = { all:'전체', open:'미출고', prep:'준비중', done:'출고완료', cancel:'취소' }[b.dataset.f];
     b.innerHTML = name + '<b>' + (cnt[b.dataset.f] || 0) + '</b>';
     b.classList.toggle('on', b.dataset.f === S.filter);
   });
@@ -2794,7 +2803,9 @@ function renderShip(){
   var list = shipFiltered();
   $('#shipList').innerHTML = list.length
     ? list.map(function(g){ return orderCard(g, true); }).join('')
-    : '<div class="card muted tiny">이 칸에 해당하는 건이 없습니다.</div>';
+    : '<div class="card muted tiny">' + (S.filter === 'cancel'
+        ? '이 기간에 취소된 주문이 없습니다. (10월 26일 주문부터 보여줍니다)'
+        : '이 칸에 해당하는 건이 없습니다.') + '</div>';
 
   bindShipButtons();
   bindPick();
@@ -2897,7 +2908,7 @@ function bindShipButtons(){
 }
 
 /* ═══════════════════ 출하현황 파일 ═══════════════════ */
-var WHAT = { all: '전체', open: '미출고', prep: '준비중', done: '출고완료' };
+var WHAT = { all: '전체', open: '미출고', prep: '준비중', done: '출고완료', cancel: '취소' };
 
 /* 따로 고르지 않는다 — 화면에서 보고 있는 칸이 그대로 나간다 */
 function renderExWhat(){
@@ -2906,7 +2917,8 @@ function renderExWhat(){
     ? ({ all: S.ship.summary.orders,
          open: S.ship.summary.wait + S.ship.summary.nostock,
          prep: S.ship.summary.prep,
-         done: S.ship.summary.done })[S.filter]
+         done: S.ship.summary.done,
+         cancel: (S.ship.canceled || []).length })[S.filter]
     : null;
   var from = $('#exFrom').value, to = $('#exTo').value;
   var span = (from === to) ? from : from + ' ~ ' + to;
@@ -4235,6 +4247,10 @@ function showNote(n){
   var canAck = order && S.me && S.me.role === '물류';
   ask({ title: n.t || '알림', text: n.b || '', ok: canAck ? '확인 — 준비중으로' : '확인', kind: canAck ? 'green' : 'dark' })
     .then(function(v){
+      // 취소 알림(x-) — 물류는 확인하면 「취소」 칸을 연다 (상태는 이미 취소라 바꿀 것이 없다)
+      if (v !== null && kind === 'x' && !test && S.me && S.me.role === '물류'){
+        S.filter = 'cancel'; show('ship'); return;
+      }
       if (v === null || !canAck) return;
       if (test){
         toast('시험 알림이라 바뀐 것은 없습니다. 실제 주문이면 「준비중」으로 바뀌고 다시 알림이 멈춥니다.', 'ok');
