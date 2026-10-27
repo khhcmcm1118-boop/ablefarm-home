@@ -906,6 +906,7 @@ else if (/(\?|&)settle\b/.test(location.search)) location.replace('settle.html')
       <button class="btn sm ghost grow mfilter on" data-m="all">전체</button>
       <button class="btn sm ghost grow mfilter" data-m="open">미출고</button>
       <button class="btn sm ghost grow mfilter" data-m="done">출고완료</button>
+      <button class="btn sm ghost grow mfilter" data-m="cancel">취소</button>
     </div>
     <div id="mineList"></div>
   </div>
@@ -2227,18 +2228,30 @@ function renderMine(){
   var open = list.filter(function(g){ return !isDone(g.status) && g.status !== '취소'; });
   var late = open.filter(function(g){ return g.shipDate && g.shipDate < today; });
   var done = list.filter(function(g){ return isDone(g.status); });
+  // 취소한 주문은 「취소」 칸으로만 — 전체·주문 수에 섞지 않는다 (2026-10-27 사장님 요청, 물류 화면과 같게)
+  var live = list.filter(function(g){ return g.status !== '취소'; });
+  var canceled = list.filter(function(g){ return g.status === '취소'; })
+    .sort(function(a, b){ return a.handledAt < b.handledAt ? 1 : a.handledAt > b.handledAt ? -1 : 0; });
 
   $('#mineKpi').innerHTML =
-    '<span>주문 <b>' + list.length + '</b>건</span>' +
+    '<span>주문 <b>' + live.length + '</b>건</span>' +
     '<span>미출고 <b>' + open.length + '</b></span>' +
     '<span>출고완료 <b>' + done.length + '</b></span>' +
+    (canceled.length ? '<span>취소 <b>' + canceled.length + '</b></span>' : '') +
     (late.length ? '<span style="background:var(--alert-chip)">출하일 지남 <b>' + late.length + '</b></span>' : '') +
     (S.alerts.length ? '<span style="background:var(--alert-chip)">재고없음 <b>' + S.alerts.length + '</b></span>' : '');
 
-  var shown = S.mineFilter === 'open' ? open : (S.mineFilter === 'done' ? done : list);
+  var shown = { open: open, done: done, cancel: canceled }[S.mineFilter] || live;
+  // 칸 이름 옆에 건수 — 물류 화면과 같은 모양
+  var mcnt = { all: live.length, open: open.length, done: done.length, cancel: canceled.length };
+  $$('.mfilter').forEach(function(b){
+    var name = { all: '전체', open: '미출고', done: '출고완료', cancel: '취소' }[b.dataset.m];
+    b.innerHTML = name + ' <b>' + (mcnt[b.dataset.m] || 0) + '</b>';
+  });
   if (!shown.length){
     $('#mineList').innerHTML = '<div class="card muted tiny">' +
-      (list.length ? '해당하는 주문이 없습니다.' : '최근 주문이 없습니다.') + '</div>';
+      (S.mineFilter === 'cancel' ? '최근 14일 동안 취소한 주문이 없습니다.'
+        : list.length ? '해당하는 주문이 없습니다.' : '최근 주문이 없습니다.') + '</div>';
     return;
   }
   $('#mineList').innerHTML = shown.map(function(g){ return orderCard(g, false); }).join('');
@@ -2252,7 +2265,7 @@ function bindMine(){
         if (!ok) return;
         b.disabled = true;
         call('api_cancelOrder', S.token, b.dataset.cancel).then(function(){
-          toast('취소했습니다.', 'ok'); loadMine();
+          toast('취소했습니다. 물류에 취소 알림이 갔고, 「취소」 칸에서 볼 수 있습니다.', 'ok'); loadMine();
         }).catch(function(e){ toast(e.message, 'err'); b.disabled = false; });
       });
     });
@@ -2344,9 +2357,11 @@ function orderCard(g, forShip){
   }
 
   var acts;
-  if (forShip && g.status === '취소'){
+  if (g.status === '취소'){
+    // 물류·영업 「취소」 칸 — 단추 없이 누가 언제 취소했는지만
     acts = '<div class="tiny" style="margin-top:8px; color:var(--cancel); font-weight:700">❌ 취소 ' +
-      esc(g.handledAt || g.handledDay || '') + (g.handler ? ' · ' + esc(g.handler) : '') + ' — 보내지 마세요</div>';
+      esc(g.handledAt || g.handledDay || '') + (g.handler ? ' · ' + esc(g.handler) : '') +
+      (forShip ? ' — 보내지 마세요' : '') + '</div>';
   } else if (forShip){
     acts = '<div class="acts noprint">' +
       (g.status !== '준비중' ? '<button class="btn sm" data-st="준비중" data-oid="' + esc(g.oid) + '">준비중</button>' : '') +
