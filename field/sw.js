@@ -1,5 +1,5 @@
 /* 에이블팜 현장 처방 — 오프라인 캐시 (build.ps1 이 만든다, 직접 고치지 말 것) */
-var V = 'af-field-202610221036';
+var V = 'af-field-202610291848';
 var CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(V).then(function (c) { return c.addAll(CORE); })); self.skipWaiting(); });
 self.addEventListener('activate', function (e) {
