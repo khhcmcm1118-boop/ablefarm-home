@@ -984,8 +984,9 @@ const CROP_ISSUE_DB = {
     {keywords:["짙은 갈색 반점","고두병"], part:"열매", symptom:"과육에 짙은 갈색 반점이 생겨요", label:"고두병", cause:"고두병일 수 있어요. 조직 내 칼슘 함량이 낮아 생기는 칼슘 결핍 생리장해예요.", product:"uninkcal"}
   ],
   "배추": [
+    {keywords:["언 피해","얼었","얼어서","동해","한파","무가 얼","배추가 얼","무 어깨","무가 물러","냉해"], part:"잎", symptom:"추위에 배추·무가 얼었어요", label:"언 피해(동해)", cause:"언 피해일 수 있어요. 배추는 영하 8℃ 안팎, 무는 영하 1.5℃ 안팎에서 얼어요(농촌진흥청). 땅 위로 솟은 무 어깨가 먼저 얼고, 얼었다 녹은 조직은 물러져요. 중북부는 한파 전에 수확하고, 남부는 부직포·비닐을 미리 준비해 덮어 주세요. 이미 얼었다면 바로 뽑지 말고 언 부분이 녹은 뒤 날이 풀리면 바로 수확·출하하는 게 좋아요. 추위로 생육이 더딘 밭은 4종복합비료 엽면시비로 회복을 도와줄 수 있어요.", product:"impactone", companion:"sokddanddan"},
     {keywords:["달팽이가 붙어","달팽이가 갉아먹","달팽이가 잎을 갉아먹어요"], part:"잎", symptom:"달팽이가 잎을 갉아먹어요", label:"달팽이 피해", cause:"달팽이 피해일 수 있어요. 장마철 다습할 때 밤에 활동하며 잎을 갉아먹고, 지나간 자리에 끈적한 점액 흔적을 남겨요."},
-    {keywords:["밑동이 물러","악취","냄새","무름"], part:"뿌리", symptom:"밑동이 물러지고 악취가 나요", label:"무름병", cause:"무름병일 수 있어요. 고온다습(30℃ 이상·잦은 강수)한 조건에서 해충이 만든 상처를 통해 세균이 침입해요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["밑동이 물러","악취","냄새","무름"], part:"뿌리", symptom:"밑동이 물러지고 악취가 나요", label:"무름병", cause:"무름병일 수 있어요. 고온다습(30℃ 이상·잦은 강수)한 조건에서 해충이 만든 상처를 통해 세균이 침입해요. 무름병은 등록 약제로 방제하고, 병든 포기는 일찍 뽑아 밭 밖으로 치워 주세요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["뿌리에 혹","한낮에 시들","뿌리혹병"], part:"뿌리", symptom:"뿌리에 혹이 생기고 한낮에 시들어요", label:"뿌리혹병", cause:"뿌리혹병(무사마귀병)일 수 있어요. 산성토양·연작지에서 토양 속 병원균(휴면포자)으로 전염돼요."},
     {keywords:["회백색 곰팡이","노균병"], part:"잎", symptom:"잎에 회백색 곰팡이가 생겨요", label:"노균병", cause:"노균병일 수 있어요. 저온다습한 조건에서 잎에 황색 반점과 회백색 곰팡이가 생겨요."},
     {keywords:["V자 모양","검은썩음","흑부병"], part:"잎", symptom:"잎맥을 따라 V자 모양으로 검게 썩어요", label:"검은썩음병", cause:"검은썩음병(흑부병)일 수 있어요. 9월 이후 수확기 고온다습한 조건에서 세균으로 발생해요."},
@@ -1342,6 +1343,8 @@ const CROP_ISSUE_DB = {
 };
 // "멜론"/"메론" 두 표기 모두 같은 병해충 데이터를 쓰도록 별칭 연결
 CROP_ISSUE_DB["멜론"] = CROP_ISSUE_DB["메론"];
+// "무": 김장 무 언 피해(배추 항목을 뿌리 부위로) + 열무와 같은 병해충 자료
+CROP_ISSUE_DB["무"] = [Object.assign({}, CROP_ISSUE_DB["배추"][0], {part:"뿌리", symptom:"추위에 무가 얼었어요"}), ...CROP_ISSUE_DB["열무"]];
 
 /* ------------------------------------------------------------------
    계절/시기 인식 — cause 문장에 이미 적혀있는 "7~8월", "겨울철" 같은
@@ -1514,6 +1517,7 @@ const TOP_ISSUES = {
 };
 TOP_ISSUES["멜론"] = TOP_ISSUES["메론"];
 TOP_ISSUES["파"] = TOP_ISSUES["대파"];
+TOP_ISSUES["무"] = ["언 피해(동해)", ...TOP_ISSUES["열무"]];
 CROP_ISSUE_DB["파"] = CROP_ISSUE_DB["대파"];
 
 // 병해충 데이터(TOP10 포함)가 실제로 있는 작물 목록 — 같은 배열을 가리키는 별칭은
@@ -2913,7 +2917,8 @@ function handleUserMessage(raw){
 const GUIDE_LINKS = [
   { crops:["벼"], match:/깨씨무늬병/, title:"벼 깨씨무늬병 관리 안내", url:"guide/rice-brown-spot.html", video:"cXLysImyLjk" },
   { crops:["고추"], match:/탄저병/, title:"고추 탄저병 관리 안내", url:"guide/pepper-anthracnose.html", video:"3HrCOXWGfPE" },
-  { crops:["사과","고추","아로니아","배","복숭아"], match:/일소|햇볕 데임|햇빛 데임/, title:"사과 일소(햇볕 데임) 관리 안내", url:"guide/apple-sunburn.html", video:"FUqkyk16ZXo" }
+  { crops:["사과","고추","아로니아","배","복숭아"], match:/일소|햇볕 데임|햇빛 데임/, title:"사과 일소(햇볕 데임) 관리 안내", url:"guide/apple-sunburn.html", video:"FUqkyk16ZXo" },
+  { crops:["배추","무","얼갈이배추","열무","갓"], match:/언 피해|영하 1\.5/, title:"김장 배추·무 언 피해 대비 안내", url:"guide/kimjang-frost.html", video:"W7zAvaR1o1U" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;
