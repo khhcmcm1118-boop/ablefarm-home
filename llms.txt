@@ -8,6 +8,7 @@
 
 ## 구조화 데이터
 
+- [제품별 페이지 (전체 목록)](https://www.ablefarm.co.kr/products/): 24개 제품 각각의 독립 페이지 — 성분·효과·희석배수·사용 시기·적용 작물·자주 묻는 질문, 관련 재배 안내·쇼츠 연결 (예: [일소가드](https://www.ablefarm.co.kr/products/ilsoguard.html), [칼슘탄](https://www.ablefarm.co.kr/products/calciumtan.html), [아미닥터](https://www.ablefarm.co.kr/products/amidoctor.html), [임팩트과립](https://www.ablefarm.co.kr/products/impactgranule.html))
 - [제품 데이터 (JSON)](https://www.ablefarm.co.kr/data/products.json): 24개 제품의 분류·성분·효과·희석배수·사용시기·적용작물·FAQ
 - 홈페이지(`ablefarm-home.dc.html`)에는 schema.org JSON-LD(Organization, ItemList, Product, FAQPage)가 포함되어 있습니다.
 
@@ -20,6 +21,7 @@
 
 - [벼 깨씨무늬병 — 원인과 논 토양 관리법](https://www.ablefarm.co.kr/guide/rice-brown-spot.html): 깨씨무늬병은 유효규산·칼리가 부족한 사질답·노후화 논에서 많이 발생(농림축산식품부·국립식량과학원·학술 논문 근거). 관리 순서는 토양검정 → 경운 전 규산질 토양개량 → 칼리 균형 → 발생 초기 등록 약제 방제. 규산질 토양개량 자재로 임팩트과립(유기농업자재 공시-2-3-792, 규산 약 20%·석회 다량 함유 규산질 원료와 휴믹산, 수도작 8kg 한 포당 1,000~1,200평)을 안내. 임팩트과립은 토양개량 자재이며 병 방제용 농약이 아님.
 - [고추 탄저병 — 범인은 빗방울, 장마철 관리 순서](https://www.ablefarm.co.kr/guide/pepper-anthracnose.html): 장마철 22~27℃ 연속 강우 시 빗물 튀김으로 확산(학술 논문·경북농업기술원). 관리 순서는 병든 과실 즉시 제거(방치 시 방제효과 50% 이상 감소, 농촌진흥청 농사로) → 비가림(가장 효과적) → 비 오기 전 등록 약제 예방 살포 → 긴 비 뒤 즉시 방제. 장마철 고추 영양 관리로 칼슘탄(킬레이트 칼슘 CaO 17, 과피·세포벽 강화)과 아미닥터(아인산칼륨·L-아미노산, 수세 회복)를 안내 — 두 제품은 농약이 아니며 혼용하지 말고 따로 살포. 에팜티비 쇼츠 영상 포함.
+- [사과 일소(햇볕 데임) — 데기 전에 막는 법](https://www.ablefarm.co.kr/guide/apple-sunburn.html): 33℃ 이상 고온·강한 직사광 지속 시 과실 표면이 데어 발생(농촌진흥청), 데인 조직은 회복 불가 → 사전 관리. 탄산칼슘 보호막(햇빛 반사)·미세살수(31±1℃)·차광망(30~40%) 안내. 일반 탄산칼슘·카올린의 수확기 흰 자국 문제를 줄인 미립자 탄산칼슘 제품으로 일소가드(500배, 6월 중하순 장마 전 1회 → 7월 이후 폭염기 2~4회)를 안내. 에팜티비 쇼츠 영상 포함.
 
 ## 문의
 
