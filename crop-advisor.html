@@ -1345,6 +1345,13 @@ const CROP_ISSUE_DB = {
 CROP_ISSUE_DB["멜론"] = CROP_ISSUE_DB["메론"];
 // "무": 김장 무 언 피해(배추 항목을 뿌리 부위로) + 열무와 같은 병해충 자료
 CROP_ISSUE_DB["무"] = [Object.assign({}, CROP_ISSUE_DB["배추"][0], {part:"뿌리", symptom:"추위에 무가 얼었어요"}), ...CROP_ISSUE_DB["열무"]];
+// 겨울 시설채소: 결로·다습 → 잿빛곰팡이병·노균병 (농촌진흥청 주간농사정보 제44호·농사로 병해충 정보)
+const GH_DEW = {keywords:["결로","물방울","이슬이 맺","습도가 높","하우스가 습","다습"], part:"잎", symptom:"하우스 비닐·잎에 물방울이 맺혀요", label:"겨울 하우스 결로·다습", cause:"겨울 하우스 결로·다습 때문일 수 있어요. 밤 기온이 떨어지면 비닐과 잎에 이슬이 맺히고, 다습한 밤이 이어지면 잿빛곰팡이병·노균병이 생기기 쉬워요(농촌진흥청). 밤 최저온도는 열매채소 12℃, 잎채소 8℃ 이상으로 지키고, 해 뜬 뒤 창을 조금씩 열어 습기를 빼되 온도가 갑자기 떨어지지 않게 해 주세요. 병든 잎·열매는 바로 따서 하우스 밖으로 치워 주세요. 추위로 생육이 더딘 작물은 4종복합비료 엽면시비로 회복을 도울 수 있어요.", product:"impactone", companion:"himiup"};
+const GH_GRAY = {keywords:["잿빛곰팡이","잿빛 곰팡이","회색 곰팡이"], part:"열매", symptom:"꽃·열매에 잿빛 곰팡이가 생겨요", label:"잿빛곰팡이병", cause:"잿빛곰팡이병일 수 있어요. 저온·다습하고 환기가 나쁠 때, 밤에 맺힌 이슬로 꽃·열매가 오래 젖어 있을 때 많이 생겨요(농촌진흥청 농사로). 병든 꽃·열매는 바로 따서 하우스 밖으로 치우고, 해 뜬 뒤 환기로 습도를 낮추며, 발생 초기에 등록 약제로 방제해 주세요.", product:"impactone", companion:"himiup"};
+const GH_DOWNY = {keywords:["노균병","각진 노란","잎맥 따라 노란","잎맥 사이가 노랗"], part:"잎", symptom:"잎맥 따라 각진 노란 병반이 생겨요", label:"노균병", cause:"노균병일 수 있어요. 시설에서 습도가 높고 밤낮 온도 차가 클 때, 촘촘히 심어 통풍이 나쁠 때 많이 생겨요(농촌진흥청 농사로). 아침 환기로 잎이 젖어 있는 시간을 줄이고, 병든 잎은 바로 제거한 뒤 등록 약제로 방제해 주세요.", product:"impactone", companion:"himiup"};
+["토마토","방울토마토","딸기","파프리카"].forEach(c => { if(!CROP_ISSUE_DB[c]) CROP_ISSUE_DB[c] = [GH_DEW, GH_GRAY]; });
+if(!CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"] = [GH_DEW, GH_DOWNY, GH_GRAY];
+if(!CROP_ISSUE_DB["상추"]) CROP_ISSUE_DB["상추"] = [GH_DEW, Object.assign({}, GH_GRAY, {part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요"})];
 
 /* ------------------------------------------------------------------
    계절/시기 인식 — cause 문장에 이미 적혀있는 "7~8월", "겨울철" 같은
@@ -2730,7 +2737,8 @@ function handleUserMessage(raw){
   }
 
   // -1.1) 관주 또는 하우스(시설재배) 요청 → 임팩트골드 5리터(관주용)를 무조건 추천
-  if(isGwanjuOrHouseQuestion(msg)){
+  //      단, "하우스"만 있고 결로·다습·곰팡이 같은 증상 이야기면 진단 흐름으로 보낸다(겨울 하우스 결로 안내)
+  if(isGwanjuOrHouseQuestion(msg) && (msg.includes("관주") || !/결로|물방울|이슬|습해|습도|다습|곰팡이|노균/.test(msg))){
     showTyping(()=>{
       addBubble("관주로 사용하실 거면 임팩트골드 5리터(관주용)를 추천드려요. 수세 회복이 빠르고 세력 유지, 토양개량·염류 해소, 뿌리발달 촉진에 도움이 되고 이상기후 피해 회복에도 좋아요. 7~10일 간격으로 1,000평당 5리터씩 관주 처리하시고, 피해 회복이 급할 땐 3~5일 간격으로 2~3회 처리하시면 돼요.", 'bot');
       setChips(followUpChips());
@@ -2918,7 +2926,8 @@ const GUIDE_LINKS = [
   { crops:["벼"], match:/깨씨무늬병/, title:"벼 깨씨무늬병 관리 안내", url:"guide/rice-brown-spot.html", video:"cXLysImyLjk" },
   { crops:["고추"], match:/탄저병/, title:"고추 탄저병 관리 안내", url:"guide/pepper-anthracnose.html", video:"3HrCOXWGfPE" },
   { crops:["사과","고추","아로니아","배","복숭아"], match:/일소|햇볕 데임|햇빛 데임/, title:"사과 일소(햇볕 데임) 관리 안내", url:"guide/apple-sunburn.html", video:"FUqkyk16ZXo" },
-  { crops:["배추","무","얼갈이배추","열무","갓"], match:/언 피해|영하 1\.5/, title:"김장 배추·무 언 피해 대비 안내", url:"guide/kimjang-frost.html", video:"W7zAvaR1o1U" }
+  { crops:["배추","무","얼갈이배추","열무","갓"], match:/언 피해|영하 1\.5/, title:"김장 배추·무 언 피해 대비 안내", url:"guide/kimjang-frost.html", video:"W7zAvaR1o1U" },
+  { crops:["토마토","방울토마토","오이","딸기","파프리카","상추"], match:/결로|잿빛곰팡이병일|노균병일/, title:"겨울 하우스 결로·다습 관리 안내", url:"guide/greenhouse-winter.html", video:"OmfrclBgBHw" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;

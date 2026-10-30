@@ -21,7 +21,9 @@ $Guides = @{
   '칼슘탄'     = @(@{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
   '아미닥터'   = @(@{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
   '일소가드'   = @(@{t='사과 일소(햇볕 데임) — 데기 전에 막는 법'; u='../guide/apple-sunburn.html'; v='FUqkyk16ZXo'})
-  '임팩트원'   = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'})
+  '임팩트원'   = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'},
+                   @{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
+  '히미업'     = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
   '속딴딴'     = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'})
 }
 
