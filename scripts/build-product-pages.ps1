@@ -24,13 +24,17 @@ $Guides = @{
   '임팩트원'   = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'},
                    @{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
   '하이슈거'   = @(@{t='밍밍한 딸기, 범인은 따뜻한 밤 — 단계별 밤 온도'; u='../guide/strawberry-night-temp.html'; v='YLPreraNDtw'})
+  '임팩트골드' = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
   '히미업'     = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
   '속딴딴'     = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'})
 }
 # 제품 → 제품 홍보 영상(가로, 유튜브 「동영상」)
 $Videos = @{
   '하이슈거' = @{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 단계별 밤 온도(농촌진흥청)와 꽃 필 때 임팩트원·열매 클 때 하이슈거(500~1,000배, 수확 30~50일 전 비대기·착색기 엽면살포) 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'}
-  '임팩트원' = @{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 튼실한 꽃과 고른 수정이 큰 딸기를 만드는 원리와 개화·착과기 임팩트원(1,000배 엽면살포), 비대·착색기 하이슈거 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'}
+  '임팩트원' = @(@{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 튼실한 꽃과 고른 수정이 큰 딸기를 만드는 원리와 개화·착과기 임팩트원(1,000배 엽면살포), 비대·착색기 하이슈거 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'},
+                 @{id='13nt6XeAgAE'; t='겨울 하우스 시설채소 관리 — 뿌리는 임팩트골드, 잎은 히미업, 꽃은 임팩트원'; d='겨울 하우스 결로·저온·일조 부족(농촌진흥청) 속에서 뿌리는 임팩트골드 관주, 잎은 히미업, 꽃은 임팩트원(1,000배, 개화·착과기 엽면살포)으로 관리하는 방법을 1분 48초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M48S'; date='2026-10-30'})
+  '임팩트골드' = @{id='13nt6XeAgAE'; t='겨울 하우스 시설채소 관리 — 뿌리는 임팩트골드, 잎은 히미업, 꽃은 임팩트원'; d='겨울 하우스에서 염류가 쌓이고 차가운 흙 속 뿌리를 위해 임팩트골드(유기농업자재 공시-2-3-802, 1,000배 관주, 7~10일 간격 1~3회, 5L 하우스 관주용)를 쓰는 방법을 잎(히미업)·꽃(임팩트원) 관리와 함께 1분 48초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M48S'; date='2026-10-30'}
+  '히미업' = @{id='13nt6XeAgAE'; t='겨울 하우스 시설채소 관리 — 뿌리는 임팩트골드, 잎은 히미업, 꽃은 임팩트원'; d='추위와 흐린 날에 지친 시설채소 잎에 히미업(액상 아미노산 영양제, 1,000배 엽면살포)을 쓰는 방법을 뿌리(임팩트골드)·꽃(임팩트원) 관리와 함께 1분 48초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M48S'; date='2026-10-30'}
 }
 
 function E([string]$s) { if ($null -eq $s) { return '' }; return [System.Net.WebUtility]::HtmlEncode($s) }
@@ -141,9 +145,9 @@ foreach ($p in $all) {
   $g = $Guides[$name]
   $subjectOf = ''
   if ($g) { $subjectOf = ',"subjectOf":[' + (@($g | ForEach-Object { '{"@type":"Article","name":"' + (J $_.t) + '","url":"' + $site + '/guide/' + ($_.u -replace '\.\./guide/','') + '"}' }) -join ',') + ']' }
-  $v = $Videos[$name]
+  $vs = @($Videos[$name] | Where-Object { $_ })
   $vidLd = ''
-  if ($v) { $vidLd = '{"@type":"VideoObject","name":"' + (J $v.t) + '","description":"' + (J $v.d) + '","thumbnailUrl":"https://i.ytimg.com/vi/' + $v.id + '/hqdefault.jpg","uploadDate":"' + $v.date + '","duration":"' + $v.dur + '","contentUrl":"https://www.youtube.com/watch?v=' + $v.id + '","embedUrl":"https://www.youtube-nocookie.com/embed/' + $v.id + '","about":{"@id":"' + $canon + '#product"},"publisher":{"@type":"Organization","name":"(주)에이블팜"}},' }
+  foreach ($v in $vs) { $vidLd += '{"@type":"VideoObject","name":"' + (J $v.t) + '","description":"' + (J $v.d) + '","thumbnailUrl":"https://i.ytimg.com/vi/' + $v.id + '/hqdefault.jpg","uploadDate":"' + $v.date + '","duration":"' + $v.dur + '","contentUrl":"https://www.youtube.com/watch?v=' + $v.id + '","embedUrl":"https://www.youtube-nocookie.com/embed/' + $v.id + '","about":{"@id":"' + $canon + '#product"},"publisher":{"@type":"Organization","name":"(주)에이블팜"}},' }
   $ld = '{"@context":"https://schema.org","@graph":[' +
     '{"@type":"Product","@id":"' + $canon + '#product","name":"' + (J $name) + '","description":"' + (J $desc) + '","image":"' + $img + '","category":"' + (J $p.분류) + '","brand":{"@type":"Brand","name":"에이블팜"},"manufacturer":{"@type":"Organization","name":"(주)에이블팜","url":"' + $site + '"},"url":"' + $canon + '"' + $subjectOf + '},' + $vidLd +
     '{"@type":"FAQPage","mainEntity":[' + $faqLd + ']},' +
@@ -165,8 +169,9 @@ foreach ($p in $all) {
     foreach ($e in $p.성분) { [void]$sb.Append("<div class=""card""><b>$(E $e.성분명)</b><span>$(E $e.작용)</span></div>") }
     [void]$sb.Append("</div>`n")
   }
-  if ($v) {
-    [void]$sb.Append("<h2>제품 영상</h2>`n<div style=""position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;margin:10px 0""><iframe src=""https://www.youtube-nocookie.com/embed/$($v.id)"" title=""$(E $v.t)"" loading=""lazy"" style=""position:absolute;inset:0;width:100%;height:100%;border:0"" allow=""accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"" referrerpolicy=""strict-origin-when-cross-origin"" allowfullscreen></iframe></div>`n<p>$(E $v.d)</p>`n")
+  if ($vs.Count -gt 0) { [void]$sb.Append("<h2>제품 영상</h2>`n") }
+  foreach ($v in $vs) {
+    [void]$sb.Append("<h3>$(E $v.t)</h3>`n<div style=""position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;margin:10px 0""><iframe src=""https://www.youtube-nocookie.com/embed/$($v.id)"" title=""$(E $v.t)"" loading=""lazy"" style=""position:absolute;inset:0;width:100%;height:100%;border:0"" allow=""accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"" referrerpolicy=""strict-origin-when-cross-origin"" allowfullscreen></iframe></div>`n<p>$(E $v.d)</p>`n")
   }
   if ($g) {
     [void]$sb.Append("<h2>관련 재배 안내 · 에팜티비 쇼츠</h2>`n")
