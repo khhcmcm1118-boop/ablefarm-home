@@ -27,6 +27,10 @@ $Guides = @{
   '히미업'     = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
   '속딴딴'     = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'})
 }
+# 제품 → 제품 홍보 영상(가로, 유튜브 「동영상」)
+$Videos = @{
+  '하이슈거' = @{id='mhv9q9_zUME'; t='딸기 당도 관리 — 밤 온도로 지키고, 하이슈거로 채운다'; d='딸기 단계별 밤 온도(농촌진흥청)와 하이슈거의 성분·사용법(500~1,000배, 수확 30~50일 전 비대기·착색기 엽면살포)을 1분 20초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M21S'; date='2026-10-30'}
+}
 
 function E([string]$s) { if ($null -eq $s) { return '' }; return [System.Net.WebUtility]::HtmlEncode($s) }
 function J([string]$s) { if ($null -eq $s) { return '' }; return ($s -replace '\\','\\' -replace '"','\"' -replace "`r",'' -replace "`n",'\n') }
@@ -136,8 +140,11 @@ foreach ($p in $all) {
   $g = $Guides[$name]
   $subjectOf = ''
   if ($g) { $subjectOf = ',"subjectOf":[' + (@($g | ForEach-Object { '{"@type":"Article","name":"' + (J $_.t) + '","url":"' + $site + '/guide/' + ($_.u -replace '\.\./guide/','') + '"}' }) -join ',') + ']' }
+  $v = $Videos[$name]
+  $vidLd = ''
+  if ($v) { $vidLd = '{"@type":"VideoObject","name":"' + (J $v.t) + '","description":"' + (J $v.d) + '","thumbnailUrl":"https://i.ytimg.com/vi/' + $v.id + '/hqdefault.jpg","uploadDate":"' + $v.date + '","duration":"' + $v.dur + '","contentUrl":"https://www.youtube.com/watch?v=' + $v.id + '","embedUrl":"https://www.youtube-nocookie.com/embed/' + $v.id + '","about":{"@id":"' + $canon + '#product"},"publisher":{"@type":"Organization","name":"(주)에이블팜"}},' }
   $ld = '{"@context":"https://schema.org","@graph":[' +
-    '{"@type":"Product","@id":"' + $canon + '#product","name":"' + (J $name) + '","description":"' + (J $desc) + '","image":"' + $img + '","category":"' + (J $p.분류) + '","brand":{"@type":"Brand","name":"에이블팜"},"manufacturer":{"@type":"Organization","name":"(주)에이블팜","url":"' + $site + '"},"url":"' + $canon + '"' + $subjectOf + '},' +
+    '{"@type":"Product","@id":"' + $canon + '#product","name":"' + (J $name) + '","description":"' + (J $desc) + '","image":"' + $img + '","category":"' + (J $p.분류) + '","brand":{"@type":"Brand","name":"에이블팜"},"manufacturer":{"@type":"Organization","name":"(주)에이블팜","url":"' + $site + '"},"url":"' + $canon + '"' + $subjectOf + '},' + $vidLd +
     '{"@type":"FAQPage","mainEntity":[' + $faqLd + ']},' +
     '{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"에이블팜","item":"' + $site + '/"},{"@type":"ListItem","position":2,"name":"제품","item":"' + $site + '/products/"},{"@type":"ListItem","position":3,"name":"' + (J $name) + '"}]}' +
     ']}'
@@ -156,6 +163,9 @@ foreach ($p in $all) {
     [void]$sb.Append("<h2>주요 성분</h2>`n<div class=""cards"">")
     foreach ($e in $p.성분) { [void]$sb.Append("<div class=""card""><b>$(E $e.성분명)</b><span>$(E $e.작용)</span></div>") }
     [void]$sb.Append("</div>`n")
+  }
+  if ($v) {
+    [void]$sb.Append("<h2>제품 영상</h2>`n<div style=""position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;margin:10px 0""><iframe src=""https://www.youtube-nocookie.com/embed/$($v.id)"" title=""$(E $v.t)"" loading=""lazy"" style=""position:absolute;inset:0;width:100%;height:100%;border:0"" allow=""accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"" referrerpolicy=""strict-origin-when-cross-origin"" allowfullscreen></iframe></div>`n<p>$(E $v.d)</p>`n")
   }
   if ($g) {
     [void]$sb.Append("<h2>관련 재배 안내 · 에팜티비 쇼츠</h2>`n")
