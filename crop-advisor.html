@@ -1351,6 +1351,8 @@ const GH_GRAY = {keywords:["잿빛곰팡이","잿빛 곰팡이","회색 곰팡�
 const GH_DOWNY = {keywords:["노균병","각진 노란","잎맥 따라 노란","잎맥 사이가 노랗"], part:"잎", symptom:"잎맥 따라 각진 노란 병반이 생겨요", label:"노균병", cause:"노균병일 수 있어요. 시설에서 습도가 높고 밤낮 온도 차가 클 때, 촘촘히 심어 통풍이 나쁠 때 많이 생겨요(농촌진흥청 농사로). 아침 환기로 잎이 젖어 있는 시간을 줄이고, 병든 잎은 바로 제거한 뒤 등록 약제로 방제해 주세요.", product:"impactone", companion:"himiup"};
 ["토마토","방울토마토","딸기","파프리카"].forEach(c => { if(!CROP_ISSUE_DB[c]) CROP_ISSUE_DB[c] = [GH_DEW, GH_GRAY]; });
 if(!CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"] = [GH_DEW, GH_DOWNY, GH_GRAY];
+// 딸기 당도: 야간 고온 → 호흡 소모 (농촌진흥청 주간농사정보 제44호·농사로 딸기 온도 관리)
+CROP_ISSUE_DB["딸기"].unshift({keywords:["밍밍","단맛이 없","단맛이 덜","맛이 싱거","당도가 낮","당도가 안","안 달아","달지 않"], part:"열매", symptom:"딸기가 밍밍하고 단맛이 덜해요", label:"당도 저하(야간 고온)", cause:"밤 온도가 너무 높아서일 수 있어요. 밤이 따뜻하면 낮에 잎이 만든 당분을 밤사이 호흡으로 써 버려 당도가 떨어져요(농촌진흥청). 밤 온도는 꽃봉오리·개화기 10℃, 열매가 커질 때 6~8℃, 수확기 6~7℃로 단계마다 낮추고, 낮은 25℃ 안팎으로 관리해 주세요. 잎은 개화기 5~6장, 열매가 클 때 8장을 확보하고, 첫 화방 꽃은 7~10개만 남겨 솎아 주세요.", product:"hisugar", companion:"impactone"});
 if(!CROP_ISSUE_DB["상추"]) CROP_ISSUE_DB["상추"] = [GH_DEW, Object.assign({}, GH_GRAY, {part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요"})];
 
 /* ------------------------------------------------------------------
@@ -2927,7 +2929,8 @@ const GUIDE_LINKS = [
   { crops:["고추"], match:/탄저병/, title:"고추 탄저병 관리 안내", url:"guide/pepper-anthracnose.html", video:"3HrCOXWGfPE" },
   { crops:["사과","고추","아로니아","배","복숭아"], match:/일소|햇볕 데임|햇빛 데임/, title:"사과 일소(햇볕 데임) 관리 안내", url:"guide/apple-sunburn.html", video:"FUqkyk16ZXo" },
   { crops:["배추","무","얼갈이배추","열무","갓"], match:/언 피해|영하 1\.5/, title:"김장 배추·무 언 피해 대비 안내", url:"guide/kimjang-frost.html", video:"W7zAvaR1o1U" },
-  { crops:["토마토","방울토마토","오이","딸기","파프리카","상추"], match:/결로|잿빛곰팡이병일|노균병일/, title:"겨울 하우스 결로·다습 관리 안내", url:"guide/greenhouse-winter.html", video:"OmfrclBgBHw" }
+  { crops:["토마토","방울토마토","오이","딸기","파프리카","상추"], match:/결로|잿빛곰팡이병일|노균병일/, title:"겨울 하우스 결로·다습 관리 안내", url:"guide/greenhouse-winter.html", video:"OmfrclBgBHw" },
+  { crops:["딸기"], match:/호흡으로 써 버려/, title:"딸기 단계별 밤 온도·당도 관리 안내", url:"guide/strawberry-night-temp.html", video:"YLPreraNDtw" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;
