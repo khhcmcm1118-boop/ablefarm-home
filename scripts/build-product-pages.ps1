@@ -23,11 +23,15 @@ $Guides = @{
   '일소가드'   = @(@{t='사과 일소(햇볕 데임) — 데기 전에 막는 법'; u='../guide/apple-sunburn.html'; v='FUqkyk16ZXo'})
   '임팩트원'   = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'},
                    @{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'},
-                   @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
+                   @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'},
+                   @{t='찌그러진 첫 딸기, 범인은 수정 불량 — 개화기 벌 관리'; u='../guide/strawberry-malformed.html'; v='5UCcYgcnzHU'})
   '하이슈거'   = @(@{t='밍밍한 딸기, 범인은 따뜻한 밤 — 단계별 밤 온도'; u='../guide/strawberry-night-temp.html'; v='YLPreraNDtw'})
   '임팩트골드' = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'},
                    @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
-  '히미업'     = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'})
+  '히미업'     = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'},
+                   @{t='겨울에 솟는 양파, 범인은 서릿발 — 아주심기·월동 관리'; u='../guide/onion-frost-heave.html'; v='-3Qi2kdRrE4'})
+  '아미루트'   = @(@{t='겨울에 솟는 양파, 범인은 서릿발 — 아주심기·월동 관리'; u='../guide/onion-frost-heave.html'; v='-3Qi2kdRrE4'})
+  '구근짱'     = @(@{t='겨울에 솟는 양파, 범인은 서릿발 — 아주심기·월동 관리'; u='../guide/onion-frost-heave.html'; v='-3Qi2kdRrE4'})
   '속딴딴'     = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'},
                    @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
   '임팩트규산' = @(@{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})

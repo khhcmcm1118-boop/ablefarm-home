@@ -55,6 +55,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.ablefarm.co.kr/guide/onion-frost-heave.html</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ablefarm.co.kr/guide/strawberry-malformed.html</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.ablefarm.co.kr/products/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>monthly</changefreq>

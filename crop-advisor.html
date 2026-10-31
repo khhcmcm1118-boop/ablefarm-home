@@ -1053,7 +1053,7 @@ const CROP_ISSUE_DB = {
     {keywords:["여러 쪽으로 갈라","분구"], part:"열매", symptom:"구가 여러 쪽으로 갈라져요", label:"분구", cause:"분구일 수 있어요. 이상고온·과다생육·질소 과다로 구가 여러 개로 갈라져요."},
     {keywords:["뿌리가 상하","습해","뿌리가 상해서 생육이 나빠져요"], part:"뿌리", symptom:"뿌리가 상해서 생육이 나빠져요", label:"습해", cause:"습해일 수 있어요. 3~4월 배수불량·과습으로 뿌리가 상하고 영양생장이 나빠져요."},
     {keywords:["큰 구를 못","비대불량","구가 충분히 크지 못해요"], part:"열매", symptom:"구가 충분히 크지 못해요", label:"구비대불량", cause:"구 비대불량일 수 있어요. 5월 이후 고온·가뭄으로 구가 충분히 크지 못해요."},
-    {keywords:["뿌리가 솟구쳐","서릿발"], part:"뿌리", symptom:"뿌리가 솟구쳐 올라와요", label:"서릿발피해", cause:"서릿발 피해일 수 있어요. 겨울철 얼었다 녹으면서 뿌리가 솟구쳐 올라와요."}
+    {keywords:["뿌리가 솟구쳐","서릿발","땅 위로 솟","양파가 솟","솟아 올라","솟아올라","들려 올라","뿌리가 드러"], part:"뿌리", symptom:"뿌리가 솟구쳐 올라와요", label:"서릿발피해", cause:"서릿발 피해일 수 있어요. 뿌리가 덜 내린 채 땅이 얼었다 녹으면 흙이 부풀며 양파를 밀어 올리고, 드러난 뿌리는 말라 버려요(농촌진흥청). 보이는 즉시 눌러 뿌리까지 흙을 덮어 주세요. 잎 4장·굵기 6~7.5mm 모종을 3cm 깊이로 곧게 심고 흙을 눌러 주고, 늦게 심은 밭은 부직포를 덮고 고랑을 깊게 파 물이 빠지게 해 주세요.", product:"amiroot", companion:"himiup"}
   ],
   "고추": [
     {keywords:["웃자라","웃자랐","도장","줄기가 가늘고 웃자랐어요","웃자람","육묘가 웃자랐어요"], part:"줄기", symptom:"줄기가 가늘고 웃자랐어요", label:"웃자람(도장)", cause:"웃자람(도장)일 수 있어요. 육묘 중 일조가 부족하거나 온도가 너무 높으면, 또는 밀식되면 줄기가 가늘고 연약하게 웃자라요."},
@@ -1352,6 +1352,8 @@ const GH_DOWNY = {keywords:["노균병","각진 노란","잎맥 따라 노란","
 ["토마토","방울토마토","딸기","파프리카"].forEach(c => { if(!CROP_ISSUE_DB[c]) CROP_ISSUE_DB[c] = [GH_DEW, GH_GRAY]; });
 if(!CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"] = [GH_DEW, GH_DOWNY, GH_GRAY];
 // 딸기 당도: 야간 고온 → 호흡 소모 (농촌진흥청 주간농사정보 제44호·농사로 딸기 온도 관리)
+// 딸기 기형과: 수정 불량 (농촌진흥청 주간농사정보 제44호·농사로 현장기술지원)
+CROP_ISSUE_DB["딸기"].unshift({keywords:["기형과","찌그러","모양이 이상","모양이 기형","울퉁불퉁","수정 불량","수정불량","수정벌","벌이 안"], part:"열매", symptom:"딸기가 찌그러져 나와요", label:"기형과(수정 불량)", cause:"수정 불량일 수 있어요. 딸기는 겉의 씨가 수정돼야 그 자리 과육이 자라고, 열매 맺기를 벌에 의존해요(농촌진흥청). 꽃이 피기 시작하면 바로 수정벌을 넣고, 하우스를 14~25℃로 관리해 주세요(꿀벌 적온 18~22℃, 뒤영벌 적온 10~25℃). 꽃 필 때 잦은 약 살포는 줄이고, 저온기엔 낮은 온도에서도 활동하는 뒤영벌을 써 보세요. 벌이 잘 활동하는데도 계속되면 모종·품종 문제일 수 있으니 농업기술센터에 확인해 주세요.", product:"impactone"});
 CROP_ISSUE_DB["딸기"].unshift({keywords:["밍밍","단맛이 없","단맛이 덜","맛이 싱거","당도가 낮","당도가 안","안 달아","달지 않"], part:"열매", symptom:"딸기가 밍밍하고 단맛이 덜해요", label:"당도 저하(야간 고온)", cause:"밤 온도가 너무 높아서일 수 있어요. 밤이 따뜻하면 낮에 잎이 만든 당분을 밤사이 호흡으로 써 버려 당도가 떨어져요(농촌진흥청). 밤 온도는 꽃봉오리·개화기 10℃, 열매가 커질 때 6~8℃, 수확기 6~7℃로 단계마다 낮추고, 낮은 25℃ 안팎으로 관리해 주세요. 잎은 개화기 5~6장, 열매가 클 때 8장을 확보하고, 첫 화방 꽃은 7~10개만 남겨 솎아 주세요.", product:"hisugar", companion:"impactone"});
 if(!CROP_ISSUE_DB["상추"]) CROP_ISSUE_DB["상추"] = [GH_DEW, Object.assign({}, GH_GRAY, {part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요"})];
 
@@ -2930,7 +2932,9 @@ const GUIDE_LINKS = [
   { crops:["사과","고추","아로니아","배","복숭아"], match:/일소|햇볕 데임|햇빛 데임/, title:"사과 일소(햇볕 데임) 관리 안내", url:"guide/apple-sunburn.html", video:"FUqkyk16ZXo" },
   { crops:["배추","무","얼갈이배추","열무","갓"], match:/언 피해|영하 1\.5/, title:"김장 배추·무 언 피해 대비 안내", url:"guide/kimjang-frost.html", video:"W7zAvaR1o1U" },
   { crops:["토마토","방울토마토","오이","딸기","파프리카","상추"], match:/결로|잿빛곰팡이병일|노균병일/, title:"겨울 하우스 결로·다습 관리 안내", url:"guide/greenhouse-winter.html", video:"OmfrclBgBHw" },
-  { crops:["딸기"], match:/호흡으로 써 버려/, title:"딸기 단계별 밤 온도·당도 관리 안내", url:"guide/strawberry-night-temp.html", video:"YLPreraNDtw" }
+  { crops:["딸기"], match:/호흡으로 써 버려/, title:"딸기 단계별 밤 온도·당도 관리 안내", url:"guide/strawberry-night-temp.html", video:"YLPreraNDtw" },
+  { crops:["딸기"], match:/수정 불량/, title:"딸기 기형과·수정 관리 안내", url:"guide/strawberry-malformed.html", video:"5UCcYgcnzHU" },
+  { crops:["양파"], match:/서릿발/, title:"양파 서릿발·아주심기 관리 안내", url:"guide/onion-frost-heave.html", video:"-3Qi2kdRrE4" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;
