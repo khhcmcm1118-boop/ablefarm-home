@@ -1,0 +1,1 @@
+{ "_사용법": "api 에 Apps Script 웹앱 주소를 넣으면 고객문의·알림 신청이 구글 시트로 들어온다. 비어 있으면 메일로 보내도록 안내한다.", "api": "https://script.google.com/macros/s/AKfycbwZnVr4-QqgsoNBCaULufMVQpoLZw15DwP6HUitYNQN6YZRZeptYIA4BnGP2Oak4bZOtw/exec" }

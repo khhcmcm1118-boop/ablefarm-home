@@ -168,12 +168,22 @@
 
   <!-- 회사소개 -->
   <div class="af-sec" style="padding:60px 40px;background:#faf7ef">
-    <div class="af-feat" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:34px 40px;background:#eee9db">
-    <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🧪</div><div style="font-weight: 700; font-size: 16px; color: #16241a">공시 유기농업자재</div><div style="font-size: 14px; color: #6b7465">임팩트골드·임팩트과립 등 공시 취득 제품 보유</div></div>
-    <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🚁</div><div style="font-weight: 700; font-size: 16px; color: #16241a">관주·엽면·드론방제</div><div style="font-size: 14px; color: #6b7465">현장 살포 방식에 맞춰 사용</div></div>
-    <div style="background: #e9efdd; border-radius: 20px; padding: 20px"><div style="font-size:22px;margin-bottom:8px">🌡</div><div style="font-weight: 700; font-size: 16px; color: #16241a">기후피해 대응</div><div style="font-size: 14px; color: #6b7465">고온·가뭄·침수·냉해 스트레스 관리</div></div>
-    <div style="background: #e9efdd; border-radius: 20px; padding: 20px"><div style="font-size:22px;margin-bottom:8px">🤝</div><div style="font-weight: 700; font-size: 16px; color: #16241a">전국 대리점 공급망</div><div style="font-size: 14px; color: #6b7465">가까운 대리점에서 상담·구입</div></div>
-  </div><div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;gap:20px;flex-wrap:wrap">
+    <!-- 이달의 농사 띠 — 매월 이 블록과 아래 링크의 달만 바꾼다 -->
+    <div style="background:#16271c;color:#eaf1e2;border-radius:18px;padding:28px 30px;margin-bottom:44px">
+      <div style="font-size:13.5px;font-weight:700;color:#a9d18a;margin-bottom:8px">2026년 11월호 · {{ seasonQaLabel }}</div>
+      <h2 style="margin:0 0 18px;font-weight:800;font-size:28px;letter-spacing:-.02em;color:#fff">11월, 지금 놓치면 안 되는 일</h2>
+      <div class="af-3col" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px">
+        <a href="season/2026-11.html#onion" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">양파</b>중만생종은 11월 상순까지 아주심기</a>
+        <a href="season/2026-11.html#apple" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">사과</b>부사 등 만생종은 11월 상순까지 수확</a>
+        <a href="season/2026-11.html#strawberry" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">딸기</b>개화 초기 수정벌 투입, 14~25℃ 유지</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <a href="season/2026-11.html" style="padding:12px 22px;background:#a9d18a;color:#16271c;border-radius:11px;font-weight:800;font-size:14.5px;text-decoration:none;white-space:nowrap">내 작물 보기 →</a>
+        <a href="season/2026-11.html#signup" style="padding:12px 22px;border:1.5px solid #a9d18a;color:#c7e3a8;border-radius:11px;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap">알림 받기</a>
+        <span class="af-btn" onClick="{{ goQna }}" style="padding:12px 22px;border:1.5px solid #a9d18a;color:#c7e3a8;border-radius:11px;font-weight:700;font-size:14.5px;white-space:nowrap">농사 Q&amp;A</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;gap:20px;flex-wrap:wrap">
       <div>
         <div style="font-size: 20px; font-weight: 700; letter-spacing: .1em; color: #4a7c59; margin-bottom: 10px">AGRI INFO · 농업정보</div>
         <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">오늘 날씨 · 강수 · 농산물 시세</h2>
@@ -270,8 +280,14 @@
           <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #efe9da"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">소재지</span><span style="font-size:14px;line-height:1.6;color:#2f3a2b">서울특별시 금천구 디지털로10길 37<br>가산아스크타워 15층 1541호</span></div>
           <div style="display:flex;gap:16px;padding:14px 0"><span style="width:88px;flex:none;font-size:13px;color:#8a9280;font-weight:600">고객센터</span><span style="font-size:14px;color:#2f3a2b">02-858-6229 · 팩스 02-6442-6229</span></div>
         </div>
-        
+
       </div>
+    </div>
+    <div class="af-feat" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px">
+      <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🧪</div><div style="font-weight: 700; font-size: 16px; color: #16241a">공시 유기농업자재</div><div style="font-size: 14px; color: #6b7465">임팩트골드·임팩트과립 등 공시 취득 제품 보유</div></div>
+      <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🚁</div><div style="font-weight: 700; font-size: 16px; color: #16241a">관주·엽면·드론방제</div><div style="font-size: 14px; color: #6b7465">현장 살포 방식에 맞춰 사용</div></div>
+      <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🌡</div><div style="font-weight: 700; font-size: 16px; color: #16241a">기후피해 대응</div><div style="font-size: 14px; color: #6b7465">고온·가뭄·침수·냉해 스트레스 관리</div></div>
+      <div style="background:#e9efdd;border-radius:14px;padding:20px"><div style="font-size:22px;margin-bottom:8px">🤝</div><div style="font-weight: 700; font-size: 16px; color: #16241a">전국 대리점 공급망</div><div style="font-size: 14px; color: #6b7465">가까운 대리점에서 상담·구입</div></div>
     </div>
   </div>
 
@@ -659,22 +675,57 @@
       <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px">
         <div>
           <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:10px">Q&amp;A · 고객 문의</div>
-          <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">궁금한 점을 남겨주세요</h2>
-          <p style="margin:10px 0 0;font-size:14px;color:#6b7465">작물·재배 환경에 맞는 사용법을 담당자가 직접 답변해 드립니다.</p>
+          <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">에이블팜 농사 Q&amp;A</h2>
+          <p style="margin:10px 0 0;font-size:14px;color:#6b7465">에이블팜이 농촌진흥청 자료로 정리해 매일 2건씩 올립니다.</p>
         </div>
-        <span class="af-btn" onClick="{{ qToggleAdmin }}" style="flex:none;white-space:nowrap;padding:9px 16px;border-radius:100px;border:1px solid #dcd8c7;background:{{ qAdminBg }};color:{{ qAdminFg }};font-size:12.5px;font-weight:700">{{ qAdminLabel }}</span>
+        <a href="#qna-form" style="flex:none;white-space:nowrap;padding:12px 20px;border-radius:100px;background:#16271c;color:#fff;font-size:13.5px;font-weight:800;text-decoration:none">직접 문의하기 ↓</a>
+      </div>
+
+      <!-- 농사 Q&A (data/qna.json) -->
+      <div style="margin-bottom:34px">
+        <input placeholder="작물이나 궁금한 말로 찾기 (예: 양파, 수정벌)" value="{{ qaWord }}" onChange="{{ qaSetWord }}" style="width:100%;box-sizing:border-box;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14.5px;font-family:inherit;background:#fff;color:#16241a;outline:none;margin-bottom:12px">
+        <sc-if value="{{ qaEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:18px 22px;font-size:14px;color:#6b7465">찾는 내용이 아직 없습니다. 아래에서 직접 문의해 주세요.</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ qaList }}" as="x" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;overflow:hidden">
+              <div class="af-btn" onClick="{{ x.onToggle }}" style="display:flex;align-items:flex-start;gap:12px;padding:16px 20px">
+                <span style="flex:1;min-width:0;font-size:15px;font-weight:700;line-height:1.5;color:#16241a">{{ x.title }}</span>
+                <span style="flex:none;font-size:12px;color:#9aa393;margin-top:3px">{{ x.date }}</span>
+                <span style="flex:none;color:#4a7c59;font-weight:700">{{ x.caret }}</span>
+              </div>
+              <sc-if value="{{ x.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 20px 20px">
+                  <div style="background:#e9efdd;border-radius:12px;padding:16px 18px;font-size:14.5px;line-height:1.75;color:#2f3a2b;white-space:pre-wrap">{{ x.answer }}</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+                    <sc-for list="{{ x.links }}" as="l" hint-placeholder-count="0">
+                      <a href="{{ l.u }}" style="font-size:13.5px;font-weight:700;color:#4a7c59">{{ l.t }} →</a>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:8px;font-size:12.5px;color:#8a9280">출처: {{ x.src }}</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ qaHasMore }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;margin-top:14px"><span class="af-btn" onClick="{{ qaMore }}" style="display:inline-block;padding:11px 24px;border:1px solid #dcd8c7;background:#fff;border-radius:100px;font-size:13.5px;font-weight:700;color:#54604f">더 보기</span></div>
+        </sc-if>
       </div>
 
       <!-- 질문 작성 -->
-      <div style="background:#fff;border:1px solid #dcd8c7;border-radius:18px;padding:26px 28px;margin-bottom:22px">
-        <div style="font-weight:800;font-size:16px;color:#16241a;margin-bottom:16px">문의 작성</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-          <input placeholder="이름 또는 농장명" value="{{ qName }}" onChange="{{ qSetName }}" style="padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
-          <input placeholder="작물 (예: 고추, 벼)" value="{{ qCrop }}" onChange="{{ qSetCrop }}" style="padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
+      <div id="qna-form" style="background:#fff;border:1px solid #dcd8c7;border-radius:18px;padding:26px 28px;margin-bottom:22px;scroll-margin-top:90px">
+        <div style="font-weight:800;font-size:16px;color:#16241a;margin-bottom:16px">궁금한 점을 남겨주세요</div>
+        <div class="af-3col" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px">
+          <input placeholder="이름 또는 농장명" value="{{ qName }}" onChange="{{ qSetName }}" style="min-width:0;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
+          <input placeholder="작물 (예: 고추, 벼)" value="{{ qCrop }}" onChange="{{ qSetCrop }}" style="min-width:0;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
+          <input placeholder="연락처 (선택)" value="{{ qPhone }}" onChange="{{ qSetPhone }}" style="min-width:0;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;background:#faf7ef;color:#16241a;outline:none">
         </div>
         <textarea placeholder="궁금한 내용을 적어주세요. 작물·생육 시기·증상을 함께 알려주시면 더 정확히 답변드립니다." value="{{ qBody }}" onChange="{{ qSetBody }}" style="width:100%;box-sizing:border-box;min-height:110px;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14px;font-family:inherit;line-height:1.7;background:#faf7ef;color:#16241a;outline:none;resize:vertical"></textarea>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;flex-wrap:wrap">
           <div style="display:flex;flex-direction:column;gap:8px;max-width:560px">
+            <div class="af-btn" onClick="{{ qToggleAgree }}" style="font-size:13px;line-height:1.55;color:#54604f"><b style="font-size:15px">{{ qAgreeMark }}</b> 연락처를 남기는 경우: 개인정보(이름·연락처) 수집·이용에 동의합니다. 목적: 문의 답변. 보유: 답변 후 1년.</div>
             <div style="font-size:12.5px;color:#8a9280">{{ qNotice }}</div>
             <div style="font-size:13px;font-weight:700;line-height:1.65;color:#54604f;text-wrap:pretty">환경조건에 따라 다른 결과가 나타날 수 있으므로 정확한 조치는 농업기술센터나 가까운 기관에 문의하셔서 직접 상담을 통해 결정하시기 바랍니다.</div>
           </div>
@@ -682,43 +733,29 @@
         </div>
       </div>
 
-      <!-- 문의 목록 -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px">
-        <div style="font-size:13px;font-weight:700;color:#54604f">전체 {{ qCount }}건</div>
-        <div style="font-size:12.5px;color:#8a9280">답변 완료 {{ qDone }}건</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <sc-for list="{{ qList }}" as="q" hint-placeholder-count="2">
-          <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;overflow:hidden">
-            <div class="af-btn" onClick="{{ q.onToggle }}" style="display:flex;align-items:center;gap:12px;padding:18px 22px">
-              <span style="flex:none;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:800;background:{{ q.badgeBg }};color:{{ q.badgeFg }}">{{ q.badge }}</span>
-              <span style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#16241a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ q.title }}</span>
-              <span style="flex:none;font-size:12px;color:#9aa393">{{ q.meta }}</span>
-              <span style="flex:none;color:#4a7c59;font-weight:700">{{ q.caret }}</span>
-            </div>
-            <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
-              <div style="padding:0 22px 22px">
-                <div style="background:#faf7ef;border-radius:12px;padding:18px 20px;font-size:14px;line-height:1.75;color:#3a4236;white-space:pre-wrap">{{ q.body }}</div>
-                <sc-if value="{{ q.hasAnswer }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:10px;background:#e9efdd;border-left:none;border-radius:12px;padding:18px 20px">
-                    <div style="font-size:12px;font-weight:800;color:#4a7c59;margin-bottom:7px">에이블팜 답변 · {{ q.answeredAt }}</div>
-                    <div style="font-size:14px;line-height:1.75;color:#2f3a2b;white-space:pre-wrap">{{ q.answer }}</div>
-                  </div>
-                </sc-if>
-                <sc-if value="{{ q.canAnswer }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
-                    <textarea placeholder="답변을 입력하세요" value="{{ q.draft }}" onChange="{{ q.onDraft }}" style="width:100%;box-sizing:border-box;min-height:90px;padding:13px 15px;border:1px solid #cfd6c4;border-radius:11px;font-size:14px;font-family:inherit;line-height:1.7;background:#fff;color:#16241a;outline:none;resize:vertical"></textarea>
-                    <div style="display:flex;gap:10px;justify-content:flex-end">
-                      <span class="af-btn" onClick="{{ q.onDelete }}" style="flex:none;white-space:nowrap;padding:11px 18px;border:1px solid #dcd8c7;border-radius:10px;font-size:13px;font-weight:700;color:#8a7060">문의 삭제</span>
-                      <span class="af-btn" onClick="{{ q.onSave }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#4a7c59;color:#fff;border-radius:10px;font-size:13px;font-weight:800">{{ q.saveLabel }}</span>
-                    </div>
+      <!-- 이 브라우저에서 보낸 문의 (본인만 보임) -->
+      <sc-if value="{{ qHasMine }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#54604f;margin:0 4px 12px">내가 보낸 문의</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ qList }}" as="q" hint-placeholder-count="0">
+              <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;overflow:hidden">
+                <div class="af-btn" onClick="{{ q.onToggle }}" style="display:flex;align-items:center;gap:12px;padding:18px 22px">
+                  <span style="flex:none;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:800;background:#e9efdd;color:#4a7c59">접수</span>
+                  <span style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#16241a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ q.title }}</span>
+                  <span style="flex:none;font-size:12px;color:#9aa393">{{ q.meta }}</span>
+                  <span style="flex:none;color:#4a7c59;font-weight:700">{{ q.caret }}</span>
+                </div>
+                <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:0 22px 22px">
+                    <div style="background:#faf7ef;border-radius:12px;padding:18px 20px;font-size:14px;line-height:1.75;color:#3a4236;white-space:pre-wrap">{{ q.body }}</div>
                   </div>
                 </sc-if>
               </div>
-            </sc-if>
+            </sc-for>
           </div>
-        </sc-for>
-      </div>
+        </div>
+      </sc-if>
     </div>
   </div>
 
@@ -950,20 +987,18 @@ class Component extends DCLogic {
   }
 
   static QNA_KEY = 'af_qna_v1';
-  static QNA_PIN = 'ablefarm';
-
-  qnaSeed() {
-    return [
-      { id: 1, name: '김영수', crop: '고추', body: '장마 지나고 고추 잎이 노랗게 뜨고 세력이 죽었습니다. 어떤 제품을 쓰면 좋을까요?', at: '2026-08-12', answer: '과습으로 뿌리 기능이 떨어진 상태로 보입니다. 아미루트를 500~1,000배로 관주(300평당 1~1.5ℓ)해 뿌리 회복을 먼저 잡으신 뒤, 7~10일 후 토탈그로를 엽면살포해 수세를 올려주세요.', answeredAt: '2026-08-13' },
-      { id: 2, name: '해남 대성농장', crop: '벼', body: '태풍 오기 전에 도복 예방으로 쓸 만한 제품이 있나요? 드론 방제로 살포합니다.', at: '2026-08-20', answer: '', answeredAt: '' },
-    ];
-  }
+  static CONTACT_MAIL = 'khhcmcm1118@gmail.com';
 
   qnaLoad() {
     let list = null;
     try { const raw = localStorage.getItem(Component.QNA_KEY); if (raw) list = JSON.parse(raw); } catch (e) {}
-    if (!Array.isArray(list)) list = this.qnaSeed();
-    this.setState({ qna: list });
+    // 내 브라우저에서 보낸 문의만 남긴다 (예전 예시 글 id 1·2 제외)
+    if (!Array.isArray(list)) list = [];
+    this.setState({ qna: list.filter((q) => q.id > 2) });
+    fetch('data/qna.json', { cache: 'no-cache' })
+      .then((r) => r.json())
+      .then((j) => this.setState({ qaAll: Array.isArray(j) ? j : [] }))
+      .catch(() => {});
   }
 
   qnaSave(list) {
@@ -971,71 +1006,91 @@ class Component extends DCLogic {
     try { localStorage.setItem(Component.QNA_KEY, JSON.stringify(list)); } catch (e) {}
   }
 
+  // 접수 주소(data/contact.json)가 있으면 시트로 보내고, 없으면 false
+  async sendContact(payload) {
+    try {
+      const cfg = await fetch('data/contact.json', { cache: 'no-cache' }).then((r) => r.json());
+      if (!cfg.api) return false;
+      await fetch(cfg.api, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+      return true;
+    } catch (e) { return false; }
+  }
+
+  qaVals() {
+    const s = this.state;
+    const kst = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+    // 공개일이 된 글만 보인다 — 매일 자정(한국 시간)에 2건씩 열린다
+    const live = (s.qaAll || []).filter((x) => x.date <= kst)
+      .sort((a, b) => (a.date === b.date ? (a.id < b.id ? 1 : -1) : (a.date < b.date ? 1 : -1)));
+    const word = (s.qaWord || '').trim();
+    const hits = word ? live.filter((x) => (x.crop + ' ' + x.q + ' ' + x.a).includes(word)) : live;
+    const show = s.qaShow || 6;
+    const todayN = live.filter((x) => x.date === kst).length;
+    return {
+      seasonQaLabel: todayN ? '오늘 농사 Q&A ' + todayN + '건 올라옴' : '농사 Q&A 매일 2건',
+      qaWord: s.qaWord || '',
+      qaSetWord: (e) => this.setState({ qaWord: e.target.value, qaShow: 6 }),
+      qaCount: live.length,
+      qaEmpty: hits.length === 0,
+      qaList: hits.slice(0, show).map((x) => {
+        const open = s.qaOpen === x.id;
+        return {
+          open, title: '[' + x.crop + '] ' + x.q, date: x.date, answer: x.a, src: x.src,
+          links: (x.links || []).map((l) => ({ t: l.t, u: l.u })),
+          caret: open ? '−' : '＋',
+          onToggle: () => this.setState({ qaOpen: open ? null : x.id }),
+        };
+      }),
+      qaHasMore: hits.length > show,
+      qaMore: () => this.setState({ qaShow: show + 10 }),
+    };
+  }
+
   qnaVals() {
     const s = this.state;
     const list = s.qna || [];
-    const admin = !!s.qAdmin;
-    const drafts = s.qDrafts || {};
     const today = new Date().toISOString().slice(0, 10);
 
     const qList = list.slice().sort((a, b) => b.id - a.id).map((q) => {
-      const done = !!(q.answer && q.answer.trim());
       const open = s.qOpen === q.id;
       return {
-        open, body: q.body, answer: q.answer, answeredAt: q.answeredAt,
-        hasAnswer: done,
+        open, body: q.body,
         title: (q.crop ? '[' + q.crop + '] ' : '') + q.body.split('\n')[0],
-        meta: q.name + ' · ' + q.at,
-        badge: done ? '답변완료' : '답변대기',
-        badgeBg: done ? '#e9efdd' : '#f3ece0',
-        badgeFg: done ? '#4a7c59' : '#a08050',
+        meta: q.at,
         caret: open ? '−' : '＋',
-        canAnswer: admin,
-        draft: drafts[q.id] !== undefined ? drafts[q.id] : (q.answer || ''),
-        saveLabel: done ? '답변 수정' : '답변 등록',
         onToggle: () => this.setState({ qOpen: open ? null : q.id }),
-        onDraft: (e) => this.setState({ qDrafts: { ...drafts, [q.id]: e.target.value } }),
-        onSave: () => {
-          const text = (drafts[q.id] !== undefined ? drafts[q.id] : (q.answer || '')).trim();
-          this.qnaSave(list.map((x) => x.id === q.id ? { ...x, answer: text, answeredAt: text ? today : '' } : x));
-        },
-        onDelete: () => {
-          if (!window.confirm('이 문의를 삭제할까요?')) return;
-          this.qnaSave(list.filter((x) => x.id !== q.id));
-        },
       };
     });
 
     return {
       qList,
-      qCount: list.length,
-      qDone: list.filter((q) => q.answer && q.answer.trim()).length,
-      qName: s.qName || '', qCrop: s.qCrop || '', qBody: s.qBody || '',
+      qHasMine: list.length > 0,
+      qName: s.qName || '', qCrop: s.qCrop || '', qPhone: s.qPhone || '', qBody: s.qBody || '',
       qSetName: (e) => this.setState({ qName: e.target.value }),
       qSetCrop: (e) => this.setState({ qCrop: e.target.value }),
+      qSetPhone: (e) => this.setState({ qPhone: e.target.value }),
       qSetBody: (e) => this.setState({ qBody: e.target.value }),
-      qNotice: s.qMsg || '등록된 문의는 담당자 확인 후 이 페이지에 답변으로 게시됩니다.',
-      qSubmit: () => {
+      qAgreeMark: s.qAgree ? '☑' : '☐',
+      qToggleAgree: () => this.setState({ qAgree: !s.qAgree }),
+      qNotice: s.qMsg || '담당자가 확인합니다. 연락처를 남기시면 직접 연락드립니다. 이름과 연락처는 공개되지 않습니다.',
+      qSubmit: async () => {
         const body = (s.qBody || '').trim();
+        const phone = (s.qPhone || '').trim();
         if (!body) { this.setState({ qMsg: '문의 내용을 입력해 주세요.' }); return; }
-        const item = {
-          id: Date.now(),
-          name: (s.qName || '').trim() || '익명',
-          crop: (s.qCrop || '').trim(),
-          body, at: today, answer: '', answeredAt: '',
-        };
+        if (phone && !s.qAgree) { this.setState({ qMsg: '연락처를 남기시려면 개인정보 수집·이용에 동의해 주세요.' }); return; }
+        const name = (s.qName || '').trim() || '익명';
+        const crop = (s.qCrop || '').trim();
+        const sent = await this.sendContact({ type: '문의', name, crop, phone, body, page: location.href });
+        if (!sent) {
+          // 접수 주소가 없거나 전송 실패 → 메일로 보내게 한다
+          const text = '이름: ' + name + '\n작물: ' + crop + '\n연락처: ' + phone + '\n\n' + body;
+          location.href = 'mailto:' + Component.CONTACT_MAIL + '?subject=' + encodeURIComponent('에이블팜 고객문의') + '&body=' + encodeURIComponent(text);
+          this.setState({ qMsg: '메일 앱이 열리면 보내기를 눌러 주세요. 열리지 않으면 ' + Component.CONTACT_MAIL + ' 또는 02-858-6229로 연락 주세요.' });
+          return;
+        }
+        const item = { id: Date.now(), crop, body, at: today };
         this.qnaSave([...list, item]);
-        this.setState({ qName: '', qCrop: '', qBody: '', qOpen: item.id, qMsg: '문의가 등록되었습니다. 확인 후 답변드리겠습니다.' });
-      },
-      qAdminLabel: admin ? '🔓 관리자 모드 (해제)' : '🔒 관리자 로그인',
-      qAdminBg: admin ? '#16271c' : '#fff',
-      qAdminFg: admin ? '#fff' : '#54604f',
-      qToggleAdmin: () => {
-        if (admin) { this.setState({ qAdmin: false }); return; }
-        const pin = window.prompt('관리자 비밀번호를 입력하세요');
-        if (pin === null) return;
-        if (pin === Component.QNA_PIN) this.setState({ qAdmin: true });
-        else window.alert('비밀번호가 올바르지 않습니다.');
+        this.setState({ qName: '', qCrop: '', qPhone: '', qBody: '', qAgree: false, qOpen: item.id, qMsg: '문의가 접수되었습니다. 확인 후 연락드리겠습니다.' });
       },
     };
   }
@@ -1223,15 +1278,15 @@ class Component extends DCLogic {
       stats: [['공시-2-3-792', '유기농업자재 공시'], ['입단구조', '다공질 베이직슬래그'], ['2·6·8kg', '과립형 포장']],
       steps: [['STEP 1', '정식·파종 전 밑거름으로 토양 전면 살포'], ['STEP 2', '경운으로 흙과 고르게 섞기'], ['STEP 3', '생육 중 추비로 추가 시용']] },
     { name: '임팩트골드', headline: '토양개량과 생육을\n동시에 잡는 유기농업자재',
-      video: 'assets/video/impact-gold.mp4', poster: 'assets/products/p15.jpg',
+      video: 'assets/video/winter-house.mp4', poster: 'assets/products/p15.jpg', fit: 'contain', start: 42, hold: 18,
       quote: '"염류 낀 하우스에 관주하고 수세가 올라왔습니다."',
       stats: [['공시-2-3-802', '유기농업자재 공시'], ['혈액발효액', '목초액·해조추출물'], ['500㎖·5ℓ', '액제 포장']],
       steps: [['STEP 1', '토양개량은 관주, 수세 회복은 엽면살포'], ['STEP 2', '생육 단계에 맞춰 7~10일 간격 반복'], ['STEP 3', '염류·과습 피해 후 회복 처방으로 활용']] },
-    { name: '일소가드', headline: '폭염에 데인 잎,\n다시 일하게 만듭니다',
-      video: 'assets/video/ilsoguard.mp4', poster: 'assets/products/p13.jpg',
-      quote: '"장마 전에 한 번, 그 뒤로 흰 자국 걱정이 없어요."',
-      stats: [['500배', '물 20ℓ당 40㎖'], ['1~4회', '7~10일 간격'], ['미립자', '탄산칼슘·트레할로스']],
-      steps: [['STEP 1', '6월 중하순 장마 전 1회 예방 살포'], ['STEP 2', '7월 이후 폭염기 2~4회 반복'], ['STEP 3', '고온 시간대를 피해 서늘할 때 살포']] },
+    { name: '히미업', headline: '겨울 하우스 모종에,\n히미나는 히미업',
+      video: 'assets/video/himiup.mp4', poster: 'assets/products/p24.jpg', fit: 'contain', hold: 23,
+      quote: '모종이 약하면 한 해 농사가 흔들립니다.',
+      stats: [['1,000배', '물 20ℓ당 20㎖'], ['800배', '스트레스 심할 때'], ['500㎖', '액제 포장']],
+      steps: [['STEP 1', '육묘기·정식 초기에 엽면살포'], ['STEP 2', '겨울에는 맑은 날 오전에 살포'], ['STEP 3', '저녁 전에 잎이 마르게 관리']] },
     { name: '속딴딴', headline: '물러짐 없이,\n끝까지 단단하게',
       video: 'assets/video/sokddanddan.mp4', poster: 'assets/products/p03.jpg',
       quote: '"수확 후 저장성이 좋아져 상품률이 올랐습니다."',
@@ -1248,10 +1303,16 @@ class Component extends DCLogic {
   hiStart() {
     if (this._hiTimer) clearInterval(this._hiTimer);
     // 화면에 보일 때만 다음 제품으로 넘어간다 (보이지 않을 때 영상을 미리 받지 않도록)
+    // 긴 영상은 항목의 hold(초)만큼 머문다. 기본 9초
+    this._hiSec = 0;
     this._hiTimer = setInterval(() => {
       if (!Component.onScreen(document.getElementById('hi-video'))) return;
-      this.setState((s) => ({ hi: ((s.hi || 0) + 1) % Component.HILITE.length }));
-    }, 9000);
+      const L = Component.HILITE;
+      const cur = (this.state.hi || 0) % L.length;
+      if (++this._hiSec < (L[cur].hold || 9)) return;
+      this._hiSec = 0;
+      this.setState({ hi: (cur + 1) % L.length });
+    }, 1000);
     if (!this._vidWatch) {
       this._vidWatch = () => {
         if (this._vidRaf) return;
@@ -1291,7 +1352,8 @@ class Component extends DCLogic {
         if (el.__afSrc === src) return;
         el.__afSrc = src;
         el.poster = encodeURI(h.poster);
-        el.src = src;
+        el.style.objectFit = h.fit || 'cover';
+        el.src = src + (h.start ? '#t=' + h.start : '');
         el.muted = true;
         el.load();
         el.play().catch(() => {});
@@ -1542,6 +1604,7 @@ class Component extends DCLogic {
       priceBadge, priceBadgeBg, priceBadgeFg, priceNote,
       ...this.hiVals(),
       ...this.qnaVals(),
+      ...this.qaVals(),
       catShow: !!this.state.catOpen,
       catOpen: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ catOpen: true }); },
       catClose: () => this.setState({ catOpen: false }),

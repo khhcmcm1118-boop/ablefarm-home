@@ -2399,6 +2399,47 @@ function revealProduct(afterRegion){
   }, 400);
 }
 
+// 농사 Q&A (data/qna.json) — 공개일이 지난 글만 봇이 답한다. 고객문의 화면과 같은 파일이다
+let QNA_ITEMS = [];
+fetch('data/qna.json', {cache:'no-cache'})
+  .then(r => r.json())
+  .then(list => {
+    const today = new Date(Date.now() + 9*3600000).toISOString().slice(0,10);
+    QNA_ITEMS = (Array.isArray(list) ? list : []).filter(x => x.date <= today);
+  })
+  .catch(() => {});
+
+const QNA_CUE = /언제|시기|몇|얼마|어떻게|온도|습도|방법|까지|해야|하나요|되나요|적기|깊이|간격/;
+const QNA_SYMPTOM = /누렇|노랗|시들|썩|반점|말라|마르|갈색|구멍|벌레|병|죽|이상|약해|쳐져|처져|떨어져|힘이|안 ?커|안 ?자라/;
+const QNA_GENERIC = /^(언제|시기|방법|어떻게|몇|얼마|적기|관리|하나요|되나요)$/;
+// 묶음 이름으로 된 작물 칸은 농민이 쓰는 말로 찾는다
+const QNA_CROP_WORDS = {"시설채소":/하우스|시설|토마토|오이/, "과수":/과수|과원/, "저장고":/저장고/, "농기계":/농기계|콤바인|트랙터|이앙기/, "종자":/종자|씨앗/};
+// 키워드의 다른 표현 (심어요·심나요 → 아주심기 등)
+const QNA_WORD_ALIAS = {"아주심기":/심어|심나|심기|심는|심을/, "정식":/심어|심나|심기|심는|심을/, "파종":/뿌려|뿌리나|심어|심나|심기|심는/, "수확":/따야|따나|캐야|베야/};
+
+function qnaWordHit(msg, k){
+  return msg.includes(k) || (QNA_WORD_ALIAS[k] && QNA_WORD_ALIAS[k].test(msg));
+}
+
+function findQnaAnswer(msg){
+  if(!QNA_ITEMS.length) return null;
+  if(pendingQuestion || pendingConfirmIssue || symptomStage > 0) return null;
+  if(QNA_SYMPTOM.test(msg)) return null;
+  if(PRODUCT_ALIASES.some(a => msg.includes(a[0]))) return null;
+  let best = null, bestScore = 0;
+  QNA_ITEMS.forEach(item => {
+    const cropWords = String(item.crop).split(/[·,\s]+/).filter(Boolean);
+    const cropHit = cropWords.some(c => msg.includes(c) || (QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(msg))) || (currentCrop && cropWords.includes(currentCrop));
+    if(!cropHit) return;
+    const isCropWord = k => cropWords.includes(k) || cropWords.some(c => QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(k));
+    const hits = (item.keywords || []).filter(k => !isCropWord(k) && !QNA_GENERIC.test(k) && qnaWordHit(msg, k)).length;
+    if(hits < 1) return;
+    if(hits < 2 && !QNA_CUE.test(msg)) return;
+    if(hits > bestScore || (hits === bestScore && best && item.date > best.date)){ best = item; bestScore = hits; }
+  });
+  return best;
+}
+
 function handleUserMessage(raw){
   let msg = raw.trim();
   if(!msg) return;
@@ -2575,6 +2616,22 @@ function handleUserMessage(raw){
         addCalcLink(detectCalcProductName(msg));
       }
       setChips(followUpChips());
+    });
+    return;
+  }
+
+  // -3.1) 재배 시기·방법 질문 → 쌓아 둔 농사 Q&A에서 답한다 (증상·제품 질문은 기존 흐름으로)
+  const qaHit = findQnaAnswer(msg);
+  if(qaHit){
+    resetSymptomState();
+    showTyping(()=>{
+      addBubble(`${qaHit.a}\n\n출처: ${qaHit.src}`, 'bot');
+      const links = (qaHit.links || []).map(l => `<a href="${escapeHtml(l.u)}" target="_blank" rel="noopener">📄 ${escapeHtml(l.t)}</a>`);
+      if(links.length) addBubbleHTML(links.join('<br>'), 'bot');
+      setChips([
+        {label:"다른 고민이 있어요", value:"__reset__"},
+        {label:"직접 상담받고 싶어요", value:"__contact__", primary:true},
+      ]);
     });
     return;
   }
