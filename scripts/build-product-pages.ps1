@@ -17,7 +17,8 @@ $SlugMap = @{
 }
 # 제품 → 관련 재배 안내(쇼츠 포함)
 $Guides = @{
-  '임팩트과립' = @(@{t='벼 깨씨무늬병 — 원인은 흙 속에 있습니다'; u='../guide/rice-brown-spot.html'; v='cXLysImyLjk'})
+  '임팩트과립' = @(@{t='벼 깨씨무늬병 — 원인은 흙 속에 있습니다'; u='../guide/rice-brown-spot.html'; v='cXLysImyLjk'},
+                   @{t='보리·밀 겨울 농사, 세 번만 챙기세요 — 배수로·밟기·재생기'; u='../guide/barley-wheat-winter.html'; v='zcgAl1TObhU'})
   '칼슘탄'     = @(@{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
   '아미닥터'   = @(@{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
   '일소가드'   = @(@{t='사과 일소(햇볕 데임) — 데기 전에 막는 법'; u='../guide/apple-sunburn.html'; v='FUqkyk16ZXo'})
