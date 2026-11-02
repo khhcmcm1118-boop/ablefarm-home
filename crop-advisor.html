@@ -1358,6 +1358,7 @@ CROP_ISSUE_DB["딸기"].unshift({keywords:["밍밍","단맛이 없","단맛이 �
 // 겨울 토마토·오이 착과 불량: 일조 부족 (농촌진흥청 주간농사정보 제44호·제1호, 농업기술 길잡이 토마토)
 ["토마토","방울토마토"].forEach(c => { if(CROP_ISSUE_DB[c]) CROP_ISSUE_DB[c].unshift({keywords:["꽃은 피는데","꽃은 펴","열매가 안 달","안 달려","착과가 안","착과 불량","착과불량","착과가 잘"], part:"꽃", symptom:"꽃은 피는데 열매가 안 달려요", label:"착과 불량(일조 부족)", cause:"부족한 햇빛 때문일 수 있어요. 해가 짧고 흐린 날이 이어지면 잎이 만드는 양분이 모자라 착과가 줄어요(농촌진흥청). 비닐을 닦고 반사판을 달고 늙은 잎을 따 빛을 확보해 주세요. 밤 온도는 과채류 12℃ 이상으로 지키고, 물은 줄여 오전에 주고 낮에 환기해 습기를 빼 주세요. 토마토 수정벌은 17~27℃에서 잘 일하니 온도와 벌 수도 확인해 주세요.", product:"impactone"}); });
 if(CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"].unshift({keywords:["꽃은 피는데","열매가 안 달","안 달려","착과가 안","착과 불량","착과불량","휘어","휜 오이","구부러","곡과","끝이 가늘","끝이 가는","기형과"], part:"열매", symptom:"오이가 휘거나 끝이 가늘어요, 잘 안 달려요", label:"곡과·착과 불량(일조 부족)", cause:"부족한 햇빛 때문일 수 있어요. 해가 짧고 흐린 날이 이어지면 잎이 만드는 양분이 모자라 착과가 줄어요(농촌진흥청). 비닐을 닦고 반사판을 달고 늙은 잎을 따 빛을 확보해 주세요. 밤 온도는 과채류 12℃ 이상으로 지키고, 물은 줄여 오전에 주고 낮에 환기해 습기를 빼 주세요. 빛이 부족하면 오이는 휘거나 끝이 가는 열매가 나오기 쉬워요.", product:"impactone"});
+CROP_ISSUE_DB["마늘"].unshift({keywords:["씨마늘","심는 깊이","심는 법","심는 방법","어떻게 심","얼마나 깊이","언제 심","파종 시기","파종 방법","파종 깊이","파종은 언제","파종 언제"], part:"열매", symptom:"마늘을 어떻게 심어야 하나요", label:"마늘 파종(씨마늘·심는 깊이)", cause:"씨마늘과 심는 방법이 내년 마늘 크기와 모양을 좌우해요. 씨마늘은 한지형 쪽당 4~5g, 난지형 5~7g이 알맞고, 너무 크면 벌마늘이 되기 쉬워요(농촌진흥청). 병든 것, 무른 것, 상처 난 것은 골라내고 등록 약제로 소독해 그늘에서 말려 심어 주세요. 뿌리는 아래로, 깊이는 마늘쪽 길이의 2~3배(5~7cm)예요. 얕으면 겨울에 솟아 얼고 벌마늘이 늘어요. 한지형은 늦어도 11월 하순까지 심고, 비닐은 땅이 얼기 전에 덮어 주세요. 아래 제품은 심을 때가 아니라 봄에 마늘종이 나오기 전부터 쓰는 비대기 영양제예요.", product:"gugeunjjang"});
 if(!CROP_ISSUE_DB["상추"]) CROP_ISSUE_DB["상추"] = [GH_DEW, Object.assign({}, GH_GRAY, {part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요"})];
 
 /* ------------------------------------------------------------------
@@ -2995,7 +2996,8 @@ const GUIDE_LINKS = [
   { crops:["딸기"], match:/호흡으로 써 버려/, title:"딸기 단계별 밤 온도·당도 관리 안내", url:"guide/strawberry-night-temp.html", video:"YLPreraNDtw" },
   { crops:["딸기"], match:/수정 불량/, title:"딸기 기형과·수정 관리 안내", url:"guide/strawberry-malformed.html", video:"5UCcYgcnzHU" },
   { crops:["양파"], match:/서릿발/, title:"양파 서릿발·아주심기 관리 안내", url:"guide/onion-frost-heave.html", video:"-3Qi2kdRrE4" },
-  { crops:["토마토","방울토마토","오이"], match:/부족한 햇빛/, title:"겨울 토마토·오이 착과 관리 안내", url:"guide/winter-fruit-set.html", video:"NTbxT8zcVb4" }
+  { crops:["토마토","방울토마토","오이"], match:/부족한 햇빛/, title:"겨울 토마토·오이 착과 관리 안내", url:"guide/winter-fruit-set.html", video:"NTbxT8zcVb4" },
+  { crops:["마늘"], match:/씨마늘|벌마늘/, title:"마늘 파종 안내", url:"guide/garlic-planting.html", video:"7OPvxOSjk8U" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;
