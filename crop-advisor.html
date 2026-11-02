@@ -1355,6 +1355,9 @@ if(!CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"] = [GH_DEW, GH_DOWNY, GH_GRA
 // 딸기 기형과: 수정 불량 (농촌진흥청 주간농사정보 제44호·농사로 현장기술지원)
 CROP_ISSUE_DB["딸기"].unshift({keywords:["기형과","찌그러","모양이 이상","모양이 기형","울퉁불퉁","수정 불량","수정불량","수정벌","벌이 안"], part:"열매", symptom:"딸기가 찌그러져 나와요", label:"기형과(수정 불량)", cause:"수정 불량일 수 있어요. 딸기는 겉의 씨가 수정돼야 그 자리 과육이 자라고, 열매 맺기를 벌에 의존해요(농촌진흥청). 꽃이 피기 시작하면 바로 수정벌을 넣고, 하우스를 14~25℃로 관리해 주세요(꿀벌 적온 18~22℃, 뒤영벌 적온 10~25℃). 꽃 필 때 잦은 약 살포는 줄이고, 저온기엔 낮은 온도에서도 활동하는 뒤영벌을 써 보세요. 벌이 잘 활동하는데도 계속되면 모종·품종 문제일 수 있으니 농업기술센터에 확인해 주세요.", product:"impactone"});
 CROP_ISSUE_DB["딸기"].unshift({keywords:["밍밍","단맛이 없","단맛이 덜","맛이 싱거","당도가 낮","당도가 안","안 달아","달지 않"], part:"열매", symptom:"딸기가 밍밍하고 단맛이 덜해요", label:"당도 저하(야간 고온)", cause:"밤 온도가 너무 높아서일 수 있어요. 밤이 따뜻하면 낮에 잎이 만든 당분을 밤사이 호흡으로 써 버려 당도가 떨어져요(농촌진흥청). 밤 온도는 꽃봉오리·개화기 10℃, 열매가 커질 때 6~8℃, 수확기 6~7℃로 단계마다 낮추고, 낮은 25℃ 안팎으로 관리해 주세요. 잎은 개화기 5~6장, 열매가 클 때 8장을 확보하고, 첫 화방 꽃은 7~10개만 남겨 솎아 주세요.", product:"hisugar", companion:"impactone"});
+// 겨울 토마토·오이 착과 불량: 일조 부족 (농촌진흥청 주간농사정보 제44호·제1호, 농업기술 길잡이 토마토)
+["토마토","방울토마토"].forEach(c => { if(CROP_ISSUE_DB[c]) CROP_ISSUE_DB[c].unshift({keywords:["꽃은 피는데","꽃은 펴","열매가 안 달","안 달려","착과가 안","착과 불량","착과불량","착과가 잘"], part:"꽃", symptom:"꽃은 피는데 열매가 안 달려요", label:"착과 불량(일조 부족)", cause:"부족한 햇빛 때문일 수 있어요. 해가 짧고 흐린 날이 이어지면 잎이 만드는 양분이 모자라 착과가 줄어요(농촌진흥청). 비닐을 닦고 반사판을 달고 늙은 잎을 따 빛을 확보해 주세요. 밤 온도는 과채류 12℃ 이상으로 지키고, 물은 줄여 오전에 주고 낮에 환기해 습기를 빼 주세요. 토마토 수정벌은 17~27℃에서 잘 일하니 온도와 벌 수도 확인해 주세요.", product:"impactone"}); });
+if(CROP_ISSUE_DB["오이"]) CROP_ISSUE_DB["오이"].unshift({keywords:["꽃은 피는데","열매가 안 달","안 달려","착과가 안","착과 불량","착과불량","휘어","휜 오이","구부러","곡과","끝이 가늘","끝이 가는","기형과"], part:"열매", symptom:"오이가 휘거나 끝이 가늘어요, 잘 안 달려요", label:"곡과·착과 불량(일조 부족)", cause:"부족한 햇빛 때문일 수 있어요. 해가 짧고 흐린 날이 이어지면 잎이 만드는 양분이 모자라 착과가 줄어요(농촌진흥청). 비닐을 닦고 반사판을 달고 늙은 잎을 따 빛을 확보해 주세요. 밤 온도는 과채류 12℃ 이상으로 지키고, 물은 줄여 오전에 주고 낮에 환기해 습기를 빼 주세요. 빛이 부족하면 오이는 휘거나 끝이 가는 열매가 나오기 쉬워요.", product:"impactone"});
 if(!CROP_ISSUE_DB["상추"]) CROP_ISSUE_DB["상추"] = [GH_DEW, Object.assign({}, GH_GRAY, {part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요"})];
 
 /* ------------------------------------------------------------------
@@ -2981,7 +2984,7 @@ function handleUserMessage(raw){
   processSymptom(msg, false);
 }
 
-// 에팜티비 쇼츠 + 홈페이지 안내 페이지 연결.
+// 에이농티비 쇼츠 + 홈페이지 안내 페이지 연결.
 // 새 쇼츠를 만들면 여기에 한 줄 추가한다(작물 목록·원인 문구에서 찾을 단어·안내 페이지·영상 ID).
 const GUIDE_LINKS = [
   { crops:["벼"], match:/깨씨무늬병/, title:"벼 깨씨무늬병 관리 안내", url:"guide/rice-brown-spot.html", video:"cXLysImyLjk" },
@@ -2991,13 +2994,14 @@ const GUIDE_LINKS = [
   { crops:["토마토","방울토마토","오이","딸기","파프리카","상추"], match:/결로|잿빛곰팡이병일|노균병일/, title:"겨울 하우스 결로·다습 관리 안내", url:"guide/greenhouse-winter.html", video:"OmfrclBgBHw" },
   { crops:["딸기"], match:/호흡으로 써 버려/, title:"딸기 단계별 밤 온도·당도 관리 안내", url:"guide/strawberry-night-temp.html", video:"YLPreraNDtw" },
   { crops:["딸기"], match:/수정 불량/, title:"딸기 기형과·수정 관리 안내", url:"guide/strawberry-malformed.html", video:"5UCcYgcnzHU" },
-  { crops:["양파"], match:/서릿발/, title:"양파 서릿발·아주심기 관리 안내", url:"guide/onion-frost-heave.html", video:"-3Qi2kdRrE4" }
+  { crops:["양파"], match:/서릿발/, title:"양파 서릿발·아주심기 관리 안내", url:"guide/onion-frost-heave.html", video:"-3Qi2kdRrE4" },
+  { crops:["토마토","방울토마토","오이"], match:/부족한 햇빛/, title:"겨울 토마토·오이 착과 관리 안내", url:"guide/winter-fruit-set.html", video:"NTbxT8zcVb4" }
 ];
 function findGuideLink(causeText){
   return GUIDE_LINKS.find(g => (!currentCrop || g.crops.includes(currentCrop)) && g.match.test(causeText || "")) || null;
 }
 function guideLinkHTML(g){
-  return `📺 이 증상을 30초 영상으로 정리했어요.<br><a href="https://www.youtube.com/shorts/${g.video}" target="_blank" rel="noopener">▶ 에팜티비 쇼츠 보기</a> · <a href="${g.url}" target="_blank" rel="noopener">📄 ${g.title}</a>`;
+  return `📺 이 증상을 30초 영상으로 정리했어요.<br><a href="https://www.youtube.com/shorts/${g.video}" target="_blank" rel="noopener">▶ 에이농티비 쇼츠 보기</a> · <a href="${g.url}" target="_blank" rel="noopener">📄 ${g.title}</a>`;
 }
 
 function answerDiseaseWithCause(causeText, textForProductMatch, seasonMismatch, part, productOverride, companionKey){

@@ -24,7 +24,8 @@ $Guides = @{
   '임팩트원'   = @(@{t='김장 무가 먼저 언다 — 배추·무 언 피해 대비'; u='../guide/kimjang-frost.html'; v='W7zAvaR1o1U'},
                    @{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'},
                    @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'},
-                   @{t='찌그러진 첫 딸기, 범인은 수정 불량 — 개화기 벌 관리'; u='../guide/strawberry-malformed.html'; v='5UCcYgcnzHU'})
+                   @{t='찌그러진 첫 딸기, 범인은 수정 불량 — 개화기 벌 관리'; u='../guide/strawberry-malformed.html'; v='5UCcYgcnzHU'},
+                   @{t='꽃은 피는데 안 달린다면? 겨울 토마토·오이 착과 관리'; u='../guide/winter-fruit-set.html'; v='NTbxT8zcVb4'})
   '하이슈거'   = @(@{t='밍밍한 딸기, 범인은 따뜻한 밤 — 단계별 밤 온도'; u='../guide/strawberry-night-temp.html'; v='YLPreraNDtw'})
   '임팩트골드' = @(@{t='겨울 하우스, 병의 범인은 밤 이슬 — 결로·다습 관리'; u='../guide/greenhouse-winter.html'; v='OmfrclBgBHw'},
                    @{t='고추 탄저병 — 범인은 빗방울, 장마철 관리 순서'; u='../guide/pepper-anthracnose.html'; v='3HrCOXWGfPE'})
@@ -189,7 +190,7 @@ foreach ($p in $all) {
     [void]$sb.Append("<h3>$(E $v.t)</h3>`n<div style=""position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;margin:10px 0""><iframe src=""https://www.youtube-nocookie.com/embed/$($v.id)"" title=""$(E $v.t)"" loading=""lazy"" style=""position:absolute;inset:0;width:100%;height:100%;border:0"" allow=""accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"" referrerpolicy=""strict-origin-when-cross-origin"" allowfullscreen></iframe></div>`n<p>$(E $v.d)</p>`n")
   }
   if ($g) {
-    [void]$sb.Append("<h2>관련 재배 안내 · 에팜티비 쇼츠</h2>`n")
+    [void]$sb.Append("<h2>관련 재배 안내 · 에이농티비 쇼츠</h2>`n")
     foreach ($x in $g) { [void]$sb.Append("<a class=""guide"" href=""$($x.u)""><img src=""https://i.ytimg.com/vi/$($x.v)/hqdefault.jpg"" alt="""" loading=""lazy""><div><b>$(E $x.t)</b><span>원인과 관리 순서를 국가기관 자료로 정리하고 30초 쇼츠로 담았습니다 →</span></div></a>`n") }
   }
   if ($p.자주묻는질문) {
