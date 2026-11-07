@@ -216,6 +216,49 @@
   }
   .inputbar button:hover{background:var(--mid-green);}
 
+  /* 사진 첨부 버튼 — 정사각형으로 고정한다.
+     padding 으로만 크기를 잡으면 입력창 스킨에 따라 납작하게 찌그러진다. */
+  .photo-btn{
+    width:38px !important;
+    height:38px !important;
+    min-width:38px;
+    padding:0 !important;
+    background:#fff !important;
+    color:var(--dark-green) !important;
+    border:1.5px solid var(--line) !important;
+    border-radius:12px !important;
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+    align-self:center;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .photo-btn:hover{background:#EEF6EA !important;}
+  .photo-btn.busy{opacity:.45;pointer-events:none;}
+
+  /* 농민이 올린 사진 — 말풍선 안에 넣는다 */
+  .shot{
+    max-width:200px;border-radius:14px;border:1px solid var(--line);
+    display:block;cursor:zoom-in;
+  }
+  .shot-wrap{padding:5px !important;background:#fff !important;}
+  .shot-cap{font-size:11.5px;color:var(--ink-soft);padding:5px 4px 1px;}
+
+  /* 사진 크게 보기 */
+  .lightbox{
+    position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:99;
+    display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;
+  }
+  .lightbox img{max-width:100%;max-height:100%;border-radius:10px;}
+
+  @media (max-width:480px){
+    .photo-btn{
+      border:none !important;border-radius:999px !important;
+      width:36px !important;height:36px !important;min-width:36px;
+    }
+  }
+
   .typing{
     display:flex;gap:4px;padding:11px 14px;
     background:#EEF6EA;border:1px solid #DCEBD3;border-radius:16px;border-bottom-left-radius:5px;
@@ -420,6 +463,17 @@
   <div class="thread" id="thread"></div>
   <div class="chips" id="chips"></div>
   <div class="inputbar">
+    <!-- 사진 첨부 — accept="image/*" 만 두고 capture 는 쓰지 않는다.
+         capture 를 넣으면 휴대폰에서 '카메라 촬영'만 열려 갤러리의 기존 사진을 못 고른다. -->
+    <input id="photoInput" type="file" accept="image/*" hidden />
+    <!-- capture="environment" — 누르면 바로 뒷면 카메라가 열린다 (찍기 전용) -->
+    <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
+    <button id="photoBtn" class="photo-btn" type="button" aria-label="작물 사진 첨부" title="작물 사진 올리기">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.1-1.8A1 1 0 0 1 8.7 4.7h6.6a1 1 0 0 1 .9.5L17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/>
+        <circle cx="12" cy="13" r="3.4"/>
+      </svg>
+    </button>
     <input id="textInput" type="text" placeholder="예) 고추 키우는데 열매가 잘 안커요" />
     <button id="sendBtn">보내기</button>
   </div>
@@ -749,9 +803,12 @@ function matchesKeyword(text, kw){
    지역별 담당 직원 (출처: www.ablefarm.co.kr 고객문의 페이지)
 ------------------------------------------------------------------- */
 const REGION_STAFF = {
-  "충청·경기": { name:"이준희 팀장", phone:"010-9283-1393" },
-  "영남": { name:"박태진 팀장", phone:"010-8131-9840" },
-  "강원·호남·경북(청송·봉화)": { name:"박정호 부장", phone:"010-9158-0404" },
+  /* ⚠ 개인 휴대폰 번호는 넣지 않는다. 이 위젯은 홈페이지에 공개돼 있어
+       소스에 적힌 번호가 그대로 수집 대상이 된다.
+       "누구를 찾으면 되는지"만 알려주고 연결은 대표번호로 받는다. */
+  "충청·경기": { name:"이준희 팀장" },
+  "영남": { name:"박태진 팀장" },
+  "강원·호남·경북(청송·봉화)": { name:"박정호 부장" },
 };
 const REGION_CHIPS = Object.keys(REGION_STAFF).map(r => ({label:r, value:"__region__"+r}));
 
@@ -1997,6 +2054,9 @@ const thread = document.getElementById('thread');
 const chipsBox = document.getElementById('chips');
 const textInput = document.getElementById('textInput');
 const sendBtn = document.getElementById('sendBtn');
+const photoBtn = document.getElementById('photoBtn');
+const photoInput = document.getElementById('photoInput');
+const cameraInput = document.getElementById('cameraInput');
 
 let currentCrop = null;
 let previousCrop = null; // "다른 고민이 있어요" 선택 직전의 작물 (같은 작물인지 판단용)
@@ -2111,6 +2171,169 @@ function escapeHtml(str){
   return String(str)
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+/* ==================================================================
+   작물 사진 첨부
+   ------------------------------------------------------------------
+   지금은 사진을 "받아서 보여주고, 증상을 좁히는 실마리"로만 쓴다.
+   나중에 AI 진단을 붙일 때 lastPhoto 를 그대로 보내면 된다.
+
+   ⚠ 사진은 어디로도 전송되지 않는다. 농민 휴대폰 안에만 있다.
+     전송이 필요해지면 PHOTO_ENDPOINT 에 Apps Script 주소를 넣고
+     sendPhotoToStaff() 를 켠다 (그때 개인정보 안내 문구도 함께 넣을 것).
+================================================================== */
+const PHOTO_MAX_EDGE = 1092;   // 긴 변 기준. AI 진단 붙일 때 토큰 수와 직결된다
+const PHOTO_MAX_MB = 12;       // 원본이 이보다 크면 받지 않는다
+const PHOTO_ENDPOINT = "";     // 비워두면 전송하지 않는다
+let lastPhoto = null;          // { dataUrl, w, h } — AI 진단 붙일 때 쓸 자리
+
+/* ------------------------------------------------------------------
+   하루 사용량 제한 — 1인 하루 10건
+   ⚠ 이건 '예의상 제한'이다. 기기 안(localStorage)에 세는 것이라
+     시크릿 창이나 저장소 삭제로 넘길 수 있다.
+     AI 진단을 붙일 때는 반드시 Apps Script 쪽에도 상한을 둬야 요금이 지켜진다.
+     (저장소를 못 쓰는 환경에서는 막지 않고 통과시킨다 — 정상 이용자를
+      막는 쪽이 더 나쁘기 때문이다)
+------------------------------------------------------------------- */
+const PHOTO_DAILY_LIMIT = 10;
+const PHOTO_QUOTA_KEY = "ablefarm_photo_quota_v1";
+
+function todayStamp(){
+  const d = new Date();
+  return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+}
+function readPhotoQuota(){
+  try {
+    const q = JSON.parse(localStorage.getItem(PHOTO_QUOTA_KEY) || "{}");
+    return (q.d === todayStamp()) ? (q.n || 0) : 0;   // 날짜가 바뀌면 0부터
+  } catch(e){ return null; }                           // 저장소를 못 쓰는 환경
+}
+function photoQuotaLeft(){
+  const used = readPhotoQuota();
+  if(used === null) return PHOTO_DAILY_LIMIT;          // 못 세면 막지 않는다
+  return Math.max(0, PHOTO_DAILY_LIMIT - used);
+}
+function countPhotoUse(){
+  try {
+    const used = readPhotoQuota();
+    if(used === null) return;
+    localStorage.setItem(PHOTO_QUOTA_KEY, JSON.stringify({ d: todayStamp(), n: used + 1 }));
+  } catch(e){ /* 저장 실패해도 상담은 계속된다 */ }
+}
+function sayQuotaExhausted(){
+  showTyping(()=>{
+    addBubble(`사진 상담은 하루 ${PHOTO_DAILY_LIMIT}장까지 봐드리고 있어요. 오늘은 다 쓰셨고, 내일 다시 올려주시면 됩니다.`, 'bot');
+    addBubble("급하시면 사진을 들고 담당자에게 바로 연락주세요. 더 정확히 봐드릴 수 있어요.", 'bot');
+    addContactCard();
+    setChips(followUpChips());
+  });
+}
+
+/* 휴대폰 사진은 대부분 3,000px 이상이라 그대로 두면 무겁다.
+   긴 변을 PHOTO_MAX_EDGE 로 줄이고 JPEG 로 다시 뽑는다. */
+async function shrinkPhoto(file){
+  let bmp;
+  try {
+    // imageOrientation:'from-image' — 휴대폰 사진이 눕거나 뒤집혀 보이는 것을 막는다
+    bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch(e) {
+    bmp = await new Promise((res, rej)=>{
+      const img = new Image();
+      img.onload = ()=> res(img);
+      img.onerror = ()=> rej(new Error('decode'));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  const w0 = bmp.width, h0 = bmp.height;
+  if(!w0 || !h0) throw new Error('decode');
+  const scale = Math.min(1, PHOTO_MAX_EDGE / Math.max(w0, h0));
+  const w = Math.round(w0 * scale), h = Math.round(h0 * scale);
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  cv.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  if(bmp.close) bmp.close();
+  return { dataUrl: cv.toDataURL('image/jpeg', 0.82), w, h };
+}
+
+function addPhotoBubble(dataUrl){
+  compactHero();
+  const row = document.createElement('div');
+  row.className = 'row user';
+  const b = document.createElement('div');
+  b.className = 'bubble user shot-wrap';
+  const img = document.createElement('img');
+  img.className = 'shot';
+  img.alt = '첨부한 작물 사진';
+  img.src = dataUrl;
+  img.onclick = ()=> openLightbox(dataUrl);
+  b.appendChild(img);
+  row.appendChild(b);
+  thread.appendChild(row);
+  scrollBottom();
+}
+
+function openLightbox(src){
+  const box = document.createElement('div');
+  box.className = 'lightbox';
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = '첨부한 작물 사진';
+  box.appendChild(img);
+  box.onclick = ()=> box.remove();
+  document.body.appendChild(box);
+}
+
+/* 사진을 받은 뒤의 대화 흐름.
+   사진만으로는 아직 진단할 수 없으므로, 사진을 받았다고 알리고
+   작물·증상을 좁히는 기존 흐름으로 자연스럽게 넘긴다. */
+function afterPhoto(){
+  if(!currentCrop){
+    awaitingCropForExamples = true;
+    showTyping(()=>{
+      addBubble("사진 잘 받았어요. 어떤 작물인지 알려주시면 증상을 같이 좁혀볼게요.", 'bot');
+      chipsBox.innerHTML = '';
+    });
+    return;
+  }
+  showTyping(()=>{
+    addBubble(`사진 잘 받았어요. ${currentCrop} 말씀이시군요 — 어디가 문제인지 골라주시면 바로 알려드릴게요.`, 'bot');
+    resetSymptomState();
+    if(getTopIssues(currentCrop).length){
+      startTopIssueFlow(currentCrop);
+    } else {
+      setChips([
+        ...STARTER_CHIPS.filter(c => !String(c.value).startsWith("__")),
+        {label:"직접 상담받고 싶어요", value:"__contact__"}
+      ]);
+    }
+  });
+}
+
+async function handlePhotoPick(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type || '')){
+    addBubble("사진 파일만 올려주실 수 있어요.", 'bot');
+    return;
+  }
+  if(file.size > PHOTO_MAX_MB * 1024 * 1024){
+    addBubble(`사진이 너무 커요(${PHOTO_MAX_MB}MB 넘음). 다시 찍어서 올려주시겠어요?`, 'bot');
+    return;
+  }
+  if(photoQuotaLeft() <= 0){ sayQuotaExhausted(); return; }
+  photoBtn.classList.add('busy');
+  try {
+    const shot = await shrinkPhoto(file);
+    lastPhoto = shot;
+    countPhotoUse();              // 사진을 실제로 받아낸 뒤에만 센다
+    addPhotoBubble(shot.dataUrl);
+    afterPhoto();
+  } catch(e) {
+    // 아이폰 HEIC 등 브라우저가 못 여는 형식일 때
+    addBubble("이 사진은 열지 못했어요. 휴대폰 갤러리에서 다시 저장하거나 다른 사진으로 올려주시겠어요?", 'bot');
+  } finally {
+    photoBtn.classList.remove('busy');
+  }
 }
 
 // 영양분 이름을 빨간색+밑줄로 강조한 span으로 감싼다 (텍스트는 escape 처리됨)
@@ -2256,7 +2479,7 @@ function addStaffCard(region){
   const c = document.createElement('div');
   c.className = 'contact-card';
   if(staff){
-    c.innerHTML = `📍 <b>${region}</b> 담당 직원을 안내해드려요.<br><b>${staff.name}</b> ${staff.phone}<br><br>(주)에이블팜 본사 ☎ 02-858-6229`;
+    c.innerHTML = `📍 <b>${region}</b> 담당은 <b>${staff.name}</b>이에요.<br>대표번호로 전화하셔서 담당자를 찾아주시면 연결해드려요.<br><br>(주)에이블팜 ☎ 02-858-6229`;
   } else {
     c.innerHTML = `📞 지역 담당자 연결은 본사로 문의해주세요.<br><b>(주)에이블팜</b> ☎ 02-858-6229`;
   }
@@ -2371,6 +2594,22 @@ function followUpChips(){
 }
 
 let lastRecommended = null;
+/* 그 추천을 만들 때의 작물. 작물이 바뀌면 직전 추천은 버려야 한다.
+   ⚠ 안 버리면 "콩 농사예요 → 벼밀콩애 → 땅콩은 어때요 → 제품 추천" 에서
+     콩 전용 제품이 땅콩에 그대로 다시 나온다 (제품 주의사항 위반). */
+let lastRecommendedCrop = null;
+/* 농민이 마지막으로 입에 올린 작물. currentCrop 과 다를 수 있다 —
+   "땅콩은 어때요" 처럼 슬쩍 물으면 봇은 작물을 바꾸지 않지만,
+   직전 추천을 그대로 다시 내주면 안 되기 때문에 따로 기억한다. */
+let lastNamedCrop = null;
+function dropStaleRecommendation(){
+  const askingAbout = lastNamedCrop || currentCrop;
+  if(lastRecommended && lastRecommendedCrop && lastRecommendedCrop !== askingAbout){
+    lastRecommended = null;
+    lastSecond = null;
+    lastRecommendedCrop = null;
+  }
+}
 let lastSecond = null;
 let questionCount = 0; // 같은 고민에 대해 원인만 답한 횟수 (제품 추천 전)
 
@@ -2453,6 +2692,12 @@ function findQnaAnswer(msg){
 function handleUserMessage(raw){
   let msg = raw.trim();
   if(!msg) return;
+
+  // 버튼이 아닌 직접 입력에서 작물 이름이 나오면 기억해둔다 (추천 재사용 차단용)
+  if(!msg.startsWith("__")){
+    const named = detectAnyCrop(msg);
+    if(named) lastNamedCrop = named;
+  }
 
   if(msg === "__reset__"){
     addBubble("다른 고민이 있어요", 'user');
@@ -2560,8 +2805,14 @@ function handleUserMessage(raw){
     });
     return;
   }
+  if(msg === "__takephoto__" || msg === "__pickphoto__"){
+    chipsBox.innerHTML = '';
+    (msg === "__takephoto__" ? cameraInput : photoInput).click();
+    return;
+  }
   if(msg === "__recommend__"){
     addBubble("제품 추천해주세요", 'user');
+    dropStaleRecommendation(); // 작물이 바뀌었으면 직전 추천을 쓰지 않는다
     showTyping(()=>{
       if(!lastRecommended){
         addBubble("먼저 어떤 증상인지 말씀해주시면 그에 맞는 제품을 알려드릴게요.", 'bot');
@@ -2841,7 +3092,7 @@ function handleUserMessage(raw){
       if(detectedRegion){
         const staff = REGION_STAFF[detectedRegion];
         if(staff){
-          addBubble(`${staff.name} ${staff.phone}`, 'bot');
+          addBubble(`${staff.name}이에요. 대표번호 02-858-6229 로 전화하셔서 찾아주세요.`, 'bot');
         } else {
           addStaffCard(detectedRegion);
         }
@@ -2871,7 +3122,7 @@ function handleUserMessage(raw){
       showTyping(()=>{
         const staff = REGION_STAFF[detectedRegion];
         if(staff){
-          addBubble(`${detectedRegion} 지역 담당자는 ${staff.name} ${staff.phone} 입니다.`, 'bot');
+          addBubble(`${detectedRegion} 지역 담당자는 ${staff.name}입니다. 대표번호 02-858-6229 로 전화하셔서 찾아주세요.`, 'bot');
         } else {
           addStaffCard(detectedRegion);
         }
@@ -3054,7 +3305,7 @@ function answerDiseaseWithCause(causeText, textForProductMatch, seasonMismatch, 
 `${highlightNutrient(p.nutrient)}${josa(p.nutrient,["이","가"])} 들어있는 ${p.name}${josa(p.name,["을","를"])} 사용하시면, ${mainEffect} 효과로 작물 관리에 도움이 될 수 있어요.${rootComboNote}${secondNote}${companionNote}
 
 병해충은 해당 작물에 등록된 약제로 방제하시고, 정확한 진단은 전문 기관에서 받아 보시기 바랍니다.`, 'bot');
-      lastRecommended = productKey;
+      lastRecommended = productKey; lastRecommendedCrop = currentCrop;
       lastSecond = null;
       diseaseStage = 1;
       const guide = findGuideLink(causeText);
@@ -3330,7 +3581,7 @@ function continueSymptomEscalation(msgForMatching){
   if(ranked.length){
     showTyping(()=>{
       const topKey = ranked[0][0];
-      lastRecommended = topKey;
+      lastRecommended = topKey; lastRecommendedCrop = currentCrop;
       lastSecond = null;
       questionCount += 1;
       addBubble(PRODUCTS[topKey].cause, 'bot');
@@ -3428,7 +3679,7 @@ function processSymptom(msgForMatching, justLearnedCrop){
 
     const topKey = ranked[0][0];
     const topScore = ranked[0][1];
-    lastRecommended = topKey;
+    lastRecommended = topKey; lastRecommendedCrop = currentCrop;
     lastSecond = null;
     questionCount += 1;
 
@@ -3454,6 +3705,38 @@ function processSymptom(msgForMatching, justLearnedCrop){
     }
   });
 }
+
+/* 사진 버튼을 누르면 "찍기 / 앨범" 을 고르게 한다.
+   휴대폰 브라우저가 띄우는 기본 선택창도 둘 다 주긴 하지만,
+   QR 찍고 바로 들어온 농민에게는 봇 안에서 한국어로 묻는 쪽이 분명하다. */
+/* PC에는 '사진 찍기'가 의미가 없다. capture 속성을 데스크톱 브라우저는
+   무시해서 두 버튼이 똑같이 파일 선택창만 연다 — 고르라고 묻는 게 오히려 헷갈린다.
+   그래서 터치 기기(휴대폰·태블릿)에서만 찍기/앨범을 묻고, PC는 바로 연다. */
+const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+photoBtn.onclick = () => {
+  addBubble("작물 사진으로 물어볼게요", 'user');
+  if(photoQuotaLeft() <= 0){ sayQuotaExhausted(); return; }
+  if(!isTouchDevice){ photoInput.click(); return; }
+  showTyping(()=>{
+    const left = photoQuotaLeft();
+    addBubble("지금 찍으시거나, 휴대폰에 있는 사진을 고르셔도 돼요."
+      + (left <= 3 ? ` (오늘 ${left}장 남았어요)` : ""), 'bot');
+    setChips([
+      {label:"📷 사진 찍기", value:"__takephoto__", primary:true},
+      {label:"🖼 앨범에서 고르기", value:"__pickphoto__"}
+    ]);
+  }, 250);
+};
+
+const onPhotoChosen = (e) => {
+  const f = e.target.files && e.target.files[0];
+  handlePhotoPick(f);
+  // 같은 사진을 연달아 고를 수 있게 값을 비운다 (안 비우면 change 가 안 뜬다)
+  e.target.value = '';
+};
+photoInput.onchange = onPhotoChosen;
+cameraInput.onchange = onPhotoChosen;
 
 sendBtn.onclick = () => handleUserMessage(textInput.value);
 textInput.addEventListener('keydown', (e)=>{
