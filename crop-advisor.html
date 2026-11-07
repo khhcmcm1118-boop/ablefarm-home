@@ -2416,10 +2416,10 @@ fetch('data/qna.json', {cache:'no-cache'})
   .catch(() => {});
 
 const QNA_CUE = /언제|시기|몇|얼마|어떻게|온도|습도|방법|까지|해야|하나요|되나요|적기|깊이|간격/;
-const QNA_SYMPTOM = /누렇|노랗|시들|썩|반점|말라|마르|갈색|구멍|벌레|병|죽|이상|약해|쳐져|처져|떨어져|힘이|안 ?커|안 ?자라/;
+const QNA_SYMPTOM = /누렇|노랗|시들|썩|반점|말라|마르|갈색|구멍|벌레|병|죽|이상(?!기후)|약해|쳐져|처져|떨어져|힘이|안 ?커|안 ?자라/;
 const QNA_GENERIC = /^(언제|시기|방법|어떻게|몇|얼마|적기|관리|하나요|되나요)$/;
 // 묶음 이름으로 된 작물 칸은 농민이 쓰는 말로 찾는다
-const QNA_CROP_WORDS = {"시설채소":/하우스|시설|토마토|오이/, "과수":/과수|과원/, "저장고":/저장고/, "농기계":/농기계|콤바인|트랙터|이앙기/, "종자":/종자|씨앗/};
+const QNA_CROP_WORDS = {"시설채소":/하우스|시설|토마토|오이/, "과수":/과수|과원/, "저장고":/저장고/, "농기계":/농기계|콤바인|트랙터|이앙기/, "종자":/종자|씨앗/, "공통":/엘니뇨|엘리뇨|이상기후|이번 겨울|겨울 ?(농사|대비|준비)|한파|폭설/};
 // 키워드의 다른 표현 (심어요·심나요 → 아주심기 등)
 const QNA_WORD_ALIAS = {"아주심기":/심어|심나|심기|심는|심을/, "정식":/심어|심나|심기|심는|심을/, "파종":/뿌려|뿌리나|심어|심나|심기|심는/, "수확":/따야|따나|캐야|베야/};
 
@@ -2438,9 +2438,13 @@ function findQnaAnswer(msg){
     const cropHit = cropWords.some(c => msg.includes(c) || (QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(msg))) || (currentCrop && cropWords.includes(currentCrop));
     if(!cropHit) return;
     const isCropWord = k => cropWords.includes(k) || cropWords.some(c => QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(k));
-    const hits = (item.keywords || []).filter(k => !isCropWord(k) && !QNA_GENERIC.test(k) && qnaWordHit(msg, k)).length;
-    if(hits < 1) return;
-    if(hits < 2 && !QNA_CUE.test(msg)) return;
+    let hits = (item.keywords || []).filter(k => !isCropWord(k) && !QNA_GENERIC.test(k) && qnaWordHit(msg, k)).length;
+    // "엘니뇨 때문에 걱정", "한파 오면 어떻게" 처럼 짧은 겨울 대비 질문은 공통 글로 받는다
+    // (작물이 얼었다는 증상은 빼서 언 피해 흐름으로 보낸다)
+    // 작물 이름이 들어간 질문("이상기후로 고추 잎이 말려요")은 작물·증상 흐름이 먼저다
+    const commonOnly = cropWords.includes("공통") && !detectAnyCrop(msg.replace(/한파|폭설|엘니뇨|엘리뇨|이상기후/g, "")) &&!/얼었|얼어|냉해|동해 ?입|잎|열매|뿌리|줄기/.test(msg);
+    if(hits < 1){ if(!commonOnly) return; hits = 0.5; }
+    else if(hits < 2 && !QNA_CUE.test(msg) && !commonOnly) return;
     if(hits > bestScore || (hits === bestScore && best && item.date > best.date)){ best = item; bestScore = hits; }
   });
   return best;

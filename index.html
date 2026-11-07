@@ -858,6 +858,15 @@ class Component extends DCLogic {
     this.loadPrices();
     this.hiStart();
     this.injectJsonLd();
+    this.openQnaFromHash();
+  }
+
+  // 주소 끝이 #qna 이면 고객문의(농사 Q&A) 화면으로 바로 연다. #qna=엘니뇨 처럼 쓰면 그 말로 걸러서 보여 준다
+  // (쇼츠 설명란·안내 페이지에서 Q&A로 바로 보내는 링크용)
+  openQnaFromHash() {
+    const m = decodeURIComponent(location.hash || '').match(/^#qna(?:=(.*))?$/);
+    if (!m) return;
+    this.setState({ view: 'qna', qOpen: null, qaWord: (m[1] || '').trim(), qaShow: 6 }, () => window.scrollTo({ top: 0, behavior: 'auto' }));
   }
 
   // 검색엔진·AI 크롤러가 제품 정보를 구조적으로 읽도록 schema.org JSON-LD 주입
