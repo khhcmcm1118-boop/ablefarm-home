@@ -367,6 +367,63 @@
     width:118px;height:24px;background:var(--bezel);border-radius:0 0 16px 16px;
   }
   .notch::after{content:"";position:absolute;right:20px;top:8px;width:8px;height:8px;border-radius:50%;background:#1D3A2B;}
+  /* ── 로그인 화면 (등록된 직원·대리점만) ──────────────────────────
+     ⚠ 이 화면은 일반 이용자를 걸러내는 문일 뿐이다. 글 상담 자료는
+       이 파일 안에 들어 있어서, 소스를 열면 내용은 보인다.
+       실제로 막히는 것은 서버(중계)를 거치는 사진 AI 판독이다. */
+  .login{
+    position:absolute;inset:0;z-index:40;
+    background:var(--cream);
+    display:none;flex-direction:column;align-items:center;
+    padding:34px 24px 24px;overflow-y:auto;
+  }
+  .login.on{display:flex;}
+  .login .mark{
+    width:62px;height:62px;border-radius:18px;background:var(--dark-green);
+    display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;
+  }
+  .login h2{font-size:19px;font-weight:800;margin:14px 0 4px;color:var(--dark-green);letter-spacing:-.3px;}
+  .login .sub{font-size:12.5px;color:var(--ink-soft);text-align:center;line-height:1.6;margin-bottom:20px;}
+  .login .form{width:100%;max-width:290px;}
+  .login label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin:0 0 5px 2px;}
+  .login input{
+    width:100%;padding:12px 13px;font-size:15px;font-family:inherit;
+    border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);
+    margin-bottom:13px;outline:none;
+  }
+  .login input:focus{border-color:var(--mid-green);}
+  .login .go{
+    width:100%;padding:13px;border:0;border-radius:11px;cursor:pointer;
+    background:var(--dark-green);color:#fff;font-size:15px;font-weight:800;font-family:inherit;
+  }
+  .login .go:disabled{opacity:.55;cursor:default;}
+  .login .err{
+    display:none;margin-top:13px;font-size:12.5px;line-height:1.6;
+    background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;
+    padding:10px 12px;color:#9B3B2E;
+  }
+  .login .err.on{display:block;}
+  .login .help{
+    margin-top:18px;font-size:11.5px;color:var(--ink-soft);text-align:center;line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;width:100%;max-width:290px;
+  }
+  .login .help b{color:var(--dark-green);}
+
+  /* 대리점 안내 띠 — 로그인한 사람이 대리점일 때만 */
+  .testband{
+    display:none;background:#8A6A1C;color:#fff;
+    font-size:11.5px;font-weight:700;text-align:center;padding:5px 10px;flex-shrink:0;
+  }
+  .testband.on{display:block;}
+  /* 로그아웃 — 작게, 상단 오른쪽 구석 */
+  .signout{
+    position:absolute;top:8px;right:10px;z-index:20;
+    background:rgba(255,255,255,.18);border:0;border-radius:999px;cursor:pointer;
+    color:#fff;font-size:10.5px;font-weight:700;font-family:inherit;padding:3px 9px;
+    display:none;
+  }
+  .signout.on{display:block;}
+
   .topbar{background:var(--sage);color:#fff;padding:30px 20px 12px;flex-shrink:0;}
   .topbar .name{font-size:16px;font-weight:800;text-align:center;letter-spacing:.3px;}
   .topbar .name small{
@@ -457,11 +514,32 @@
 </head>
 <body>
 
-<div class="widget" id="widget">
+<div class="widget" id="widget" style="position:relative">
+
+  <!-- 로그인 화면 — 등록된 직원·대리점만 (출하앱과 같은 이름·PIN) -->
+  <div class="login" id="loginView">
+    <div class="mark">🌾</div>
+    <h2>에이블 농박사</h2>
+    <p class="sub">등록된 직원·대리점만 쓸 수 있어요.<br><b>출하앱과 같은 이름·PIN</b>을 넣어 주세요.<br><span style="font-size:11.5px;opacity:.85">처음 로그인한 휴대폰에서만 쓸 수 있어요</span></p>
+    <form class="form" id="loginForm" autocomplete="off">
+      <label for="loginName">이름</label>
+      <input id="loginName" type="text" inputmode="text" autocomplete="off" placeholder="예) 홍길동">
+      <label for="loginPin">PIN</label>
+      <input id="loginPin" type="password" inputmode="numeric" autocomplete="off" placeholder="숫자 PIN">
+      <button class="go" id="loginGo" type="submit">들어가기</button>
+    </form>
+    <div class="err" id="loginErr"></div>
+    <div class="help">
+      등록이 안 되어 있으면 담당자에게 문의해 주세요.<br><b>02-858-6229</b>
+    </div>
+  </div>
+
+  <button class="signout" id="signoutBtn" type="button">로그아웃</button>
   <div class="notch"></div>
   <div class="topbar">
     <div class="name">에이블 농박사<small>작물 상담</small></div>
   </div>
+  <div class="testband" id="testBand">테스트 버전 · 사진 상담 하루 10장</div>
   <div class="hero-char" id="heroChar"><span class="online"><i></i>상담 중</span></div>
   <div class="band">
     <div class="band-t">작물 상태를 말씀해주시면 원인부터, 제품 사용법까지 알려드려요.</div>
@@ -2391,21 +2469,14 @@ function deviceTag(){
    실패하면 조용히 null 을 돌려주고, 봇은 기존 증상 흐름으로 내려간다. */
 async function askPhotoAI(shot){
   if(!PHOTO_ENDPOINT) return null;
-  try {
-    const res = await fetch(PHOTO_ENDPOINT, {
-      method: 'POST',
-      // Apps Script 는 preflight 를 받지 않는다. text/plain 으로 보내야 통과한다.
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({
-        image: shot.dataUrl.split(',')[1],
-        crop: currentCrop || '',
-        note: lastPhotoNote || '',
-        device: deviceTag()
-      })
-    });
-    const data = await res.json();
-    return data && data.ok ? data : (data || null);
-  } catch(e){ return null; }
+  // 로그인 토큰을 같이 보낸다. 없거나 만료면 중계가 reason:"login" 을 돌려준다.
+  return await callRelay({
+    image: shot.dataUrl.split(',')[1],
+    crop: currentCrop || '',
+    note: lastPhotoNote || '',
+    device: deviceTag(),
+    token: authToken || ''
+  });
 }
 
 const AI_FAIL_MSG = {
@@ -2433,6 +2504,12 @@ function afterPhoto(){
         addBubble(r.text, 'bot');
         addBubble("사진만으로는 확실하지 않을 수 있어요. 아래에서 증상을 같이 좁혀보면 더 정확해요.", 'bot');
         narrowAfterPhoto();
+        return;
+      }
+      // 토큰이 만료됐거나 끊긴 경우 — 다시 로그인부터
+      if(r && r.reason === 'login'){
+        clearToken();
+        showLogin("로그인이 풀렸어요. 다시 들어와 주세요.");
         return;
       }
       if(r && r.reason && AI_FAIL_MSG[r.reason]) addBubble(AI_FAIL_MSG[r.reason], 'bot');
@@ -3969,13 +4046,115 @@ textInput.addEventListener('keydown', (e)=>{
   if(e.key === 'Enter') handleUserMessage(textInput.value);
 });
 
-/* ------------------------------------------------------------------
-   시작
-------------------------------------------------------------------- */
-window.onload = () => {
-  mountHeroCharacter();
+/* ==================================================================
+   로그인 — 등록된 직원·대리점만 (출하앱과 같은 이름·PIN)
+   ------------------------------------------------------------------
+   ⚠ 솔직히 알아둘 것: 이 화면은 "문"일 뿐이다.
+     글 상담 자료(증상·제품 설명)는 이 HTML 안에 들어 있어서,
+     소스를 열 줄 아는 사람에게는 보인다. 이 화면으로 실제로 막히는 것은
+     서버(중계)를 거쳐야 하는 사진 AI 판독이다.
+   ⚠ 이름·PIN 은 저장하지 않는다. 서버가 준 토큰만 30일 보관한다.
+================================================================== */
+/* 로그인을 언제 받을지 — 한 줄만 바꾸면 범위가 바뀐다.
+     'mobile' 휴대폰·태블릿에서 열면 받는다. PC(홈페이지)는 그냥 들어감  ← 지금 설정
+     'app'    홈 화면 앱으로 열었을 때만 받는다 (기기와 무관하게 홈페이지는 열려 있음)
+     'all'    누구나 받는다
+     'none'   안 받는다 */
+const LOGIN_SCOPE = "mobile";
 
+/* 홈 화면 앱(「에이블 농박사」)으로 연 것인가 */
+function isStandaloneApp(){
+  try {
+    if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+    if(window.navigator.standalone === true) return true;        // 아이폰 사파리
+    if(/[?&]from=app(\b|&|$)/.test(location.search)) return true; // manifest 의 start_url
+  } catch(e){}
+  return false;
+}
+/* 휴대폰·태블릿인가 — 화면 폭이 아니라 기기로 본다 */
+function isPhoneOrTablet(){
+  try {
+    if(navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean'
+       && navigator.userAgentData.mobile) return true;
+    const ua = navigator.userAgent || '';
+    if(/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return true;
+    // 아이패드는 사파리에서 자신을 Macintosh 라고 말한다. 진짜 맥은 터치점이 0이다.
+    if(/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+  } catch(e){}
+  return false;
+}
+function loginNeeded(){
+  if(LOGIN_SCOPE === 'none') return false;
+  if(LOGIN_SCOPE === 'all')  return true;
+  if(LOGIN_SCOPE === 'app')  return isStandaloneApp();
+  return isPhoneOrTablet() || isStandaloneApp();   // 'mobile'
+}
+
+const LOGIN_TOKEN_KEY = "ablefarm_advisor_token_v1";
+const LOGIN_TOKEN_DAYS = 30;
+let authToken = null;
+let authName = null;
+let authIsDealer = false;
+
+function readToken(){
+  try {
+    const raw = localStorage.getItem(LOGIN_TOKEN_KEY);
+    if(!raw) return null;
+    const o = JSON.parse(raw);
+    if(!o || !o.t) return null;
+    if(o.exp && Date.now() > o.exp){ localStorage.removeItem(LOGIN_TOKEN_KEY); return null; }
+    return o.t;
+  } catch(e){ return null; }   // 시크릿 창 등 저장소를 못 쓰면 그냥 로그인 화면
+}
+function writeToken(t){
+  try {
+    localStorage.setItem(LOGIN_TOKEN_KEY, JSON.stringify({
+      t, exp: Date.now() + LOGIN_TOKEN_DAYS*24*60*60*1000
+    }));
+  } catch(e){}              // 저장이 안 돼도 이번 접속은 쓸 수 있게 둔다
+}
+function clearToken(){ try { localStorage.removeItem(LOGIN_TOKEN_KEY); } catch(e){} }
+
+/* 중계에 보내는 공통 요청 (Apps Script 는 preflight 를 받지 않으므로 text/plain) */
+async function callRelay(body){
+  if(!PHOTO_ENDPOINT) return null;
+  try {
+    const res = await fetch(PHOTO_ENDPOINT, {
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    });
+    return await res.json();
+  } catch(e){ return null; }
+}
+
+function showLogin(msg){
+  authToken = null; authName = null; authIsDealer = false;
+  document.getElementById('testBand').classList.remove('on');
+  document.getElementById('signoutBtn').classList.remove('on');
+  const err = document.getElementById('loginErr');
+  if(msg){ err.textContent = msg; err.classList.add('on'); }
+  else { err.textContent = ''; err.classList.remove('on'); }
+  document.getElementById('loginView').classList.add('on');
+  const pin = document.getElementById('loginPin');
+  if(pin) pin.value = '';
+}
+
+/* 로그인을 통과한 뒤 들어가는 곳. 인사말은 여기서 한 번만 그린다. */
+let greeted = false;
+function enterApp(info){
+  authName = (info && info.name) || null;
+  authIsDealer = !!(info && info.dealer);
+  document.getElementById('loginView').classList.remove('on');
+  // 로그인을 거친 경우에만 로그아웃 버튼을 보인다 (PC 홈페이지에서는 로그인이 없다)
+  if(authToken) document.getElementById('signoutBtn').classList.add('on');
+  if(authIsDealer) document.getElementById('testBand').classList.add('on');
+
+  if(greeted) return;
+  greeted = true;
+  mountHeroCharacter();
   addBubble("안녕하세요! 저는 (주)에이블팜의 농박사예요 🌾\n작물이 아플 땐 증상부터, 궁금한 에이블팜 제품은 사용법까지 알려드려요.", 'bot');
+  if(authIsDealer && info && info.notice) addBubble(info.notice, 'bot');
   addBubble("어떤 작물을 키우세요? 작물을 먼저 알려주시거나, 아래 추천 질문을 눌러보세요!", 'bot');
   awaitingCropForExamples = true;
   setChips([
@@ -3985,6 +4164,70 @@ window.onload = () => {
     { label:"벼 육묘 추천", value:"벼 육묘 제품 추천해줘" },
     { label:"일소가드 알아보기", value:"일소가드에 대해 알려줘" }
   ]);
+}
+
+const LOGIN_FAIL_MSG = {
+  login        : "이름이나 PIN이 맞지 않아요. 출하앱에 쓰시는 이름·PIN을 그대로 넣어 주세요.",
+  login_down   : "지금 확인이 안 돼요. 잠시 뒤 다시 해 주시겠어요?",
+  locked       : "여러 번 틀려서 10분간 잠겼어요. 조금 뒤에 다시 해 주세요.",
+  other_device : "이 이름은 다른 휴대폰에 등록돼 있어 여기서는 열 수 없어요. 휴대폰을 바꾸셨으면 담당자(02-858-6229)에게 등록 해제를 요청해 주세요.",
+  nostore      : "이 브라우저에서는 저장이 막혀 있어 로그인할 수 없어요. 시크릿 모드를 끄고 다시 해 주세요."
+};
+
+async function doLogin(e){
+  if(e) e.preventDefault();
+  const name = document.getElementById('loginName').value.trim();
+  const pin  = document.getElementById('loginPin').value.trim();
+  const btn  = document.getElementById('loginGo');
+  const err  = document.getElementById('loginErr');
+  if(!name || !pin){
+    err.textContent = "이름과 PIN을 모두 넣어 주세요."; err.classList.add('on'); return;
+  }
+  btn.disabled = true; btn.textContent = "확인 중…";
+  err.classList.remove('on');
+  // device 를 같이 보낸다 — 한 이름은 처음 로그인한 휴대폰 하나에만 묶인다
+  const r = await callRelay({ action:'login', name, pin, device: deviceTag() });
+  btn.disabled = false; btn.textContent = "들어가기";
+
+  if(r && r.ok && r.token){
+    authToken = r.token;
+    writeToken(r.token);
+    document.getElementById('loginPin').value = '';   // PIN 은 화면에서도 바로 지운다
+    enterApp(r);
+    return;
+  }
+  const why = (r && r.reason) || 'login_down';
+  err.textContent = (r && r.message) || LOGIN_FAIL_MSG[why] || LOGIN_FAIL_MSG.login_down;
+  err.classList.add('on');
+  document.getElementById('loginPin').value = '';
+}
+
+function doSignout(){
+  clearToken();
+  showLogin("로그아웃했어요.");
+}
+
+/* ------------------------------------------------------------------
+   시작
+------------------------------------------------------------------- */
+window.onload = async () => {
+  document.getElementById('loginForm').addEventListener('submit', doLogin);
+  document.getElementById('signoutBtn').addEventListener('click', doSignout);
+
+  if(!loginNeeded() || !PHOTO_ENDPOINT){
+    // PC(홈페이지)이거나 로그인을 끈 상태 — 예전처럼 바로 들어간다
+    enterApp(null);
+    return;
+  }
+
+  const t = readToken();
+  if(!t){ showLogin(); return; }
+
+  // 저장된 토큰이 아직 살아 있는지 서버에 물어본다
+  authToken = t;
+  const r = await callRelay({ action:'check', token: t, device: deviceTag() });
+  if(r && r.ok){ enterApp(r); }
+  else { clearToken(); showLogin(); }
 };
 </script>
 
