@@ -797,7 +797,9 @@
         <span style="color:#eaf1e2;font-weight:800;font-size:15px">💧 희석·사용량 계산기</span>
         <span class="af-btn" onClick="{{ calcClose }}" style="flex:none;white-space:nowrap;padding:9px 18px;background:#fff;color:#16241a;border-radius:10px;font-weight:800;font-size:14px">닫기 ✕</span>
       </div>
-      <iframe src="{{ calcSrc }}" title="에이블팜 희석·사용량 계산기" style="flex:1;width:100%;border:0;border-radius:14px;background:#faf7ef"></iframe>
+      <!-- loading="lazy" — 화면에 나타나기 전에는 불러오지 않는다.
+           없으면 브라우저가 글자 그대로의 "{{ calcSrc }}" 를 주소로 보고 404 를 한 번 낸다. -->
+      <iframe loading="lazy" src="{{ calcSrc }}" title="에이블팜 희석·사용량 계산기" style="flex:1;width:100%;border:0;border-radius:14px;background:#faf7ef"></iframe>
     </div>
   </div>
 </sc-if>
