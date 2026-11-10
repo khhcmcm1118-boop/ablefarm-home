@@ -2897,7 +2897,7 @@ let lastCauseWasPest = false;
    봇의 본래 일은 작물 이야기를 전하는 것이고, 제품은 그 끝에 놓인 선택지다. */
 function causeChips(){
   return [
-    {label: lastCauseWasPest ? "🌾 생육 관리 제품 보기" : "🌾 이 증상에 맞는 제품 보기", value:"__recommend__", primary:true},
+    Object.assign(productChip(), {primary:true}),
     {label:"다른 고민이 있어요", value:"__reset__"},
     {label:"직접 상담받고 싶어요", value:"__contact__"},
   ];
@@ -2905,10 +2905,26 @@ function causeChips(){
 
 function followUpChips(){
   return [
+    productChip(),
     {label:"다른 고민이 있어요", value:"__reset__"},
     {label:"사용법 다시 볼래요", value:"__usage__"},
     {label:"직접 상담받고 싶어요", value:"__contact__", primary:true},
   ];
+}
+
+/* ------------------------------------------------------------------
+   제품 보기 버튼 — 봇이 답을 마친 자리에는 어디든 이것이 붙는다.
+   ⚠ 글귀가 상황마다 다르다. 병·해충 이야기 끝에 「이 증상에 맞는 제품」이라고
+     쓰면 비료가 병에 듣는다는 말로 읽힌다(비료관리법). 그래서 병·해충이면
+     「생육 관리 제품」으로 부른다.
+   ⚠ 아직 아무 증상도 안 들었으면 추천할 게 없으므로 제품 목록을 보여준다.
+------------------------------------------------------------------- */
+function productChip(){
+  if(!lastRecommended) return {label:"🌾 제품 보기", value:"__recommend__"};
+  return {
+    label: lastCauseWasPest ? "🌾 생육 관리 제품 보기" : "🌾 이 증상에 맞는 제품 보기",
+    value: "__recommend__"
+  };
 }
 
 let lastRecommended = null;
@@ -3137,8 +3153,12 @@ function handleUserMessage(raw){
     addBubble("제품 추천해주세요", 'user');
     dropStaleRecommendation(); // 작물이 바뀌었으면 직전 추천을 쓰지 않는다
     showTyping(()=>{
+      /* 아직 증상을 못 들었으면 추천할 게 없다.
+         그렇다고 돌려보내지 말고, 취급 제품을 바로 보여준다 —
+         「제품이 궁금해서」 누른 농민도 있기 때문이다. */
       if(!lastRecommended){
-        addBubble("먼저 어떤 증상인지 말씀해주시면 그에 맞는 제품을 알려드릴게요.", 'bot');
+        addBubble(getSupportedProductsMessage(), 'bot');
+        addBubble("증상을 말씀해주시면 그에 맞는 제품을 골라드릴 수도 있어요.", 'bot');
         setChips(STARTER_CHIPS);
         return;
       }
