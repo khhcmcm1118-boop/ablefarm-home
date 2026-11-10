@@ -1638,6 +1638,16 @@ function rkMan(n){
 }
 function rkSum(o, a, b){ var s = 0; o = o || {}; for (var k = a; k <= b; k++) s += Number(o[k]) || 0; return s; }
 function rkPct(a, b){ return b > 0 ? Math.round(a / b * 1000) / 10 : 0; }
+/* 작년이 0 이하인 기간이 있다 — 2025년 11월 팀 합계는 반품 때문에 -187만이었다.
+   그런 기간은 「작년 대비 몇 %」가 뜻이 없다. rkPct 는 0 을 돌려주기 때문에
+   「작년을 이미 넘었습니다」 옆에 0% 가 같이 뜨는 모순이 생겼다 (2026-11-10).
+   작년이 0 이하면 숫자 대신 달성·미달로 적고 막대는 꽉 채우거나 비운다. */
+function rkYoy(now, ly){
+  if (ly > 0){ var p = Math.round(now / ly * 1000) / 10; return { num: true, up: p >= 100, txt: p + '%', bar: p }; }
+  if (now > ly) return { num: false, up: true,  txt: '달성', bar: 120 };
+  if (now < ly) return { num: false, up: false, txt: '미달', bar: 0 };
+  return { num: false, up: false, txt: '—', bar: 0 };
+}
 
 function loadRank(fresh){
   if (RK.busy) return;
@@ -1678,8 +1688,14 @@ function renderRank(){
              paid: rkSum(D.PAY[n], from, to) + rkSum(CASH[n], from, to) + rkSum(D.NH[n], from, to) + rkSum(DED[n], from, to),
              rate: rkPct(cumIn, cumBill), ar: Number(D.AR[n]) || 0 };
   }).sort(function(a, b){ return b.amt - a.amt; });
-  var team = reps.reduce(function(s, r){ return s + r.amt; }, 0);
-  var teamLy = reps.reduce(function(s, r){ return s + r.ly; }, 0);
+  // 팀 목표는 **지역·담당자 구분 없이 샘플 뺀 전체 매출** 이다 (2026-11-10 사장님 지시).
+  // 영업 3명 합만 세면 담당자 칸이 「전남」·「홍해수」 처럼 적힌 줄이 빠진다 — 2025년 11월이 그래서 -187만으로 보였다.
+  // 개인 목표는 예전대로 본인 작년 실적이다 (아래 ②④ 는 그대로 3명 기준).
+  // 서버가 YALL·LYALL 을 아직 안 내려보내는 옛 배포에서는 3명 합으로 돌아간다.
+  var team3 = reps.reduce(function(s, r){ return s + r.amt; }, 0);
+  var teamLy3 = reps.reduce(function(s, r){ return s + r.ly; }, 0);
+  var team = D.YALL ? rkSum(D.YALL, from, to) : team3;
+  var teamLy = D.LYALL ? rkSum(D.LYALL, from, to) : teamLy3;
   var teamIn = 0, teamBill = 0;
   D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to) + rkSum(DED[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
   var teamAr = D.reps.reduce(function(s, n){ return s + (Number(D.AR[n]) || 0); }, 0);
@@ -1688,17 +1704,23 @@ function renderRank(){
   var html = '';
 
   /* ① 팀 목표 — 작년 같은 기간 대비 */
-  var tp = rkPct(team, teamLy);
+  var tY = rkYoy(team, teamLy);
   html += '<div class="rk-card rk-hero"><div class="k">🚩 팀 목표 · ' + lyLabel + ' 넘기기</div>' +
-    '<div class="big">' + tp + '% <small>' + (cur ? '달성 중' : '달성') + '</small></div>' +
-    '<div class="rk-gauge"><i style="width:' + Math.min(100, Math.max(0, tp)) + '%"></i></div>' +
+    '<div class="big">' + tY.txt + ' <small>' + (tY.num ? (cur ? '달성 중' : '달성') : (cur ? '중' : '')) + '</small></div>' +
+    '<div class="rk-gauge"><i style="width:' + Math.min(100, Math.max(0, tY.bar)) + '%"></i></div>' +
+    // 왜 % 가 아니라 「달성」인지 한 줄로 적어 둔다 — 안 적으면 숫자가 빠진 것처럼 보인다
+    (tY.num ? '' : '<div class="row" style="margin-top:4px; opacity:.85"><span>' + lyLabel + '이 마이너스(' + rkMan(teamLy) + ')라 비율 대신 달성 여부로 적습니다</span></div>') +
     '<div class="row"><span>올해 ' + rkMan(team) + '</span><span>' + lyLabel + ' ' + rkMan(teamLy) + '</span></div>' +
     '<div class="row" style="margin-top:6px"><span>💰 팀 수금율(누계) <b>' + rkPct(teamIn, teamBill) + '%</b></span>' +
       '<span>남은 미수 <b>' + rkMan(teamAr) + '</b></span></div>' +
+    // 매출은 전체인데 수금·미수는 영업 3명 것이라 기준이 다르다 — 섞인 채로 두지 않고 적어 준다
+    (D.YALL && team !== team3 ? '<div class="row" style="margin-top:4px; opacity:.75"><span>매출은 담당자 구분 없는 전체 · 수금·미수와 아래 순위는 영업 ' + reps.length + '명 기준</span></div>' : '') +
     (cur ? (team < teamLy
         ? '<div class="msg">남은 평일 <b>' + D.daysLeft + '일</b>' + (D.daysLeft ? ' · 하루 <b>' + rkMan((teamLy - team) / D.daysLeft) + '원</b>씩이면 작년을 넘습니다 💪' : '') + '</div>'
         : '<div class="msg">🎉 작년을 이미 넘었습니다! 이대로 신기록 가자!</div>')
-      : '<div class="msg">' + (tp >= 100 ? '🎉 이 기간은 작년을 넘었습니다' : '이 기간은 작년의 ' + tp + '%로 마감했습니다') + '</div>') +
+      : '<div class="msg">' + (tY.up ? '🎉 이 기간은 작년을 넘었습니다'
+          : tY.num ? '이 기간은 작년의 ' + tY.txt + '로 마감했습니다'
+                   : '이 기간은 작년(' + rkMan(teamLy) + ')도 넘지 못했습니다') + '</div>') +
   '</div>';
 
   /* ② 순위 — 매출 막대 + 수금 막대(절반 두께) */
@@ -1706,12 +1728,12 @@ function renderRank(){
   html += '<div class="rk-card"><h2>🏆 ' + label + ' 매출 순위 <small>출고완료 · 샘플 제외</small></h2>' +
     '<div class="rk-legend"><span><i class="l1"></i>매출</span><span><i class="l2"></i>수금 (통장 + 현금 + 농협)</span></div>';
   reps.forEach(function(r, i){
-    var p = rkPct(r.amt, r.ly), gap = i > 0 ? reps[i - 1].amt - r.amt : 0;
+    var y = rkYoy(r.amt, r.ly), gap = i > 0 ? reps[i - 1].amt - r.amt : 0;
     // 관리·관제는 줄을 누르면 아래 「거래처별 미수금」이 그 사람으로 바뀐다
     html += '<div class="rk-row' + (r.n === ME ? ' me' : '') + (!ME ? ' pick' : '') + (!ME && RK.sel === r.n ? ' sel' : '') +
       '" data-rep="' + esc(r.n) + '"><div class="rk-medal">' + (['🥇','🥈','🥉'][i] || (i + 1)) + '</div><div class="rk-body">' +
       '<div class="rk-nm">' + esc(r.n) + (r.n === ME ? '<span class="me">나</span>' : '') +
-        ' <span class="rk-chip ' + (p >= 100 ? 'up' : 'dn') + '">작년비 ' + p + '%</span><span class="amt">' + won(r.amt) + '</span></div>' +
+        ' <span class="rk-chip ' + (y.up ? 'up' : 'dn') + '">작년비 ' + y.txt + '</span><span class="amt">' + won(r.amt) + '</span></div>' +
       '<div class="rk-bar"><i style="width:' + Math.max(3, r.amt / max * 100) + '%; background:' + col[r.n] + '"></i></div>' +
       '<div class="rk-bar pay"><i style="width:' + Math.max(2, r.paid / max * 100) + '%; background:' + light[r.n] + '"></i></div>' +
       // 통장 입금과 농협분을 나눠 적는다 — 합쳐만 두면 모두 통장에 들어온 돈으로 오해한다 (R18)
@@ -1736,14 +1758,15 @@ function renderRank(){
   }
 
   /* ④ 작년 대비 — 세로선 = 작년 100% */
-  var ps = reps.map(function(r){ return rkPct(r.amt, r.ly); });
-  var scale = Math.max(120, Math.ceil(Math.max.apply(null, ps.concat([0])) / 20) * 20);
+  var ys = reps.map(function(r){ return rkYoy(r.amt, r.ly); });
+  var scale = Math.max(120, Math.ceil(Math.max.apply(null, ys.map(function(y){ return y.bar; }).concat([0])) / 20) * 20);
   html += '<div class="rk-card"><h2>📈 ' + lyLabel + ' 대비 <small>세로선 = 작년 100%</small></h2>';
   reps.forEach(function(r, i){
-    var p = ps[i];
-    html += '<div class="rk-yoy"><div class="top"><span>' + esc(r.n) + '</span><span>' + p + '%</span></div>' +
-      '<div class="track"><i style="width:' + Math.min(100, Math.max(0, p) / scale * 100) + '%; background:' + col[r.n] + '"></i><u style="left:' + (100 / scale * 100) + '%"></u></div>' +
-      '<div class="sub">올해 ' + won(r.amt) + ' / 작년 ' + won(r.ly) + (r.n === '박태진' ? ' (양길호 포함)' : '') + (p >= 100 ? ' · 🎉 작년 돌파!' : '') + '</div></div>';
+    var y = ys[i];
+    html += '<div class="rk-yoy"><div class="top"><span>' + esc(r.n) + '</span><span>' + y.txt + '</span></div>' +
+      // 작년이 0 이하라 숫자가 없는 사람(y.num=false)은 비율 막대가 뜻이 없다 — 넘었으면 꽉, 아니면 빈 막대
+      '<div class="track"><i style="width:' + (y.num ? Math.min(100, Math.max(0, y.bar) / scale * 100) : (y.up ? 100 : 0)) + '%; background:' + col[r.n] + '"></i><u style="left:' + (100 / scale * 100) + '%"></u></div>' +
+      '<div class="sub">올해 ' + won(r.amt) + ' / 작년 ' + won(r.ly) + (r.n === '박태진' ? ' (양길호 포함)' : '') + (y.up ? ' · 🎉 작년 돌파!' : '') + '</div></div>';
   });
   html += '</div>';
 
