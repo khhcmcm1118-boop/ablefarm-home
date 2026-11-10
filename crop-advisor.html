@@ -2496,7 +2496,38 @@ let cropNamedAfterPhoto = false;
 /* 사진을 받은 뒤의 대화 흐름.
    중계가 연결돼 있으면 먼저 AI 소견을 보여주고,
    없거나 실패하면 작물·증상을 좁히는 기존 흐름으로 넘어간다. */
+/* 사진을 받아두고 작물 이름을 기다리는 중인가 */
+let photoAwaitingCrop = false;
+
+/* 사진에서 작물을 묻는 버튼 — 자주 쓰는 작물만 한 번에 고르게 한다.
+   ⚠ 여기 없는 작물은 그냥 쳐서 넣으면 된다 (입력창은 열려 있다). */
+const PHOTO_CROP_CHIPS = ["고추","벼","사과","배추","토마토","양파","마늘","포도","배","감귤"];
+function photoCropChips(){
+  const list = PHOTO_CROP_CHIPS.filter(c => CROP_ISSUE_DB[c]).slice(0, 8)
+    .map(c => ({label:c, value:c}));
+  list.push({label:"작물은 사진 보고 판단해주세요", value:"__photoskip__"});
+  return list;
+}
+
 function afterPhoto(){
+  /* 작물을 모르면 AI 에 보내기 전에 먼저 물어본다.
+     ⚠ 작물 없이 사진만 보내면 AI 가 양파를 「파 모종」으로 보는 식으로 틀린다.
+       잎·줄기·뿌리만 찍은 가까운 사진일수록 더 그렇다.
+     ⚠ 어차피 AI 답 뒤에도 증상을 좁히려면 작물을 물어야 했다.
+       묻는 횟수는 그대로이고, 순서만 앞으로 온 것이다. */
+  if(PHOTO_ENDPOINT && !currentCrop){
+    photoAwaitingCrop = true;
+    showTyping(()=>{
+      addBubble("사진 잘 받았어요. 어떤 작물인가요? 알려주시면 사진을 더 정확하게 봐드려요.", 'bot');
+      setChips(photoCropChips());
+    });
+    return;
+  }
+  runPhotoAI();
+}
+
+/* 작물까지 정해진 뒤 실제로 사진을 중계로 보낸다 */
+function runPhotoAI(){
   // 중계가 연결돼 있으면 먼저 AI 소견을 보여준다
   if(PHOTO_ENDPOINT){
     showTyping(async ()=>{
@@ -3118,6 +3149,23 @@ function handleUserMessage(raw){
 
   // 흔한 맞춤법 혼동은 매칭 전에 정규화한다 ("되요"는 "돼요"의 오타로 같은 뜻)
   msg = msg.replace(/되요/g, "돼요");
+
+  /* 사진을 받아두고 작물을 기다리던 중이면, 여기서 작물을 정하고 사진을 보낸다.
+     「사진 보고 판단해주세요」를 누르면 작물 없이 그냥 보낸다. */
+  if(photoAwaitingCrop){
+    photoAwaitingCrop = false;
+    chipsBox.innerHTML = '';
+    textInput.value = '';
+    if(msg === "__photoskip__"){
+      addBubble("작물은 사진 보고 판단해주세요", 'user');
+    } else {
+      addBubble(msg, 'user');
+      const named = detectAnyCrop(msg) || msg.trim();
+      if(named){ currentCrop = named; lastNamedCrop = named; cropNamedAfterPhoto = true; }
+    }
+    runPhotoAI();
+    return;
+  }
 
   addBubble(msg, 'user');
   textInput.value = '';
