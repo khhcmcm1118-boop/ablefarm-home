@@ -1695,6 +1695,8 @@ function renderRank(){
   var team3 = reps.reduce(function(s, r){ return s + r.amt; }, 0);
   var teamLy3 = reps.reduce(function(s, r){ return s + r.ly; }, 0);
   var team = D.YALL ? rkSum(D.YALL, from, to) : team3;
+  // 작년에서 반품을 빼고 센 달이 있으면 그 금액 — 시트 합계와 달라 보이는 이유를 적어 주려고 쓴다
+  var lyNoRet = D.LYNR ? rkSum(D.LYNR, from, to) : 0;
   var teamLy = D.LYALL ? rkSum(D.LYALL, from, to) : teamLy3;
   var teamIn = 0, teamBill = 0;
   D.reps.forEach(function(n){ teamIn += rkSum(D.PAY[n], 1, to) + rkSum(CASH[n], 1, to) + rkSum(D.NH[n], 1, to) + rkSum(DED[n], 1, to); teamBill += rkSum(D.BILL[n], 1, to) + rkSum(D.NH[n], 1, to); });
@@ -1711,10 +1713,12 @@ function renderRank(){
     // 왜 % 가 아니라 「달성」인지 한 줄로 적어 둔다 — 안 적으면 숫자가 빠진 것처럼 보인다
     (tY.num ? '' : '<div class="row" style="margin-top:4px; opacity:.85"><span>' + lyLabel + '이 마이너스(' + rkMan(teamLy) + ')라 비율 대신 달성 여부로 적습니다</span></div>') +
     '<div class="row"><span>올해 ' + rkMan(team) + '</span><span>' + lyLabel + ' ' + rkMan(teamLy) + '</span></div>' +
+    // 작년에서 반품을 뺐으면 적어 준다 — 안 적으면 시트 숫자와 달라 틀린 것처럼 보인다
+    (lyNoRet < 0 ? '<div class="row" style="margin-top:4px; opacity:.75"><span>' + lyLabel + '은 반품 ' + rkMan(-lyNoRet) + '을 빼고 센 실적입니다</span></div>' : '') +
     '<div class="row" style="margin-top:6px"><span>💰 팀 수금율(누계) <b>' + rkPct(teamIn, teamBill) + '%</b></span>' +
       '<span>남은 미수 <b>' + rkMan(teamAr) + '</b></span></div>' +
     // 매출은 전체인데 수금·미수는 영업 3명 것이라 기준이 다르다 — 섞인 채로 두지 않고 적어 준다
-    (D.YALL && team !== team3 ? '<div class="row" style="margin-top:4px; opacity:.75"><span>매출은 담당자 구분 없는 전체 · 수금·미수와 아래 순위는 영업 ' + reps.length + '명 기준</span></div>' : '') +
+    (D.YALL && (team !== team3 || teamLy !== teamLy3) ? '<div class="row" style="margin-top:4px; opacity:.75"><span>매출은 담당자 구분 없는 전체 · 수금·미수와 아래 순위는 영업 ' + reps.length + '명 기준</span></div>' : '') +
     (cur ? (team < teamLy
         ? '<div class="msg">남은 평일 <b>' + D.daysLeft + '일</b>' + (D.daysLeft ? ' · 하루 <b>' + rkMan((teamLy - team) / D.daysLeft) + '원</b>씩이면 작년을 넘습니다 💪' : '') + '</div>'
         : '<div class="msg">🎉 작년을 이미 넘었습니다! 이대로 신기록 가자!</div>')
