@@ -2207,7 +2207,20 @@ function drawOrder(g){
   fillNhList();
   if (g.exported) $('#dUnexport').addEventListener('click', function(){ unexportFlow(g.oid); });
   $('#eSave').addEventListener('click', function(){
-    var b = this; b.disabled = true;
+    var b = this;
+    /* 농협명 칸에 받는 분 이름이 들어가는 일이 있었다 (2026-11 홍성농협 건 — 비고가 「농협(장재영)」으로 남았다).
+       「농협」 이라는 글자가 없으면 한 번 더 묻는다. 막지는 않는다 — 신규 농협도 넣을 수 있어야 한다.
+       출하앱 주문 화면(index.html)에도 같은 확인이 있다 — 고칠 때는 양쪽 다 고친다. */
+    var nhVal = $('#eNh').value.trim();
+    var go = (nhVal && nhVal.indexOf('농협') === -1)
+      ? ask('농협명에 「농협」 이라는 글자가 없습니다. 받는 분 이름을 넣으신 것은 아닌가요?\n\n' +
+            '이대로 저장하면 비고에 「농협(' + nhVal + ')」 으로 남습니다.',
+            { title: '「' + nhVal + '」 — 농협명이 맞습니까?', yes: '맞습니다 — 그대로 저장' })
+      : Promise.resolve(true);
+    go.then(function(ok){ if (ok) save(); });
+
+    function save(){
+    b.disabled = true;
     call('api_adminUpdateOrder', S.token, g.oid, {
       // force — 이 창은 주문 하나를 보고 고치는 자리다.
       // 취소한 주문을 되살리는 것도 여기서만 되게 한다 (일괄 적용은 취소 건을 건너뛴다).
@@ -2219,6 +2232,7 @@ function drawOrder(g){
       toast('저장했습니다 · ' + (d.changed.join(', ') || '변경 없음'), 'ok');
       closeDrawer(); loadOrders(); loadDash();
     }).catch(function(e){ toast(e.message, 'err'); b.disabled = false; });
+    }
   });
   $$('[data-save-item]').forEach(function(b){
     b.addEventListener('click', function(){

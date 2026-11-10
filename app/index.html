@@ -2134,6 +2134,17 @@ $('#btnSubmit').addEventListener('click', function(){
     checks.push({ title: '팩스번호가 비어 있습니다',
                   text: '배송정보를 등록하셨는데 팩스번호가 없습니다. 그대로 저장할까요?', ok: '그대로 저장' });
   }
+  /* 농협명 칸에 받는 분 이름이 들어가는 일이 있었다 (2026-11-05·11-09 홍성농협 건 —
+     농협명에 「장재영」이 들어가 비고가 「농협(장재영)」으로 남았다. 어느 농협인지 알아볼 수 없고
+     농협배송정보등록·정산내역서 표기가 어긋난다).
+     「농협」 이라는 글자가 없으면 한 번 더 묻는다. 막지는 않는다 —
+     목록에 없는 신규 농협도 넣을 수 있어야 하기 때문이다 (renderNhList 와 같은 이유). */
+  if (nh && nh.indexOf('농협') === -1){
+    checks.push({ title: '「' + nh + '」 — 농협명이 맞습니까?',
+      text: '농협명에 「농협」 이라는 글자가 없습니다. 받는 분 이름을 넣으신 것은 아닌가요?' +
+            (isNh ? '\n\n이대로 저장하면 비고에 「농협(' + nh + ')」 으로 남습니다.' : ''),
+      ok: '맞습니다 — 그대로 저장', kind: 'amber' });
+  }
 
   var total = items.reduce(function(s, it){ return s + Number(it.qty) * (Number(it.price)||0); }, 0);
   var summary = S.cust.name + ' · ' + S.wh + ' · ' + (isNh ? '농협' : '시판') +
