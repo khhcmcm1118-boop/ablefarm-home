@@ -255,7 +255,14 @@
 
   /* 병해충 탭 */
   .pestrisk{background:linear-gradient(160deg,#fffdf7,#f6efe0);border-color:rgba(184,149,90,.35)}
-  .wxchips{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 12px}
+.phcard .phbtns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.phcard .phbtns label{flex:1;min-width:130px;text-align:center;border:1px solid var(--g);border-radius:12px;padding:12px 10px;font-weight:800;cursor:pointer;background:var(--ivory)}
+.phcard .phbtns label.go{background:var(--g);color:#fff}
+.phcard .phbtns input{display:none}
+.phcard #phNote{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;margin-top:2px}
+.phres{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
+.phres img{width:110px;height:110px;object-fit:cover;border-radius:12px;flex:none}
+.phres .phtxt{font-size:14.5px;line-height:1.6}  .wxchips{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 12px}
   .wxchips span,.wxchips b{font-size:12.5px;padding:4px 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700}
   .wxchips b{background:var(--g);color:var(--gold2);border-color:var(--g)}
   .toprow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -677,7 +684,7 @@ const CROP_ISSUE_DB = {
     {keywords:["잎끝이 하얗게","흰잎마름"], part:"잎", symptom:"잎끝이 하얗게 말라요", label:"흰잎마름병", cause:"잎끝이 하얗게 마르는 흰잎마름병일 수 있어요. 장마·태풍으로 침수가 되면서 세균이 퍼질 때 많이 발생해요."},
     {keywords:["구름무늬","잎집무늬","문고병"], part:"잎", symptom:"잎집에 회녹색 구름무늬 병반이 생겨요", label:"잎집무늬마름병(문고병)", cause:"잎집에 회녹색 구름무늬가 생기는 잎집무늬마름병(문고병)일 수 있어요. 최고분얼기 이후 7~8월 고온다습이 지속되고 밀식 재배할 때, 질소를 과다하게 줬을 때 많이 발생해요."},
     {keywords:["새로 나오는 잎이 황색","줄무늬잎마름","말리면서 늘어","새로 나오는 잎이 노랗게 되며 말리고 늘어져요"], part:"잎", symptom:"새로 나오는 잎이 노랗게 되며 말리고 늘어져요", label:"줄무늬잎마름병", cause:"줄무늬잎마름병일 수 있어요. 애멸구가 매개하는 바이러스병으로, 묘판말기~정식초기에 많이 발생해요."},
-    {keywords:["깨알 같은","깨씨무늬"], part:"잎", symptom:"잎에 깨알 같은 작은 반점이 많이 생겨요", label:"깨씨무늬병", cause:"깨씨무늬병일 수 있어요. 비가 잦고 습도가 높거나, 칼리가 부족한 노후화 논에서 많이 발생해요. 이런 논은 산성으로 기운 경우가 많은데, 임팩트과립에 든 규산과 석회(칼슘)이 토양을 중화하면서 잎·줄기 표피를 규질화해 벼를 튼튼하게 해줘요. 병반이 보이면 벼에 등록된 약제로 방제해야 해요.", product:"impactgranule", companion:"npcalma"},
+    {keywords:["깨알 같은","깨씨무늬"], part:"잎", symptom:"잎에 깨알 같은 작은 반점이 많이 생겨요", label:"깨씨무늬병", cause:"깨씨무늬병일 수 있어요. 비가 잦고 습도가 높거나, 칼리가 부족한 노후화 논에서 많이 발생해요. 병반이 보이면 벼에 등록된 약제로 방제해야 해요. 논 자체를 보면, 노후화 논은 산성으로 기운 경우가 많아요. 규산과 석회(칼슘)로 토양을 중화하고 잎·줄기를 규질화해 두면 벼 생육이 안정됩니다.", product:"impactgranule", companion:"npcalma"},
     {keywords:["누룩덩어리","이삭누룩","이삭에 누룩 덩어리 같은 것이 생겨요"], part:"열매", symptom:"이삭에 누룩 덩어리 같은 것이 생겨요", label:"이삭누룩병", cause:"이삭누룩병일 수 있어요. 출수기에 비가 잦고 다습할 때 발생해요."},
     {keywords:["벼알이 홍색","벼알이 말라죽","세균성벼알"], part:"열매", symptom:"벼알이 홍색을 띠며 말라 죽어요", label:"세균성벼알마름병", cause:"세균성벼알마름병일 수 있어요. 출수·개화기 고온다습 조건, 감염된 종자에서 고온기에 많이 발생해요."},
     {keywords:["모가 웃자","키다리","가늘고 길게"], part:"잎", symptom:"모가 비정상적으로 웃자라 가늘고 길게 자라요", label:"키다리병", cause:"키다리병일 수 있어요. 종자전염병으로 못자리~본답초기에 많이 발생해요."},
@@ -740,7 +747,11 @@ const CROP_ISSUE_DB = {
     {keywords:["다닥다닥 붙어","열매 수가 달라","한쪽만 열매가 없"], part:"열매", symptom:"열매가 다닥다닥 붙어 자라요", label:"적과 미실시(착과 과다·불균일)", cause:"적과 미실시(착과 과다·불균일)일 수 있어요. 열매솎기(적과)를 제때 안 하면 한 가지에 너무 많이 달리거나, 수정이 고르지 않으면 가지·나무마다 열매 수가 차이 나요. 적과 시기를 놓쳤다면 지금이라도 여분의 열매를 솎아주시면 남은 열매가 더 실해져요."},
     {keywords:["껍질이 갈라지고 들떠","조피","나무껍질이 거칠어지고 갈라"], part:"줄기", symptom:"나무껍질이 갈라지고 들떠요", label:"조피(겹무늬썩음병 등)", cause:"조피 증상일 수 있어요. 겹무늬썩음병(윤문병) 등 줄기 병해나 노화로 나무껍질이 거칠어지며 갈라지고 들떠요. 심하면 나무 세력이 약해지는 신호일 수 있어 지켜봐 주세요."},
     {keywords:["꽃이 안 펴","꽃눈이 안 생겨","개화가 안돼요"], part:"꽃", symptom:"꽃이 안 펴요", label:"꽃눈형성 부족", cause:"꽃눈형성 부족일 수 있어요. 전년도에 과다결실했거나 질소 과다·웃자람·강전정으로 나무 세력이 흐트러지면 이듬해 꽃눈이 충분히 안 만들어져 해거리(격년결실)로 이어지기 쉬워요."},
-    {keywords:["움푹","V자","과실에 갈색 반점","탄저"], part:"열매", symptom:"과실에 움푹 들어간 갈색 반점이 생겨요", label:"탄저병", cause:"탄저병일 수 있어요. 7월 하순~수확기 고온다습한 조건에서 비를 통해 전염되며, 과실이 V자 모양으로 과심까지 썩어들어가요."},
+    /* ⚠ 2026-11-09 — 사과에서는 「탄저병」이라는 이름을 쓰지 않는다.
+       우리 자료·안내(쇼츠·안내 쪽·제품 문구)가 전부 고추 탄저병 기준이라,
+       사과에서 같은 이름이 나오면 농민이 헷갈리고 우리가 틀린 것처럼 보인다.
+       증상 자체는 남기되 사과에서 쓰는 이름(쓴썩음병)으로만 부른다. */
+    {keywords:["움푹","V자","과실에 갈색 반점","쓴썩음"], part:"열매", symptom:"과실에 움푹 들어간 갈색 반점이 생겨요", label:"쓴썩음병", cause:"쓴썩음병일 수 있어요. 7월 하순~수확기 고온다습한 조건에서 비를 통해 전염되며, 과실이 V자 모양으로 과심까지 썩어들어가요."},
     {keywords:["흑갈색","조기낙엽","잎에 반점","갈색무늬병"], part:"잎", symptom:"잎에 흑갈색 반점이 생기고 일찍 떨어져요", label:"갈색무늬병", cause:"갈색무늬병(갈반병)일 수 있어요. 6월 중하순 장마기 직전에 감염이 최대가 되고, 배수불량·밀식 시 심해요."},
     {keywords:["점무늬낙엽","잎에 갈색 점무늬가 생기고 일찍 떨어져요"], part:"잎", symptom:"잎에 갈색 점무늬가 생기고 일찍 떨어져요", label:"점무늬낙엽병", cause:"점무늬낙엽병일 수 있어요. 여름철 고온다습한 조건에서 잎에 갈색 점무늬가 생기고 일찍 떨어져요."},
     {keywords:["둥근 반점이 붉게","겹무늬썩음","윤문병","과실 껍질에 둥근 띠 모양으로 썩는 반점이 생겨요"], part:"열매", symptom:"과실 껍질에 둥근 띠 모양으로 썩는 반점이 생겨요", label:"겹무늬썩음병", cause:"겹무늬썩음병(윤문병)일 수 있어요. 고온다습·수세 약화 시 과실 껍질에 둥근 띠 모양으로 썩는 병반이 생겨요."},
@@ -754,7 +765,7 @@ const CROP_ISSUE_DB = {
     {keywords:["조팝나무진딧물","잎과 순에 진딧물이 붙어있어요"], part:"잎", symptom:"잎과 순에 진딧물이 붙어있어요", label:"조팝나무진딧물", cause:"조팝나무진딧물 피해일 수 있어요. 봄~여름 잎·신초를 흡즙해요."},
     {keywords:["과실 속을 파고","심식나방","과실 속을 벌레가 파고들었어요"], part:"열매", symptom:"과실 속을 벌레가 파고들었어요", label:"복숭아심식나방", cause:"복숭아심식나방 피해일 수 있어요. 6월 중하순~8월 유충이 과실 속을 파고들어 과육을 가해해요."},
     {keywords:["신초를 가해","순나방","새순이 벌레에게 가해당했어요"], part:"열매", symptom:"새순이 벌레에게 가해당했어요", label:"복숭아순나방", cause:"복숭아순나방 피해일 수 있어요. 6월 이후 2~3회 신초·과실을 가해해요."},
-    {keywords:["잎 뒤가 오그라","사과굴나방","쪼그라들","오그라들","잎 뒷면","뒷면이"], part:"잎", symptom:"잎 뒤가 오그라들어요", label:"사과굴나방", cause:"사과굴나방 피해일 수 있어요. 유충이 잎 속에 타원형 굴을 파 잎 뒤가 오그라들어요."},
+    {keywords:["잎 뒤가 오그라","사과굴나방","굴을 파","잎 속에 굴","잎에 굴","쪼그라들","오그라들"], part:"잎", symptom:"잎 뒤가 오그라들어요", label:"사과굴나방", cause:"사과굴나방 피해일 수 있어요. 유충이 잎 속에 타원형 굴을 파 잎 뒤가 오그라들어요."},
     {keywords:["은빛 무늬","은무늬굴나방"], part:"잎", symptom:"잎에 은빛 무늬가 생겨요", label:"은무늬굴나방", cause:"은무늬굴나방 피해일 수 있어요. 유충이 잎에 은빛 굴을 파요."},
     {keywords:["잎을 말고","잎말이나방","잎이 말려있고 그 속에 벌레가 있어요"], part:"잎", symptom:"잎이 말려있고 그 속에 벌레가 있어요", label:"잎말이나방류", cause:"잎말이나방류(애모무늬잎말이나방 등) 피해일 수 있어요. 유충이 잎을 말고 그 속에서 가해해요."},
     {keywords:["갈색날개매미충","가지에 그을음이 생기고 벌레가 붙어있어요"], part:"잎", symptom:"가지에 그을음이 생기고 벌레가 붙어있어요", label:"갈색날개매미충", cause:"갈색날개매미충 피해일 수 있어요. 여름철 약충·성충이 흡즙하고 감로로 그을음이 생겨요."},
@@ -779,7 +790,7 @@ const CROP_ISSUE_DB = {
     {keywords:["과피에 얼룩","과피얼룩반점병"], part:"열매", symptom:"과피에 얼룩 반점이 생겨요", label:"과피얼룩반점병", cause:"과피얼룩반점병일 수 있어요. 다습하거나 봉지재배 관리가 부실할 때 생겨요."},
     {keywords:["불에 탄 듯","과수화상병","잎이 불에 탄 것처럼 갈색으로 말라요"], part:"잎", symptom:"잎이 불에 탄 것처럼 갈색으로 말라요", label:"과수화상병", cause:"과수화상병일 수 있어요. 개화기 고온·곤충 전파로 발생하는 세균병으로, 법정 방제 대상이라 관할 농업기술센터 신고가 필요해요."},
     {keywords:["가지가 마름","줄기마름","동고병","가지·줄기가 말라요"], part:"줄기", symptom:"가지·줄기가 말라요", label:"줄기마름병", cause:"줄기마름병(동고병)일 수 있어요. 상처나 수세 약화로 가지·줄기가 말라요."},
-    {keywords:["갈색 썩음","탄저"], part:"열매", symptom:"과실에 갈색 썩음이 생겨요", label:"탄저병", cause:"탄저병일 수 있어요. 고온다습한 조건에서 과실에 갈색 썩음이 생겨요."},
+    {keywords:["갈색 썩음","쓴썩음"], part:"열매", symptom:"과실에 갈색 썩음이 생겨요", label:"과실 갈색 썩음", cause:"과실이 썩는 병일 수 있어요. 고온다습한 조건에서 열매에 갈색 썩음이 번져요. 정확한 병명은 농업기술센터에서 확인하시고, 그 작물에 등록된 약제로 방제해 주세요."},
     {keywords:["흡즙","꼬마배나무이","감로"], part:"잎", symptom:"잎에 흡즙 흔적과 끈적한 감로가 생겨요", label:"꼬마배나무이", cause:"꼬마배나무이 피해일 수 있어요. 이른 봄 월동성충부터 생육기까지 흡즙하고 감로로 그을음 증상이 생겨요."},
     {keywords:["신초를 가해","순나방","새순이 벌레에게 가해당했어요"], part:"열매", symptom:"새순이 벌레에게 가해당했어요", label:"복숭아순나방", cause:"복숭아순나방 피해일 수 있어요. 꽃 진 후~여름 신초·과실을 가해해요."},
     {keywords:["잎 흡즙","응애","잎을 흡즙당해 색이 변했어요"], part:"잎", symptom:"잎을 흡즙당해 색이 변했어요", label:"응애류", cause:"응애류 피해일 수 있어요. 고온건조기에 잎을 흡즙해 변색시켜요."},
@@ -809,7 +820,7 @@ const CROP_ISSUE_DB = {
     {keywords:["잎 뒷면 흡즙","진딧물"], part:"잎", symptom:"잎 뒷면에 진딧물이 붙어있어요", label:"진딧물", cause:"복숭아혹진딧물·무테두리진딧물 피해일 수 있어요. 봄·가을 잎 뒷면을 흡즙하고 바이러스를 옮겨요."},
     {keywords:["속이 갈변","속썩음","팁번","잎끝이 갈색","석회결핍"], part:"잎", symptom:"속이 갈변되고 잎끝이 갈색으로 말라요", label:"석회결핍(속썩음)", cause:"석회결핍으로 인한 속썩음(팁번)일 수 있어요. 토양건조나 질소 과다로 칼슘 흡수가 저해될 때 생장점 부근 잎끝이 갈색으로 마르고 결구 속이 갈변돼요.", product:"uninkcal"},
     {keywords:["세포벽이 붕괴","붕소결핍","조직이 물러"], part:"잎", symptom:"잎 조직이 물러지고 생육이 나빠져요", label:"붕소결핍", cause:"붕소결핍일 수 있어요. 붕소가 부족하면 세포벽이 무너져 조직이 물러지고 생육이 나빠져요."},
-    {keywords:["검은 깨알","깨씨무늬"], part:"잎", symptom:"잎에 검은 깨알 같은 반점이 생겨요", label:"깨씨무늬", cause:"깨씨무늬(생리적 반점)일 수 있어요. 질소 과다·저온·염류장해로 중륵·잎에 검은 깨알 반점이 생겨요. 임팩트과립의 규산과 석회(칼슘)이 쌓인 염류를 완화하고 조직을 튼튼하게 해줘요.", product:"impactgranule", companion:"npcalma"},
+    {keywords:["검은 깨알","깨씨무늬"], part:"잎", symptom:"잎에 검은 깨알 같은 반점이 생겨요", label:"깨씨무늬", cause:"깨씨무늬(생리적 반점)일 수 있어요. 질소 과다·저온·염류장해로 중륵·잎에 검은 깨알 반점이 생겨요. 규산과 석회(칼슘)를 보충하면 쌓인 염류를 완화하고 조직을 튼튼하게 하는 데 도움이 돼요.", product:"impactgranule", companion:"npcalma"},
     {keywords:["속이 안 차","속이 비어","결구불량","속이 꽉 차지 않고 비어있어요","속이 꽉 안"], part:"잎", symptom:"속이 꽉 차지 않고 비어있어요", label:"결구불량", cause:"결구불량일 수 있어요. 배추는 결구기(속이 차는 시기)에 수분을 많이 필요로 하는 호냉성 작물이라, 이 시기에 가물거나 고온이 이어지면 결구가 늦어지고 속이 덜 차요. 정식이 늦어 생육기간이 부족했거나 포기 사이가 너무 밀식된 경우에도 이런 증상이 나타나요. 이건 비료보다 결구기 수분 관리(관수)가 더 중요한 경우가 많아요."}
   ],
   "마늘": [
@@ -824,7 +835,7 @@ const CROP_ISSUE_DB = {
     {keywords:["인경이 검게","흑색썩음","균핵"], part:"뿌리", symptom:"인경이 검게 썩어요", label:"흑색썩음균핵병", cause:"흑색썩음균핵병일 수 있어요. 2~5월 저온기에 연작지 토양 속 균핵을 통해 전염되며, 인경이 흑색으로 썩고 잎이 아래부터 말라요."},
     {keywords:["잎집이 담갈색","잎집썩음","춘부병"], part:"잎", symptom:"잎집이 담갈색으로 썩어요", label:"잎집썩음병", cause:"잎집썩음병(춘부병)일 수 있어요. 봄철 다습한 조건에서 잎집이 썩어 들어가 줄기·구까지 부패해요."},
     {keywords:["등황색 가루","녹병"], part:"잎", symptom:"잎에 등황색 가루가 생겨요", label:"녹병", cause:"녹병일 수 있어요. 5~6월 저온다습하거나 비료가 부족할 때 발생해요."},
-    {keywords:["구가 물러","무름병","냄새","악취"], part:"뿌리", symptom:"구가 물러 썩어요", label:"무름병", cause:"무름병일 수 있어요. 고온이나 과다 비료, 과습 조건에서 지제부부터 물러 썩어요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["구가 물러","무름병","냄새","악취"], part:"뿌리", symptom:"구가 물러 썩어요", label:"무름병", cause:"무름병일 수 있어요. 고온이나 과다 비료, 과습 조건에서 지제부부터 물러 썩어요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["모자이크","바이러스"], part:"잎", symptom:"잎에 모자이크 무늬가 생겨요", label:"바이러스병", cause:"바이러스병(모자이크병)일 수 있어요. 응애·진딧물이 매개해요."},
     {keywords:["뿌리가 잘려","쉽게 뽑","고자리"], part:"뿌리", symptom:"뿌리가 잘려서 포기가 쉽게 뽑혀요", label:"고자리파리", cause:"고자리파리 피해일 수 있어요. 유충이 뿌리·비늘줄기를 가해해 뿌리가 잘리면서 포기가 쉽게 뽑히고 시들어요."},
     {keywords:["뿌리응애","뿌리 주변이 썩고 아래잎부터 누렇게 변해요"], part:"뿌리", symptom:"뿌리 주변이 썩고 아래잎부터 누렇게 변해요", label:"뿌리응애", cause:"뿌리응애 피해일 수 있어요. 구근 상처·수분 많은 부위에 모여 증식하며, 피해부가 썩고 아래잎부터 누렇게 변해요."},
@@ -847,7 +858,7 @@ const CROP_ISSUE_DB = {
     {keywords:["심은 자리가 비어","결주","발아불량","싹이 안 나"], part:"뿌리", symptom:"심은 자리가 비어있어요", label:"발아불량(결주)", cause:"발아불량(결주)일 수 있어요. 종구가 오래됐거나 심은 깊이가 너무 깊거나 얕으면, 저온다습한 환경까지 겹치면 발아율이 떨어져 드문드문 빈자리가 생겨요."},
     {keywords:["회백색 곰팡이","노균"], part:"잎", symptom:"잎에 회백색 곰팡이가 생겨요", label:"노균병", cause:"노균병일 수 있어요. 연작지에서 저온다습(3~4월 잦은 비)할 때 발생하고, 잎에 회백색 곰팡이가 생겨요."},
     {keywords:["유묘가 쓰러","잘록병","어린 모가 잘록해지며 쓰러져요"], part:"뿌리", symptom:"어린 모가 잘록해지며 쓰러져요", label:"잘록병", cause:"잘록병일 수 있어요. 묘상이 과습할 때 유묘기에 잘록 증상으로 쓰러져요."},
-    {keywords:["구가 물러","구썩음","무름병","세균썩음","무름병(구썩음병)","세균썩음병","냄새","악취"], part:"열매", symptom:"구가 물러 썩어요", label:"무름병(세균썩음병)", cause:"무름병(세균썩음병)일 수 있어요. 고온다습·상처·비료 과다 조건에서 세균이 침입해 구가 물러 썩어요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["구가 물러","구썩음","무름병","세균썩음","무름병(구썩음병)","세균썩음병","냄새","악취"], part:"열매", symptom:"구가 물러 썩어요", label:"무름병(세균썩음병)", cause:"무름병(세균썩음병)일 수 있어요. 고온다습·상처·비료 과다 조건에서 세균이 침입해 구가 물러 썩어요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["잎마름","잎이 말라요"], part:"잎", symptom:"잎이 말라요", label:"잎마름병", cause:"잎마름병일 수 있어요. 다습하거나 생육후기 쇠약할 때 발생해요."},
     {keywords:["등황색 부푼","녹병","잎에 등황색으로 부푼 반점이 생겨요"], part:"잎", symptom:"잎에 등황색으로 부푼 반점이 생겨요", label:"녹병", cause:"녹병일 수 있어요. 봄철 저온다습하거나 비료 부족, 생육후기 쇠약 시 발생해요."},
     {keywords:["뿌리가 흑색","흑색썩음균핵"], part:"뿌리", symptom:"뿌리가 흑색으로 변해요", label:"흑색썩음균핵병", cause:"흑색썩음균핵병일 수 있어요. 연작지 토양 속 균핵으로 전염돼요."},
@@ -865,13 +876,13 @@ const CROP_ISSUE_DB = {
   ],
   "고추": [
     {keywords:["웃자라","웃자랐","도장","줄기가 가늘고 웃자랐어요","웃자람","육묘가 웃자랐어요"], part:"줄기", symptom:"줄기가 가늘고 웃자랐어요", label:"웃자람(도장)", cause:"웃자람(도장)일 수 있어요. 육묘 중 일조가 부족하거나 온도가 너무 높으면, 또는 밀식되면 줄기가 가늘고 연약하게 웃자라요."},
-    {keywords:["열매에 반점","궤양","탄저"], part:"열매", symptom:"열매에 궤양처럼 움푹 들어간 반점이 생겨요", label:"탄저병", cause:"탄저병일 수 있어요. 생육적온 26~30℃에서 장마기·8~9월 고온다습 조건에 급증하고, 열매에 연녹색 반점이 궤양처럼 움푹 들어가요. 병든 고추의 포자가 빗물에 튀어 옆 열매로 옮겨 가므로, 병든 과실은 보이는 즉시 따서 밭 밖으로 치우고 비가림·등록 약제로 방제하는 게 기본이에요.", product:"amidoctor", companion:"calciumtan"},
+    {keywords:["열매에 반점","궤양","탄저"], part:"열매", symptom:"열매에 궤양처럼 움푹 들어간 반점이 생겨요", label:"탄저병", cause:"탄저병일 수 있어요. 생육적온 26~30℃에서 장마기·8~9월 고온다습 조건에 급증하고, 열매에 연녹색 반점이 궤양처럼 움푹 들어가요. 병든 고추의 포자가 빗물에 튀어 옆 열매로 옮겨 가므로, 병든 과실은 보이는 즉시 따서 밭 밖으로 치우고 비가림·등록 약제로 방제하는 게 기본이에요.", product:"calciumtan"},
     {keywords:["포기가 시들어 죽","역병"], part:"뿌리", symptom:"포기가 시들어 죽어요", label:"역병", cause:"역병일 수 있어요. 연작지에서 매년 같은 토양에 반복 발생하며, 배수가 안 되는 밭에서 심해요.", product:"impactgranule"},
     {keywords:["낮에 시들고 밤에 회복","청고병","풋마름병","낮에 시들었다가 밤에 회복되길 반복해요"], part:"뿌리", symptom:"낮에 시들었다가 밤에 회복되길 반복해요", label:"풋마름병(청고병)", cause:"풋마름병(청고병)일 수 있어요. 세균성 토양전염병으로, 배수불량·연작지에서 낮에 시들었다 밤에 회복되길 반복하다 포기 전체가 말라 죽어요.", product:"impactgranule"},
     {keywords:["회갈색 작은 점","세균점무늬","반점세균","잎에 회갈색 작은 반점이 생겨요"], part:"잎", symptom:"잎에 회갈색 작은 반점이 생겨요", label:"세균점무늬병", cause:"세균점무늬병(반점세균병)일 수 있어요. 비가 많고 다습하거나, 질소질 비료를 과용해 식물체가 연약할 때 발생해요."},
     {keywords:["흰가루"], part:"잎", symptom:"잎에 흰가루가 덮여요", label:"흰가루병", cause:"흰가루병일 수 있어요. 저온에 다소 건조한 환경, 밤낮 기온차가 크거나 마그네슘·인산이 부족한 토양에서 발생해요."},
     {keywords:["잿빛곰팡이","잎에 잿빛 곰팡이가 생겨요"], part:"잎", symptom:"잎에 잿빛 곰팡이가 생겨요", label:"잿빛곰팡이병", cause:"잿빛곰팡이병일 수 있어요. 시설재배 하우스 내 높은 습도가 주원인이에요."},
-    {keywords:["꼭지가 수침상","꼭지가 물러","고추가 물러","열매가 물러","물러지","무름병","냄새","악취"], part:"열매", symptom:"열매 꼭지가 물러져요", label:"무름병", cause:"무름병일 수 있어요. 고온다습한 조건에서 상처를 통해 세균이 침입해 열매 꼭지가 물러져요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["꼭지가 수침상","꼭지가 물러","고추가 물러","열매가 물러","물러지","무름병","냄새","악취"], part:"열매", symptom:"열매 꼭지가 물러져요", label:"무름병", cause:"무름병일 수 있어요. 고온다습한 조건에서 상처를 통해 세균이 침입해 열매 꼭지가 물러져요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["쭈글쭈글","잎이 기형","바이러스","모자이크"], part:"잎", symptom:"잎이 쭈글쭈글하고 기형이에요", label:"바이러스병", cause:"바이러스병(CMV·TSWV 등)일 수 있어요. 진딧물·총채벌레 등 매개충으로 전염돼요."},
     {keywords:["갈색 둥근 겹무늬","갈색점무늬"], part:"잎", symptom:"잎에 갈색 둥근 겹무늬가 생겨요", label:"갈색점무늬병", cause:"갈색점무늬병일 수 있어요. 시설재배에서 특히 심하게 나타나요."},
     {keywords:["회백색 점이 다수","흰별무늬"], part:"잎", symptom:"잎에 회백색 점이 다수 생겨요", label:"흰별무늬병", cause:"흰별무늬병일 수 있어요. 다습한 환경에서 잎에 작은 회백색 점이 다수 생겨요."},
@@ -920,7 +931,7 @@ const CROP_ISSUE_DB = {
     {keywords:["불규칙한 흰 줄","굴을 파고","파굴파리","밭 전체가 하얗게"], part:"잎", symptom:"잎에 불규칙한 흰 줄무늬가 생겨요", label:"파굴파리", cause:"파굴파리 피해일 수 있어요. 애벌레가 잎 속에 굴을 뚫고 다니면서 불규칙한 흰 줄무늬가 생기고, 심하면 밭 전체가 하얗게 보일 정도로 번져요."},
     {keywords:["파좀나방","파밤나방","잎이 벌레에게 갉아먹혔어요"], part:"잎", symptom:"잎이 벌레에게 갉아먹혔어요", label:"파좀나방·파밤나방", cause:"파좀나방·파밤나방 피해일 수 있어요. 봄~가을 유충이 잎을 갉아먹어요."},
     {keywords:["파총채벌레","흰 얼룩","은색 반점"], part:"잎", symptom:"잎에 흰 얼룩이나 은색 반점이 생겨요", label:"파총채벌레", cause:"파총채벌레 피해일 수 있어요. 고온건조기에 흡즙해 잎에 흰 얼룩이나 은색 반점이 생겨요."},
-    {keywords:["엽초가 물러","수침상","연부병","냄새가 고약","무름병","엽초 부위가 물러지고 냄새가 나요"], part:"줄기", symptom:"엽초 부위가 물러지고 냄새가 나요", label:"무름병(연부병)", cause:"무름병(연부병)일 수 있어요. 잎 밑동(엽초)부터 수침상 반점이 생겨 갈색으로 물러 썩으며 위쪽으로 번지고, 심하면 고약한 냄새가 나요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["엽초가 물러","수침상","연부병","냄새가 고약","무름병","엽초 부위가 물러지고 냄새가 나요"], part:"줄기", symptom:"엽초 부위가 물러지고 냄새가 나요", label:"무름병(연부병)", cause:"무름병(연부병)일 수 있어요. 잎 밑동(엽초)부터 수침상 반점이 생겨 갈색으로 물러 썩으며 위쪽으로 번지고, 심하면 고약한 냄새가 나요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["연백부가 물러","흰 줄기 부분이 물러","칼슘결핍","흰 줄기 부분(연백부)이 물러져요"], part:"줄기", symptom:"흰 줄기 부분(연백부)이 물러져요", label:"연백부 칼슘결핍", cause:"연백부 칼슘결핍일 수 있어요. 흰 줄기(연백부)가 비대해지는 시기에 칼슘이 부족하면 조직이 약해지고 무름 증상으로 이어지기 쉬워요.", product:"uninkcal"},
     {keywords:["흑색 균핵","백색 균사","뿌리가 고사","흑색썩음균핵병","뿌리에 흰 균사와 검은 균핵이 생겨요"], part:"뿌리", symptom:"뿌리에 흰 균사와 검은 균핵이 생겨요", label:"흑색썩음균핵병", cause:"흑색썩음균핵병일 수 있어요. 흰 균사가 뿌리와 비늘줄기를 덮으면서 뿌리가 말라 죽고, 겉에 검은 균핵이 생기며 아래 잎부터 갈변돼요."},
     {keywords:["뿌리가 잘려","쉽게 뽑","고자리"], part:"뿌리", symptom:"뿌리가 잘려서 포기가 쉽게 뽑혀요", label:"고자리파리", cause:"고자리파리 피해일 수 있어요. 유충이 뿌리와 비늘줄기를 가해해 뿌리가 잘리면서 포기가 쉽게 뽑히고 시들어요."},
@@ -937,7 +948,7 @@ const CROP_ISSUE_DB = {
     {keywords:["불규칙한 흰 줄","굴을 파고","파굴파리","밭 전체가 하얗게"], part:"잎", symptom:"잎에 불규칙한 흰 줄무늬가 생겨요", label:"파굴파리", cause:"파굴파리 피해일 수 있어요. 애벌레가 잎 속에 굴을 뚫고 다니면서 불규칙한 흰 줄무늬가 생기고, 심하면 밭 전체가 하얗게 보일 정도로 번져요."},
     {keywords:["파좀나방","파밤나방","잎이 벌레에게 갉아먹혔어요"], part:"잎", symptom:"잎이 벌레에게 갉아먹혔어요", label:"파좀나방·파밤나방", cause:"파좀나방·파밤나방 피해일 수 있어요. 봄~가을 유충이 잎을 갉아먹어요."},
     {keywords:["파총채벌레","흰 얼룩","은색 반점"], part:"잎", symptom:"잎에 흰 얼룩이나 은색 반점이 생겨요", label:"파총채벌레", cause:"파총채벌레 피해일 수 있어요. 고온건조기에 흡즙해 잎에 흰 얼룩이나 은색 반점이 생겨요."},
-    {keywords:["엽초가 물러","수침상","연부병","냄새가 고약","무름병","엽초 부위가 물러지고 냄새가 나요"], part:"줄기", symptom:"엽초 부위가 물러지고 냄새가 나요", label:"무름병(연부병)", cause:"무름병(연부병)일 수 있어요. 잎 밑동(엽초)부터 수침상 반점이 생겨 갈색으로 물러 썩으며 위쪽으로 번지고, 심하면 고약한 냄새가 나요. 조직 내 세포벽이 튼튼하면 병균 침입에 저항력이 생겨요.", product:"sokddanddan", companion:"uninkcal"},
+    {keywords:["엽초가 물러","수침상","연부병","냄새가 고약","무름병","엽초 부위가 물러지고 냄새가 나요"], part:"줄기", symptom:"엽초 부위가 물러지고 냄새가 나요", label:"무름병(연부병)", cause:"무름병(연부병)일 수 있어요. 잎 밑동(엽초)부터 수침상 반점이 생겨 갈색으로 물러 썩으며 위쪽으로 번지고, 심하면 고약한 냄새가 나요.", product:"sokddanddan", companion:"uninkcal"},
     {keywords:["연백부가 물러","흰 줄기 부분이 물러","칼슘결핍","흰 줄기 부분(연백부)이 물러져요"], part:"줄기", symptom:"흰 줄기 부분(연백부)이 물러져요", label:"연백부 칼슘결핍", cause:"연백부 칼슘결핍일 수 있어요. 흰 줄기(연백부)가 비대해지는 시기에 칼슘이 부족하면 조직이 약해지고 무름 증상으로 이어지기 쉬워요.", product:"uninkcal"},
     {keywords:["흑색 균핵","백색 균사","뿌리가 고사","흑색썩음균핵병","뿌리에 흰 균사와 검은 균핵이 생겨요"], part:"뿌리", symptom:"뿌리에 흰 균사와 검은 균핵이 생겨요", label:"흑색썩음균핵병", cause:"흑색썩음균핵병일 수 있어요. 흰 균사가 뿌리와 비늘줄기를 덮으면서 뿌리가 말라 죽고, 겉에 검은 균핵이 생기며 아래 잎부터 갈변돼요."},
     {keywords:["뿌리가 잘려","쉽게 뽑","고자리"], part:"뿌리", symptom:"뿌리가 잘려서 포기가 쉽게 뽑혀요", label:"고자리파리", cause:"고자리파리 피해일 수 있어요. 유충이 뿌리와 비늘줄기를 가해해 뿌리가 잘리면서 포기가 쉽게 뽑히고 시들어요."},
@@ -964,7 +975,7 @@ const CROP_ISSUE_DB = {
     {keywords:["대목에서 싹","대목순","접목 아래에서 싹"], part:"줄기", symptom:"대목에서 싹이 나요", label:"대목맹아(대목순)", cause:"대목맹아(대목순)일 수 있어요. 접목한 나무는 뿌리 쪽 대목에서도 싹이 올라올 수 있는데, 그대로 두면 양분을 빼앗겨 원가지 생육이 나빠지니 보이는 대로 일찍 제거해주시는 게 좋아요."},
     {keywords:["다닥다닥 붙어","열매 수가 달라","한쪽만 열매가 없"], part:"열매", symptom:"열매가 다닥다닥 붙어 자라요", label:"적과 미실시(착과 과다·불균일)", cause:"적과 미실시(착과 과다·불균일)일 수 있어요. 열매솎기(적과)를 제때 안 하면 한 가지에 너무 많이 달리거나, 수정이 고르지 않으면 가지·나무마다 열매 수가 차이 나요. 적과 시기를 놓쳤다면 지금이라도 여분의 열매를 솎아주시면 남은 열매가 더 실해져요."},
     {keywords:["담갈색 반점","잿빛무늬","회성병","곰팡이 덮여","열매 표면에 담갈색 원형 반점이 생기고 회색 곰팡이가 덮여요"], part:"열매", symptom:"열매 표면에 담갈색 원형 반점이 생기고 회색 곰팡이가 덮여요", label:"잿빛무늬병(균핵병)", cause:"잿빛무늬병(균핵병)일 수 있어요. 개화기 꽃을 통해 감염되고, 성숙기에는 열매 표면에 담갈색 병반이 생겨 확대되며 움푹해지고 회색 포자가 덮여요."},
-    {keywords:["갈색 반점","주황색 포자","탄저","열매에 갈색 반점이 생기고 점점 커지며 주황색 포자가 보여요"], part:"열매", symptom:"열매에 갈색 반점이 생기고 점점 커지며 주황색 포자가 보여요", label:"탄저병", cause:"탄저병일 수 있어요. 장마기 이후 비와 바람으로 급격히 번지고, 열매가 움푹 들어가며 주황색 포자덩어리가 생겨요."},
+    {keywords:["갈색 반점","주황색 포자","열매에 갈색 반점이 생기고 점점 커지며 주황색 포자가 보여요"], part:"열매", symptom:"열매에 갈색 반점이 생기고 점점 커지며 주황색 포자가 보여요", label:"과실 갈색 썩음", cause:"과실이 썩는 병일 수 있어요. 장마기 이후 비와 바람으로 급격히 번지고, 열매가 움푹 들어가며 주황색 포자덩어리가 생겨요. 정확한 병명은 농업기술센터에서 확인하시고, 복숭아에 등록된 약제로 방제해 주세요."},
     {keywords:["수침상","구멍이 뚫","천공병","세균구멍병","잎에 물에 젖은 듯한 반점이 생기고 구멍이 뚫려요"], part:"잎", symptom:"잎에 물에 젖은 듯한 반점이 생기고 구멍이 뚫려요", label:"세균구멍병(천공병)", cause:"세균구멍병(천공병)일 수 있어요. 수침상 반점이 갈색으로 변하며 딱지처럼 떨어져나가 구멍이 생기고, 가지·열매에도 병반이 나타나요."},
     {keywords:["오글쪼글","붉게 부풀","축엽병","잎오갈병","새잎이 붉게 부풀고 오글쪼글해져요"], part:"잎", symptom:"새잎이 붉게 부풀고 오글쪼글해져요", label:"잎오갈병(축엽병)", cause:"잎오갈병(축엽병)일 수 있어요. 봄철 저온다습한 조건에서 새로 나온 잎이 붉게 부풀어 오글쪼글해져요."},
     {keywords:["흰가루","잎과 열매에 흰가루가 덮여요"], part:"잎", symptom:"잎과 열매에 흰가루가 덮여요", label:"흰가루병", cause:"흰가루병일 수 있어요. 시설재배나 통풍이 안 되는 환경에서 잎·열매 표면에 흰 곰팡이가 덮여요."},
@@ -977,7 +988,7 @@ const CROP_ISSUE_DB = {
     {keywords:["어린 열매가 떨어","생리적 낙과","어린 열매가 자꾸 떨어져요"], part:"열매", symptom:"어린 열매가 자꾸 떨어져요", label:"생리적 낙과", cause:"생리적 낙과일 수 있어요. 경핵기에 저장양분이 부족하거나 수세가 약하면 어린 열매가 자꾸 떨어져요."}
   ],
   "아로니아": [
-    {keywords:["열매에 갈색 반점","짓무르","열매에 갈색 반점이 생기고 짓무르며 썩어요","탄저병"], part:"열매", symptom:"열매에 갈색 반점이 생기고 짓무르며 썩어요", label:"탄저병", cause:"탄저병일 수 있어요. 고온다습한 환경에서 비를 타고 전염되며 열매에 반점이 생기고 물러 썩어요."},
+    {keywords:["열매에 갈색 반점","짓무르","열매에 갈색 반점이 생기고 짓무르며 썩어요"], part:"열매", symptom:"열매에 갈색 반점이 생기고 짓무르며 썩어요", label:"과실 갈색 썩음", cause:"과실이 썩는 병일 수 있어요. 고온다습한 환경에서 비를 타고 전염되며 열매에 반점이 생기고 물러 썩어요. 정확한 병명은 농업기술센터에서 확인하시고, 등록된 약제로 방제해 주세요."},
     {keywords:["잎에 갈색 반점","조기낙엽","잎에 갈색 반점이 생기고 일찍 떨어져요","점무늬병"], part:"잎", symptom:"잎에 갈색 반점이 생기고 일찍 떨어져요", label:"점무늬병(갈반병)", cause:"점무늬병(갈반병)일 수 있어요. 비가 잦고 습한 환경에서 잎에 갈색 반점이 생기며, 심하면 조기낙엽으로 이어져요."},
     {keywords:["뿌리가 검게","나무 전체가 시들","뿌리가 검게 변하고 나무 전체가 시들어요","뿌리썩음병"], part:"뿌리", symptom:"뿌리가 검게 변하고 나무 전체가 시들어요", label:"뿌리썩음병", cause:"뿌리썩음병일 수 있어요. 배수가 안 되는 과습한 토양에서 뿌리가 썩으며 나무 전체 세력이 약해지고 시들어요."},
     {keywords:["흰 가루","잎에 흰 가루가 덮여요","흰가루병"], part:"잎", symptom:"잎에 흰 가루가 덮여요", label:"흰가루병", cause:"흰가루병일 수 있어요. 통풍이 안 되고 밀식된 환경에서 잎 표면에 흰 곰팡이가 덮여요."},
@@ -1326,9 +1337,12 @@ const CROP_INFO = {
   }
 };
 const REGION_STAFF = {
-  "충청·경기": { name:"이준희 팀장", phone:"010-9283-1393" },
-  "영남": { name:"박태진 팀장", phone:"010-8131-9840" },
-  "강원·호남·경북(청송·봉화)": { name:"박정호 부장", phone:"010-9158-0404" },
+  /* ⚠ 개인 휴대폰 번호는 넣지 않는다. 이 위젯은 홈페이지에 공개돼 있어
+       소스에 적힌 번호가 그대로 수집 대상이 된다.
+       "누구를 찾으면 되는지"만 알려주고 연결은 대표번호로 받는다. */
+  "충청·경기": { name:"이준희 팀장" },
+  "영남": { name:"박태진 팀장" },
+  "강원·호남·경북(청송·봉화)": { name:"박정호 부장" },
 };
 const REGION_CITY_LIST = {
   "충청·경기": ["수원","성남","용인","고양","화성","평택","안성","이천","여주","양평","안양","부천","시흥","안산","김포","파주","의정부","동두천","과천","오산","군포","의왕","하남","남양주","양주","포천","연천","가평","구리","천안","아산","서산","당진","논산","공주","보령","계룡","홍성","예산","태안","부여","서천","청양","금산","청주","충주","제천","음성","진천","괴산","보은","옥천","영동","증평","단양","대전","세종","서울","인천"],
@@ -2657,7 +2671,7 @@ var TABICON = {
   "video": "data:image/png;base64,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"
 };
 var VIDEOS = [{"id":"dYugMCVmhlI","kind":"제품","t":"임팩트원 사용법 — 작물별 사용 시기","p":["임팩트원"],"c":[],"vert":true},{"id":"Wzy5nSeGdYo","kind":"제품","t":"딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다 (세종시 연동면 농가 사례)","p":["임팩트원","하이슈거"],"c":["딸기"],"file":"video/Wzy5nSeGdYo.mp4"},{"id":"13nt6XeAgAE","kind":"제품","t":"겨울 하우스 시설채소 관리 — 뿌리는 임팩트골드, 잎은 히미업, 꽃은 임팩트원","p":["임팩트골드","히미업","임팩트원"],"c":["오이","토마토","딸기","참외","수박","가지","상추"],"file":"video/13nt6XeAgAE.mp4"},{"id":"ykLigc4psRY","kind":"제품","t":"고추 장마철 관리 — 잎·줄기는 임팩트규산, 뿌리는 임팩트골드, 껍질은 칼슘탄·속딴딴, 꽃은 임팩트원","p":["임팩트규산","임팩트규산 골드","임팩트골드","칼슘탄","속딴딴","임팩트원"],"c":["고추"],"k":["탄저병","탄저"],"note":"장마철 영양 관리 영상 · 탄저병 방제는 등록 약제로","file":"video/ykLigc4psRY.mp4"},{"id":"vhQvKhXcjr4","kind":"제품","t":"임팩트과립 보리·밀 사용법 — 사용 시기와 양","p":["임팩트과립"],"c":["밀"],"from":"2026-11-04T09:00:00+09:00","vert":true},{"id":"aZVt9QTNht8","kind":"제품","t":"같은 아미노산일까? 원료와 분해 방식이 다릅니다","p":["임팩트과립","임팩트골드","임팩트원"],"c":[],"from":"2026-11-06T09:00:00+09:00","vert":true},{"id":"89HqCPNN484","kind":"제품","t":"아미노산 비료, 비싸고 싼 차이 — 원료와 분해 방식 확인하는 법","p":["임팩트과립","임팩트골드","임팩트원"],"c":[],"k":["효소분해","아미노산","혈분","L형","D형"],"file":"video/89HqCPNN484.mp4"},{"id":"3HrCOXWGfPE","kind":"쇼츠","t":"고추 탄저병 원인과 해결 — 범인은 빗방울","p":[],"c":["고추"]},{"id":"FUqkyk16ZXo","kind":"쇼츠","t":"사과 일소(햇볕 데임) 원인과 해결 — 데기 전에 막아야 한다","p":[],"c":["사과"]},{"id":"OmfrclBgBHw","kind":"쇼츠","t":"겨울 하우스 병의 범인은 밤 이슬 — 시설채소 결로 관리","p":[],"c":["오이","토마토","딸기","참외","수박","가지","상추"]},{"id":"NTbxT8zcVb4","kind":"쇼츠","t":"꽃은 피는데 안 달린다면? 범인은 부족한 햇빛 — 겨울 토마토·오이 관리","p":[],"c":["토마토","오이"]},{"id":"YLPreraNDtw","kind":"쇼츠","t":"밍밍한 딸기, 범인은 따뜻한 밤 — 딸기 단계별 밤 온도","p":[],"c":["딸기"]},{"id":"5UCcYgcnzHU","kind":"쇼츠","t":"찌그러진 첫 딸기, 범인은 수정 불량 — 딸기 개화기 벌 관리","p":[],"c":["딸기"]},{"id":"-3Qi2kdRrE4","kind":"쇼츠","t":"겨울에 솟는 양파, 범인은 서릿발 — 양파 아주심기 관리","p":[],"c":["양파"]},{"id":"W7zAvaR1o1U","kind":"쇼츠","t":"김장 배추·무 언 피해 원인과 대비 — 무가 먼저 언다","p":[],"c":["배추","무","얼갈이배추"]},{"id":"7OPvxOSjk8U","kind":"쇼츠","t":"내년 마늘 크기와 모양, 심는 날 좌우된다 — 씨마늘 고르기·심는 깊이","p":[],"c":["마늘"],"from":"2026-11-03T13:00:00+09:00"},{"id":"zcgAl1TObhU","kind":"쇼츠","t":"보리·밀 겨울 농사, 세 번만 챙기세요 — 배수로·밟기·재생기","p":[],"c":["밀"]}];
-var BUILT = "2026-11-03";
+var BUILT = "2026-11-10";
 </script>
 <script>
 /* ===================================================================
@@ -3290,18 +3304,97 @@ function credit(x){
   return x.cr.ai ? '<p class="pcap">⚠ 사례 · AI로 만든 예시 그림입니다. 실제 사진이 아니니 진단은 실물과 증상 설명으로 하세요.</p>'
                  : '<p class="pcap">사진: ' + esc(x.cr.by || "작자 미상") + ' · ' + esc(x.cr.lic) + ' · <a href="' + esc(x.cr.page) + '" target="_blank" rel="noopener">위키미디어 공용</a></p>';
 }
-function viewPest(){
+/* ---------- 사진 진단 — 상담봇과 같은 AI 중계(Apps Script)에 사진을 보낸다 ----------
+   ⚠ 중계 지시문이 병명 단정·약제·제품 이름·「예방/치료」를 막는다(04_스크립트\상담봇_사진진단\Code.gs).
+   ⚠ 하루 10장은 기기 기준(상담봇과 같은 ablefarm_device 꼬리표라 합쳐서 센다). */
+var PHOTO_ENDPOINT = "https://script.google.com/macros/s/AKfycbybDyH2h4l57fb_OkyGkyVyoSbLtjvd2iIN9M5dbGH7yNDv8pLYupki6Z6iMRoP0rXdaw/exec";
+var PH = {img:"", note:"", busy:false, text:"", err:"", crop:""};
+var PH_FAIL = {daily_full:"오늘은 사진 진단 요청이 많아 잠시 쉬고 있어요.", device_full:"사진 진단은 이 기기에서 하루 10장까지예요.", too_fast:"요청이 몰리고 있어요. 잠시 뒤 다시 해 주세요.", too_big:"사진이 너무 커요. 다른 사진으로 해 주세요."};
+function deviceTag(){
+  try { var t = localStorage.getItem("ablefarm_device"); if (!t){ t = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem("ablefarm_device", t); } return t; }
+  catch(e){ return "nostore"; }
+}
+function shrinkPhoto(file){
+  return new Promise(function(ok, no){
+    var fr = new FileReader();
+    fr.onerror = no;
+    fr.onload = function(){
+      var im = new Image();
+      im.onerror = no;
+      im.onload = function(){
+        var k = Math.min(1, 1280 / Math.max(im.width, im.height)), cv = document.createElement("canvas");
+        cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        ok(cv.toDataURL("image/jpeg", 0.82));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function askPhoto(){
+  if (!PH.img || PH.busy) return;
+  if (!navigator.onLine){ PH.err = "사진 진단은 인터넷이 필요해요. 연결된 곳에서 다시 눌러 주세요."; draw(); return; }
+  PH.busy = true; PH.text = ""; PH.err = ""; PH.crop = S.crop; draw();
+  fetch(PHOTO_ENDPOINT, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify({image: PH.img.split(",")[1], crop: S.crop, note: PH.note, device: deviceTag(), token: ""})})
+    .then(function(r){ return r.json(); })
+    .then(function(r){
+      PH.busy = false;
+      // 중계 거르기를 지나친 문장도 한 번 더 뺀다 — 비료 자료에 「예방·치료」·제품 이름이 붙으면 안 된다
+      if (r && r.ok && r.text){
+        PH.text = r.text.split(/(?<=[.!?。])\s+/).filter(function(s){ return !/예방|치료|에이블팜|영양제|비료|제품/.test(s); }).join(" ");
+        if (!PH.text) PH.err = "소견을 정리하지 못했어요. 아래 「증상으로 찾기」로 맞춰 보세요.";
+      }
+      else PH.err = (r && PH_FAIL[r.reason]) || "사진을 읽지 못했어요. 잠시 뒤 다시 눌러 주세요.";
+      if (S.tab === "pest") draw();
+    })
+    .catch(function(){ PH.busy = false; PH.err = "AI 서버에 연결하지 못했어요. 인터넷을 확인하고 다시 눌러 주세요."; if (S.tab === "pest") draw(); });
+}
+// AI 소견에 나온 이름과 같은 병해충 카드를 자료에서 찾는다 (「고추 탄저병」→「탄저병」처럼 작물명은 떼고 본다)
+function photoMatches(all){
+  if (!PH.text) return [];
+  // 띄어쓰기·「세균성/세균」 차이는 없애고 맞춘다. 소견에 먼저 나온 이름부터
+  var norm = function(s){ return String(s).replace(/\(.*?\)/g, "").replace(/\s+/g, "").replace(/성(?=[가-힣])/g, ""); }, t = norm(PH.text);
+  return all.map(function(x){ var n = norm(x.n); return {x:x, at: n.length >= 2 ? t.indexOf(n) : -1, len: n.length}; })
+    .filter(function(m){ return m.at >= 0; })
+    .sort(function(a, b){ return a.at - b.at || b.len - a.len; })
+    .map(function(m){ return m.x; }).slice(0, 4);
+}
+function viewPhoto(all){
+  var h = '<div class="card phcard"><div class="eyebrow">Photo · 사진으로 진단</div><h3 style="margin-top:4px">' + esc(S.crop) + ' 사진을 찍으면 AI가 살펴봐요</h3>' +
+    '<p class="sub" style="margin:0">잎·열매의 증상 부위를 가까이, 밝은 곳에서 찍으세요. 사진은 AI 판독을 위해 외부 AI 서비스(Anthropic)로 보내지고, 회사 서버에는 저장하지 않아요. 농가 얼굴·주소가 찍히지 않게 해 주세요.</p>' +
+    '<div class="phbtns"><label class="go">📷 사진 찍기<input type="file" id="phCam" accept="image/*" capture="environment"></label>' +
+    '<label>🖼 앨범에서 고르기<input type="file" id="phPick" accept="image/*"></label></div>' +
+    '<input id="phNote" type="text" maxlength="120" placeholder="농가 설명(선택) — 예: 아랫잎부터 누렇게, 작은 벌레가 보임" value="' + esc(PH.note) + '">';
+  if (PH.img){
+    h += '<div class="phres"><img src="' + PH.img + '" alt="보낸 사진"><div class="phtxt">' +
+      (PH.busy ? '<p class="sub" style="margin:0">사진 보고 있어요, 잠시만요…</p>'
+       : PH.err ? '<p style="margin:0;color:var(--warn,#b45309)">' + esc(PH.err) + '</p><button type="button" class="addm" id="phAgain" style="margin-top:8px">다시 보내기</button>'
+       : PH.text ? '<p style="margin:0">' + esc(PH.text) + '</p>'
+       : '<button type="button" class="addm" id="phSend">AI에게 보내기</button>') + '</div></div>';
+    if (PH.text){
+      if (PH.crop && PH.crop !== S.crop) h += '<p class="sub" style="margin:8px 0 0">※ 이 소견은 ' + esc(PH.crop) + ' 기준이에요.</p>';
+      var m = photoMatches(all);
+      if (m.length) h += '<h4 style="margin:14px 0 4px">📚 자료에서 찾은 비슷한 병해충</h4><div class="prows">' + m.map(function(x){
+        return '<button type="button" class="prow" data-pest="' + esc(x.id) + '">' + pestImg(x) + '<div><b>' + esc(x.n) + '</b> <span class="badge' + (x.k === "해충" ? " amber" : "") + '">' + esc(x.k) + '</span><span>' + esc(plain(x.g)) + '</span></div></button>';
+      }).join("") + '</div>';
+      h += '<div class="warnbox" style="margin-top:12px"><b>현장 안내</b><ul><li>사진만으로 내린 <b>참고 소견</b>이에요. 아래 「증상으로 찾기」로 한 번 더 맞춰 보세요.</li><li>방제는 이 작물에 등록된 약제를 라벨대로 — 확실하지 않으면 농업기술센터에 확인하세요.</li></ul></div>';
+    }
+  }
+  return h + '</div>';
+}function viewPest(){
   loadPest();
   if (PEST_ERR) return '<div class="card warn"><b>영농정보를 불러오지 못했어요.</b><br>인터넷 연결을 확인하고 다시 눌러 주세요. 한 번 본 자료는 그다음부터 인터넷 없이도 보입니다.<br><button type="button" id="pestRetry" class="addm" style="margin-top:10px">다시 불러오기</button></div>';
   if (!PEST) return '<div class="card"><p class="sub" style="margin:0">영농정보를 불러오는 중…</p></div>';
   var all = pestItems();
-  if (!all.length) return '<div class="card warn"><b>' + esc(S.crop) + '</b>은(는) 농촌진흥청 병해충 자료가 없습니다. 작물정보 탭의 「자주 생기는 문제」를 참고하세요.</div>';
+  if (!all.length) return viewPhoto(all) + '<div class="card warn"><b>' + esc(S.crop) + '</b>은(는) 농촌진흥청 병해충 자료가 없습니다. 작물정보 탭의 「자주 생기는 문제」를 참고하세요.</div>';
   var wf = wxFlags();
   all.forEach(function(x){ x._r = pestRisk(x, wf); });
   var byRisk = function(a, b){ return b._r.s - a._r.s || (b.ph ? 1 : 0) - (a.ph ? 1 : 0); };
   // ① 오늘 주의
   var top = all.filter(function(x){ return x._r.s > 0; }).sort(byRisk).slice(0, 3);
-  var h = '<div class="card pestrisk"><div class="eyebrow">Today · 날씨로 본 주의</div>' +
+  var h = viewPhoto(all) + '<div class="card pestrisk"><div class="eyebrow">Today · 날씨로 본 주의</div>' +
     '<h3>' + esc(S.crop) + ' — 오늘 살펴볼 병해충</h3>' +
     (wf ? '<div class="wxchips"><span>🌡️ ' + Math.round(wf.tmin) + '~' + Math.round(wf.tmax) + '℃</span><span>💧 습도 ' + wf.rh + '%</span><span>☔ 비 ' + wf.pp + '%</span>' +
           wf.f.map(function(x){ return '<b>' + x[1] + '</b>'; }).join("") + '</div>'
@@ -3623,11 +3716,16 @@ $("view").addEventListener("input", function(e){
 });
 $("view").addEventListener("change", function(e){
   if (e.target.id === "areaP") draw();
+  if (e.target.id === "phCam" || e.target.id === "phPick"){
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    shrinkPhoto(f).then(function(u){ PH.img = u; PH.text = ""; PH.err = ""; askPhoto(); }).catch(function(){ toast("사진을 읽지 못했어요"); });
+  }
   if (e.target.id === "plantDate" && e.target.value){ S.plant[S.crop] = e.target.value.slice(5); S.open = {}; draw(); toast("일정을 " + anchorOf(S.crop)[2] + "에 맞췄어요"); }
 });
 // 병해충 탭: 증상·종류 고르기, 상세 열기, 보내기
 document.addEventListener("click", function(e){
-  var b = e.target.closest("[data-pest],[data-sym],[data-kind],#pestX,#pestSend,#pestPlan,#pestRetry"); if (!b) return;
+  var b = e.target.closest("[data-pest],[data-sym],[data-kind],#pestX,#pestSend,#pestPlan,#pestRetry,#phAgain,#phSend"); if (!b) return;
+  if (b.id === "phAgain" || b.id === "phSend"){ askPhoto(); return; }
   if (b.id === "pestRetry"){ PEST_ERR = false; draw(); return; }
   if (b.dataset.pest){ showPest(b.dataset.pest); return; }
   if (b.dataset.sym != null){ PS.sym = PS.sym === b.dataset.sym ? "" : b.dataset.sym; draw(); return; }
@@ -3639,6 +3737,7 @@ document.addEventListener("click", function(e){
 $("pestDlg").addEventListener("close", function(){ PS.open = null; });
 $("pestDlg").addEventListener("click", function(e){ if (e.target === this) this.close(); }); // 바깥 누르면 닫기
 $("view").addEventListener("input", function(e){
+  if (e.target.id === "phNote"){ PH.note = e.target.value; return; }
   if (e.target.id === "pestQ"){ PS.q = e.target.value.trim(); var pos = e.target.selectionStart; draw(); var q = $("pestQ"); if (q){ q.focus(); try { q.setSelectionRange(pos, pos); } catch(err){} } }
 });
 // 새 농가: 농가 칸·정식일·담은 제품을 비운다 (작물·면적 단위는 그대로)
