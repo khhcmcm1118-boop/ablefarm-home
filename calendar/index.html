@@ -256,7 +256,7 @@ function cropVids(c){ return VIDS.filter(function(v){ return v.kind === "쇼츠"
 function draw(){
   $("cats").innerHTML = GROUPS.map(function(g, i){ return '<button class="cat" role="tab" aria-pressed="' + (i === cat) + '" data-g="' + i + '">' + esc(g[0]) + '<small>' + g[1].length + '</small></button>'; }).join("");
   $("crops").innerHTML = GROUPS[cat][1].map(function(c){
-    return '<button class="crop" aria-pressed="' + (c === crop) + '" data-c="' + esc(c) + '"><img loading="lazy" src="' + icon(c) + '" alt=""><b>' + esc(c) + '</b></button>';
+    return '<button class="crop" aria-pressed="' + (c === crop) + '" data-c="' + esc(c) + '"><img src="' + icon(c) + '" alt=""><b>' + esc(c) + '</b></button>';
   }).join("");
   var mh = "";
   for (var m = 1; m <= 12; m++) mh += '<button class="mo' + (m === nowM ? ' now' : '') + '" aria-pressed="' + (m === month) + '" data-m="' + m + '">' + m + '월</button>';
