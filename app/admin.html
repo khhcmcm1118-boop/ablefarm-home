@@ -853,7 +853,7 @@
             <span class="tiny muted" id="gSpan"></span>
           </div>
           <div class="tiny muted" style="margin-top:8px">
-            담당자 탭(실적)에서 <b>샘플을 빼고</b> 셉니다. 앱으로 들어온 주문은 「출고완료 → 일자별전체 이관」을 한 뒤에 반영됩니다.
+            「일자별전체」 에서 <b>샘플을 빼고</b> 셉니다 — 순위·정산과 같은 자료입니다. 앱으로 들어온 주문은 「출고완료 → 일자별전체 이관」을 한 뒤에 반영됩니다.
           </div>
         </div>
 
@@ -2425,7 +2425,8 @@ function loadReceipts(){
 }
 
 /* ═══════════════ 지역별 실적 ═══════════════
-   담당자 탭(실적)에서 샘플을 빼고 센다. 도 · 시군 · 담당자로 걸러 본다. */
+   「일자별전체」 에서 샘플을 빼고 센다 (순위·정산과 같은 자료). 도 · 시군 · 담당자로 걸러 본다.
+   2026-11-12 이전에는 담당자 탭을 읽어 10/07~11/09 62줄밖에 안 나왔다 — 서버 readRegionSales_ 참고. */
 $('#btnRegion').addEventListener('click', loadRegion);
 $('#gQ').addEventListener('keydown', function(e){ if (e.key === 'Enter') loadRegion(); });
 $('#gSi').addEventListener('change', function(){ fillGun(); });
