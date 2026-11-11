@@ -340,7 +340,7 @@ function draw(){
   var nx = CAL[crop][month % 12];
   $("next").innerHTML = '<b>다음 달('+nx.m+'월) 미리 보기</b> · '+esc(nx.s)+(nx.p.length ? ' — '+nx.p.map(function(p){ return esc(p[0]); }).join(", ") : "");
 
-  $("yearTitle").textContent = crop + " 한 해 재배력" + (CAL_BASIS[crop] ? " · " + CAL_BASIS[crop] + " 기준" : "");
+  $("yearTitle").textContent = crop + " 한 해 재배력" + (CAL_BASIS[crop] ? " · " + CAL_BASIS[crop] + (/기준\)?$/.test(CAL_BASIS[crop]) ? "" : " 기준") : "");
   $("yearList").innerHTML = CAL[crop].map(function(r){
     return '<div class="yr'+(r.m===month?' cur':'')+'"><div class="m">'+r.m+'월</div><div><div class="s">'+esc(r.s)+'</div>'+(r.p.length ? '<div class="p">'+r.p.map(function(p){ return esc(p[0]); }).join(" · ")+'</div>' : '')+'</div></div>';
   }).join("");
