@@ -136,7 +136,7 @@
     border-radius:999px;
     margin-bottom:8px;
   }
-  .card .pname{
+  .card .pname, .card .cal-name{
     font-size:16.5px;
     font-weight:800;
     color:var(--dark-green);
@@ -460,7 +460,7 @@
   .avatar{border-color:var(--paper);background:var(--sage-l);}
   .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 4px 10px -8px rgba(60,50,20,.5);}
   .card .badge{background:var(--sage-l);color:var(--sage-d);}
-  .card .pname{color:var(--sage-d);}
+  .card .pname, .card .cal-name{color:var(--sage-d);}
   .card .label{color:var(--sage-d);}
   .card .pc-img{background:linear-gradient(160deg,#F3F7E8,#DCE6CC);}
   .card .promo{background:var(--sage-l);border-color:#D2E0C7;color:var(--sage-d);}
@@ -500,6 +500,12 @@
   .card.mini .pc-photo img{height:176px;}
 </style>
 <script>if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add('embed');</script>
+
+<!-- 재배력 원본 — 홈페이지 재배력 페이지(calendar/)가 읽는 바로 그 파일이다.
+     재배력이 고쳐지면 봇도 자동으로 따라간다. 파일을 못 읽어도 봇은 그대로 돌아가고
+     재배력 기능만 조용히 꺼진다(아래 CALENDAR_READY). -->
+<script src="calendar/cal-data.js"></script>
+<script src="calendar/cal-extra.js"></script>
 <style>
   html.embed body{padding:0 !important;display:block !important;min-height:0 !important;background:#FAF7F0}
   html.embed .widget{max-width:none !important;height:100vh;border:0 !important;border-radius:0 !important;box-shadow:none !important}
@@ -802,7 +808,7 @@ const CROP_LIST_RAW = [
   "고구마","감자","생강","율무","녹차","오미자","버섯",
   "갓","열무","얼갈이배추","청경채","당근","우엉","연근","도라지","더덕",
   "미나리","쑥갓","아욱","근대","깻잎","락교",
-  "대추","호두","은행","석류","유자","모과","살구",
+  "대추","호두","은행","석류","유자","모과","살구","밤나무","밤",
   "팥","녹두","완두","수수","메밀","귀리",
   "복분자","산딸기","아로니아",
   "콩나물","강낭콩","완두콩","병아리콩"
@@ -829,10 +835,60 @@ function stripKongFalsePositives(msg){
   return t;
 }
 
+/* "밤"(열매)은 시간을 말하는 "밤에·밤 기온·어젯밤"과 글자가 겹친다.
+   봇이 쓰는 설명에도 "밤 최저온도" 같은 말이 흔해서, 이런 표현을 먼저 지우고 검사한다.
+   "파밤나방"처럼 해충 이름에 든 "밤"도 작물로 읽히면 안 되므로 함께 지운다. */
+const BAM_FALSE_POSITIVES = ["파밤나방","밤나방","밤에","밤부터","밤까지","밤낮","밤 기온","밤기온","밤 온도","밤온도","밤 최저","밤최저","밤 동안","어젯밤","지난밤","오늘밤","오늘 밤","밤새","밤사이","한밤","밤중","밤이슬","밤이 되면","밤만","밤 사이"];
+function stripBamFalsePositives(msg){
+  let t = msg;
+  BAM_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
+  return t;
+}
+
+/* "배"(과일)는 "재배·재배력·배수·1000배·몇 배" 안에도 들어 있어서
+   그대로 찾으면 엉뚱하게 배 농사로 읽힌다. 이런 말을 먼저 지우고 검사한다.
+   ("배추·양배추"처럼 더 긴 작물 이름은 위에서 먼저 잡히므로 그대로 둬도 안전하다) */
+const BAE_FALSE_POSITIVES = ["재배","배추","배수","배양","배지","배합","배출","배관","배송","배달","배치","배열","배경","배려","배꼽","배게","배터리","배분","배부","배속","배율","배란","배기","배전","배우","배급","배당","배상","배차","배선","배색","배점","배정","배제","배후","배탈","배앓이","배짱"];
+function stripBaeFalsePositives(msg){
+  let t = String(msg)
+    .replace(/\d+\s*배/g, '')      // 1000배 · 500 배 (희석배수)
+    .replace(/몇\s*배/g, '')
+    .replace(/[두세네다섯]\s*배/g, '');
+  BAE_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
+  return t;
+}
+
+/* "무"(채소)는 "나무·점무늬병·무름병·무엇·무농약" 안에도 들어 있다.
+   특히 "배나무·감나무"처럼 나무 이름을 말하면 엉뚱하게 무 농사로 읽혀서 꼭 지워야 한다. */
+const MU_FALSE_POSITIVES = ["나무","무늬","무름","무엇","무슨","아무","무료","무리","무조건","무농약","무방제","무처리","무게","고무","무더위","무덥","무성","무기","무균","무효","업무","임무","의무","재무","무역","무침","무지","무심","무난","무사","무한","무시","무려","무관","무상","무장","무용","무렵"];
+function stripMuFalsePositives(msg){
+  let t = String(msg);
+  MU_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
+  return t;
+}
+
+/* "감"(단감·홍시)도 "감기·민감·감소·감염" 안에 들어 있다.
+   ("감자"는 더 긴 이름이라 위에서 먼저 잡히므로 그대로 둬도 안전하다) */
+const GAM_FALSE_POSITIVES = ["감기","감사","감소","감염","민감","예감","공감","감독","감동","감정","감각","감량","감수","감지","감시","감당","감히","감안","감퇴","감축","감상","감탄","감가","감면","감내","느낌"];
+function stripGamFalsePositives(msg){
+  let t = String(msg);
+  GAM_FALSE_POSITIVES.forEach(fp => { t = t.split(fp).join(''); });
+  return t;
+}
+
 function detectAnyCrop(msg){
   const safeForMil = stripMilFalsePositives(msg);
+  const safeForBam = stripBamFalsePositives(msg);
+  const safeForBae = stripBaeFalsePositives(msg);
+  const safeForMu  = stripMuFalsePositives(msg);
+  const safeForGam = stripGamFalsePositives(msg);
   for(const c of CROP_LIST){
-    const target = (c === "밀") ? safeForMil : msg;
+    let target = msg;
+    if(c === "밀") target = safeForMil;
+    else if(c === "밤") target = safeForBam;
+    else if(c === "배") target = safeForBae;
+    else if(c === "무") target = safeForMu;
+    else if(c === "감") target = safeForGam;
     if(target.includes(c)) return c;
   }
   return null;
@@ -2896,20 +2952,22 @@ let lastCauseWasPest = false;
 /* 제품은 농민이 스스로 누를 때만 보여준다.
    봇의 본래 일은 작물 이야기를 전하는 것이고, 제품은 그 끝에 놓인 선택지다. */
 function causeChips(){
-  return [
-    Object.assign(productChip(), {primary:true}),
-    {label:"다른 고민이 있어요", value:"__reset__"},
-    {label:"직접 상담받고 싶어요", value:"__contact__"},
-  ];
+  const list = [Object.assign(productChip(), {primary:true})];
+  const cal = calendarChip();
+  if(cal) list.push(cal);
+  list.push({label:"다른 고민이 있어요", value:"__reset__"});
+  list.push({label:"직접 상담받고 싶어요", value:"__contact__"});
+  return list;
 }
 
 function followUpChips(){
-  return [
-    productChip(),
-    {label:"다른 고민이 있어요", value:"__reset__"},
-    {label:"사용법 다시 볼래요", value:"__usage__"},
-    {label:"직접 상담받고 싶어요", value:"__contact__", primary:true},
-  ];
+  const list = [productChip()];
+  const cal = calendarChip();
+  if(cal) list.push(cal);
+  list.push({label:"다른 고민이 있어요", value:"__reset__"});
+  list.push({label:"사용법 다시 볼래요", value:"__usage__"});
+  list.push({label:"직접 상담받고 싶어요", value:"__contact__", primary:true});
+  return list;
 }
 
 /* ------------------------------------------------------------------
@@ -3028,6 +3086,155 @@ function findQnaAnswer(msg){
   return best;
 }
 
+/* ==================================================================
+   재배력 — 홈페이지 재배력 페이지(calendar/)가 읽는 바로 그 자료를 함께 읽는다.
+   cal-data.js 기본 11작물 + cal-extra.js 추가 31작물 = 42작물.
+   재배력이 고쳐지면 봇도 자동으로 따라간다. 자료를 못 읽으면 이 기능만 조용히 꺼진다.
+   줄 형식: {m 월, s 생육 단계, t 할 일[], p [[제품, 쓰는 이유, 쓰는 법]]}
+   원본을 만드는 곳: 16_영업현장앱\자료_소스\build.ps1 (cal-extra.js 는 자동 생성)
+================================================================== */
+const CALENDAR = (function(){
+  const out = {};
+  try{
+    if(typeof CAL !== 'undefined' && CAL) Object.keys(CAL).forEach(k => { out[k] = CAL[k]; });
+    if(typeof CAL_EXTRA !== 'undefined' && CAL_EXTRA) Object.keys(CAL_EXTRA).forEach(k => { if(!out[k]) out[k] = CAL_EXTRA[k]; });
+  }catch(e){}
+  return out;
+})();
+const CALENDAR_BASIS = (function(){
+  const out = {};
+  try{
+    if(typeof CAL_BASIS !== 'undefined' && CAL_BASIS) Object.keys(CAL_BASIS).forEach(k => { out[k] = CAL_BASIS[k]; });
+    if(typeof BASIS_EXTRA !== 'undefined' && BASIS_EXTRA) Object.keys(BASIS_EXTRA).forEach(k => { if(!out[k]) out[k] = BASIS_EXTRA[k]; });
+  }catch(e){}
+  return out;
+})();
+const CALENDAR_CROPS = Object.keys(CALENDAR);
+const CALENDAR_READY = CALENDAR_CROPS.length > 0;
+
+/* 봇이 쓰는 작물 이름 → 재배력 키.
+   "사과·배", "마늘·양파" 같은 묶음 키는 아래에서 가운뎃점을 풀어 자동으로 찾는다. */
+const CAL_CROP_ALIAS = {"멜론":"메론","방울토마토":"토마토","감":"단감","파":"대파","밤나무":"밤","대두":"콩","메주콩":"콩"};
+function calKeyFor(crop){
+  if(!crop || !CALENDAR_READY) return null;
+  if(CALENDAR[crop]) return crop;
+  const alias = CAL_CROP_ALIAS[crop];
+  if(alias && CALENDAR[alias]) return alias;
+  const bundled = CALENDAR_CROPS.find(k => k.indexOf("·") >= 0 && k.split("·").indexOf(crop) >= 0);
+  return bundled || null;
+}
+
+/* ⚠ 재배력 자료에 병 이름이 「제품 쓰는 이유」로 들어간 자리는 보여주기 전에 바꾼다.
+   비료가 병에 듣는다는 말로 읽히면 안 된다 (비료관리법 — 단속 사례 있음).
+   원본(calendar/cal-data.js)도 같이 고쳐야 하므로, 사람이 확인한 것만 한 줄씩 적는다. */
+const CAL_REASON_FIX = [
+  ["노균병 시기 수세 지원", "다습기 수세 지원"]
+];
+/* 임팩트규산 골드의 「병해관리용 유기농업자재(공시)」는 2026-11-11 사장님 확인 결과
+   실제로 공시를 받은 제품이라 그대로 둔다 (친환경농어업법상 허용되는 표시). */
+function calReasonSafe(t){
+  let s = String(t || "");
+  CAL_REASON_FIX.forEach(pair => { s = s.split(pair[0]).join(pair[1]); });
+  return s;
+}
+
+const CAL_DIRECT_PATTERNS = ["재배력","시비력","월별 일정","월별일정","농사 일정","농사일정","작업 일정","영농 일정","연간 일정","한 해 일정","일년 일정","1년 일정","달력","캘린더","월별 관리","월별 작업","월별로","달마다","월별 재배"];
+const CAL_WHEN_WORDS = ["이번 달","이번달","이달","금월","지금","요즘","오늘","이맘때","이 시기","이시기","이번 주","이번주"];
+const CAL_TODO_WORDS = ["할 일","할일","해야","뭐 해","뭘 해","무엇을","작업","농사일","관리를","관리 어떻게","관리는"];
+function isCalendarRequest(msg){
+  if(CAL_DIRECT_PATTERNS.some(p => msg.includes(p))) return true;
+  const when = CAL_WHEN_WORDS.some(w => msg.includes(w)) || /\d{1,2}\s*월/.test(msg);
+  const todo = CAL_TODO_WORDS.some(w => msg.includes(w));
+  if(!when || !todo) return false;
+  // 증상을 말한 문장은 증상 흐름이 맡는다 ("지금 잎이 노란데 어떻게 관리해요")
+  if(findCropSpecificIssue(msg)) return false;
+  return true;
+}
+function calMonthFrom(msg){
+  const m = msg.match(/(\d{1,2})\s*월/);
+  if(m){ const n = parseInt(m[1], 10); if(n >= 1 && n <= 12) return n; }
+  return CURRENT_MONTH;
+}
+
+// 제품 이름이 봇이 아는 제품이면 홈페이지 제품 쪽으로 걸어준다. 모르는 이름은 글자만 보여준다.
+function calProductLink(name){
+  const clean = String(name || "").trim();
+  const flat = clean.replace(/\s+/g, '');
+  const hit = PRODUCT_ALIASES.find(a => a[0].replace(/\s+/g, '') === flat);
+  if(!hit) return escapeHtml(clean);
+  return '<a href="' + HOMEPAGE_URL + '/?product=' + encodeURIComponent(clean) + '" target="_blank" rel="noopener">' + escapeHtml(clean) + '</a>';
+}
+
+let lastCalCrop = null;
+let lastCalKey = null;
+let calAwaitingCrop = false;
+
+function addCalendarCard(cropShown, calKey, month){
+  const rows = CALENDAR[calKey] || [];
+  const row = rows.find(r => Number(r.m) === Number(month));
+  const basis = CALENDAR_BASIS[calKey];
+  const wrap = newBotRow();
+  const c = document.createElement('div');
+  c.className = 'card cal';   // 제품 카드(.card .pname)와 구분한다 — 검사·CSS가 섞이지 않게
+  let html = '<div class="pc-title"><div class="badge">재배력 · ' + month + '월</div>'
+           + '<div class="cal-name">' + escapeHtml(cropShown) + '</div></div>';
+  if(!row){
+    html += '<div class="row-line">이 달에는 따로 적어 둔 작업이 없어요.</div>';
+  } else {
+    if(row.s) html += '<div class="row-line"><span class="label">생육 단계 · </span>' + escapeHtml(row.s) + '</div>';
+    const todo = (row.t || []).filter(Boolean);
+    if(todo.length) html += '<div class="row-line"><span class="label">이 달 할 일 · </span>' + todo.map(escapeHtml).join(' / ') + '</div>';
+    const prods = (row.p || []).filter(p => p && p[0]);
+    if(prods.length){
+      html += '<div class="row-line"><span class="label">쓰면 좋은 제품 · </span></div>';
+      prods.forEach(p => {
+        html += '<div class="row-line">· ' + calProductLink(p[0])
+             + (p[1] ? ' — ' + escapeHtml(calReasonSafe(p[1])) : '')
+             + (p[2] ? '<br><span style="color:var(--ink-soft)">　쓰는 법 · ' + escapeHtml(p[2]) + '</span>' : '')
+             + '</div>';
+      });
+    } else {
+      html += '<div class="row-line"><span class="label">쓰면 좋은 제품 · </span>이 달은 따로 없어요.</div>';
+    }
+  }
+  if(basis) html += '<div class="caution">기준 · ' + escapeHtml(basis) + '</div>';
+  html += '<div class="row-line" style="color:var(--ink-soft);font-size:13px">지역·품종·재배 방식에 따라 시기가 달라질 수 있어요. (농촌진흥청 농사로 자료 기준)</div>';
+  html += '<a class="more-btn" href="' + HOMEPAGE_URL + '/calendar/?c=' + encodeURIComponent(calKey) + '" target="_blank" rel="noopener">' + escapeHtml(cropShown) + ' 재배력 전체 보기 ↗</a>';
+  c.innerHTML = html;
+  wrap.appendChild(c);
+  thread.appendChild(wrap);
+  scrollBottom();
+}
+
+function calMonthChips(month){
+  const prev = month === 1 ? 12 : month - 1;
+  const next = month === 12 ? 1 : month + 1;
+  return [
+    {label: prev + "월은요?", value: "__calmonth__" + prev},
+    {label: next + "월은요?", value: "__calmonth__" + next}
+  ];
+}
+
+function answerCalendar(cropShown, calKey, month){
+  lastCalCrop = cropShown;
+  lastCalKey = calKey;
+  addCalendarCard(cropShown, calKey, month);
+  // 재배력을 이미 보여준 자리라 「이번 달 할 일」 버튼은 다시 붙이지 않는다
+  setChips(calMonthChips(month).concat([
+    productChip(),
+    {label:"다른 고민이 있어요", value:"__reset__"},
+    {label:"직접 상담받고 싶어요", value:"__contact__", primary:true}
+  ]));
+}
+
+// 작물에 재배력이 있을 때만 「이번 달 할 일」 버튼을 붙인다
+function calendarChip(){
+  if(!CALENDAR_READY) return null;
+  const key = lastCalKey || calKeyFor(currentCrop) || calKeyFor(lastNamedCrop);
+  if(!key) return null;
+  return {label:"📅 이번 달 할 일", value:"__calmonth__" + CURRENT_MONTH};
+}
+
 function handleUserMessage(raw){
   let msg = raw.trim();
   if(!msg) return;
@@ -3055,6 +3262,9 @@ function handleUserMessage(raw){
     exampleOffset = 0;
     exampleRound = 0;
     awaitingCropForExamples = true;
+    lastCalCrop = null;
+    lastCalKey = null;
+    calAwaitingCrop = false;
     showTyping(()=>{
       addBubble("네, 편하게 다시 말씀해주세요. 어떤 작물이신가요?", 'bot');
       chipsBox.innerHTML = '';
@@ -3223,6 +3433,66 @@ function handleUserMessage(raw){
       addBubble(getSupportedProductsMessage(), 'bot');
       chipsBox.innerHTML = '';
     });
+    return;
+  }
+
+  // -3.45) 재배력을 물었는데 작물을 안 말하셔서 되묻던 차례
+  if(calAwaitingCrop && !msg.startsWith("__")){
+    calAwaitingCrop = false;
+    const named = detectAnyCrop(msg) || msg.trim();
+    const key = calKeyFor(named);
+    if(key){
+      if(!currentCrop && detectAnyCrop(msg)) currentCrop = detectAnyCrop(msg);
+      showTyping(()=> answerCalendar(named, key, CURRENT_MONTH));
+    } else {
+      showTyping(()=>{
+        addBubble(named + " 재배력은 아직 준비 중이에요. 다른 작물 이름으로 말씀해 주시겠어요?", 'bot');
+        setChips(followUpChips());
+      });
+    }
+    return;
+  }
+
+  // -3.4) 재배력 질문 → 홈페이지 재배력(42작물)에서 그 달의 생육 단계·할 일·제품을 보여준다
+  if(CALENDAR_READY && isCalendarRequest(msg)){
+    const askedCrop = detectAnyCrop(msg) || currentCrop || lastNamedCrop;
+    const key = calKeyFor(askedCrop);
+    const month = calMonthFrom(msg);
+    if(key){
+      if(!currentCrop && askedCrop) currentCrop = askedCrop;
+      showTyping(()=> answerCalendar(askedCrop, key, month));
+      return;
+    }
+    if(askedCrop){
+      showTyping(()=>{
+        addBubble(askedCrop + " 재배력은 아직 준비 중이에요. 지금 올라와 있는 작물은 " + CALENDAR_CROPS.length + "가지예요. 다른 작물로 말씀해 주시면 바로 알려드릴게요.", 'bot');
+        setChips(followUpChips());
+      });
+      return;
+    }
+    calAwaitingCrop = true;
+    showTyping(()=>{
+      addBubble("어떤 작물의 재배력을 보시겠어요? 작물 이름을 말씀해 주세요.", 'bot');
+      chipsBox.innerHTML = '';
+    });
+    return;
+  }
+
+  // -3.35) 「이번 달 할 일」·「다음 달은요?」 버튼
+  if(msg.startsWith("__calmonth__")){
+    const mm = parseInt(msg.replace("__calmonth__",""), 10);
+    addBubble(mm + "월 할 일", 'user');
+    const key = lastCalKey || calKeyFor(currentCrop) || calKeyFor(lastNamedCrop);
+    const shown = lastCalCrop || currentCrop || lastNamedCrop || key;
+    if(key && mm >= 1 && mm <= 12){
+      showTyping(()=> answerCalendar(shown, key, mm));
+    } else {
+      calAwaitingCrop = true;
+      showTyping(()=>{
+        addBubble("어떤 작물인지 먼저 말씀해 주세요.", 'bot');
+        chipsBox.innerHTML = '';
+      });
+    }
     return;
   }
 
