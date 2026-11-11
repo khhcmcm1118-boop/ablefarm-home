@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>이번 달 할 일 · 작물별 재배력 | (주)에이블팜</title>
-<meta name="description" content="벼·고추·마늘·양파·배추·사과·배·포도·수박·참외·딸기 — 지금 시기에 할 일과 쓸 제품을 작물별로 알려드립니다.">
+<title>작물별 재배력 · 이번 달 할 일 | (주)에이블팜</title>
+<meta name="description" content="벼·고추·사과·복숭아·배추·감자 등 42개 작물 — 이번 달 할 일과 쓸 제품, 재배 정보 영상을 작물별로 알려드립니다.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="이번 달 할 일 · 작물별 재배력 | (주)에이블팜">
-<meta property="og:description" content="작물을 고르면 지금 시기에 할 일과 쓸 제품이 바로 나옵니다.">
+<meta property="og:title" content="작물별 재배력 · 이번 달 할 일 | (주)에이블팜">
+<meta property="og:description" content="작물을 고르면 이번 달 할 일과 쓸 제품, 재배 정보 영상이 바로 나옵니다.">
 <meta property="og:image" content="https://www.ablefarm.co.kr/assets/logo-full.jpg">
 <meta property="og:url" content="https://www.ablefarm.co.kr/calendar/">
 <link rel="canonical" href="https://www.ablefarm.co.kr/calendar/">
@@ -15,58 +15,96 @@
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf7ef; --card:#ffffff; --ink:#16241a; --sub:#5d6b5f; --line:#e3e0d4;
-    --deep:#16271c; --green:#4a7c59; --leaf:#a9d18a; --soft:#eef4e6; --warn:#fff4dc; --warn-ink:#7a5200;
+    --bg:#f7f3ea; --card:#fffdf8; --ink:#16241a; --sub:#5f6b60; --line:#e6dfcd;
+    --deep:#0f2017; --deep2:#183326; --green:#3f6f4f; --leaf:#a9d18a; --gold:#b8955a; --gold2:#e2c88f;
+    --soft:#eef3e6; --warn:#fbf1dc; --warn-ink:#7a5200;
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",system-ui,sans-serif;font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:var(--green)}
-  .wrap{max-width:640px;margin:0 auto;padding:0 16px 40px}
-  header{background:var(--deep);color:#fff;padding:18px 16px 22px}
-  header .in{max-width:640px;margin:0 auto}
+  button{font:inherit;color:inherit}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px 48px}
+
+  /* 머리 */
+  header{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 140% at 85% 0%,#2c5a3d 0%,var(--deep2) 38%,var(--deep) 100%);padding:18px 16px 30px}
+  header:after{content:"";position:absolute;inset:auto -10% -60px auto;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(226,200,143,.18),transparent 65%)}
+  header .in{position:relative;max-width:760px;margin:0 auto}
+  header .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
   header .home{color:var(--leaf);font-size:15px;font-weight:700;text-decoration:none}
-  header h1{margin:8px 0 4px;font-size:27px;font-weight:800;letter-spacing:-.02em}
-  header p{margin:0;font-size:16px;color:#cfe3bf}
+  header .yt{color:#fff;font-size:13.5px;font-weight:800;text-decoration:none;border:1px solid rgba(226,200,143,.6);border-radius:999px;padding:6px 12px;white-space:nowrap}
+  .eyebrow{font-size:12px;letter-spacing:.18em;font-weight:800;color:var(--gold2);text-transform:uppercase}
+  header .eyebrow{margin-top:22px}
+  header h1{margin:6px 0 6px;font-size:32px;font-weight:900;letter-spacing:-.03em}
+  header p{margin:0;font-size:16px;color:#d6e6ca}
 
-  .q{font-size:19px;font-weight:800;margin:20px 0 10px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{padding:12px 15px;border:2px solid var(--line);border-radius:999px;background:#fff;font:inherit;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer}
-  .chip[aria-pressed="true"]{border-color:var(--deep);background:var(--deep);color:#fff}
-  .months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-  .months .chip{padding:10px 0;border-radius:12px;font-size:16px;text-align:center}
-  .months .chip.now{border-color:var(--green)}
+  .sec{margin-top:26px}
+  .sec h2{font-size:20px;font-weight:900;letter-spacing:-.02em;margin:4px 0 12px}
 
-  .now-card{background:var(--deep);color:#fff;border-radius:18px;padding:20px 18px;margin-top:18px}
-  .now-card .when{font-size:15px;color:var(--leaf);font-weight:700;margin:0}
-  .now-card h2{margin:4px 0 12px;font-size:26px;font-weight:900;letter-spacing:-.02em}
-  .now-card ul{margin:0;padding-left:20px;font-size:17px;color:#e6f0dc}
+  /* 작물군 탭 */
+  .cats{display:flex;gap:6px;overflow-x:auto;padding:4px;background:#efe8d8;border-radius:16px;scrollbar-width:none}
+  .cats::-webkit-scrollbar{display:none}
+  .cat{flex:1 0 auto;border:0;background:transparent;border-radius:12px;padding:10px 14px;font-size:15.5px;font-weight:800;color:#5c5340;cursor:pointer;white-space:nowrap}
+  .cat small{font-weight:700;opacity:.65;margin-left:3px}
+  .cat[aria-pressed="true"]{background:linear-gradient(160deg,var(--deep2),var(--deep));color:#fff;box-shadow:0 6px 14px rgba(15,32,23,.25)}
+  .cat[aria-pressed="true"] small{color:var(--gold2);opacity:1}
+
+  /* 작물 카드 */
+  .crops{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px;margin-top:14px}
+  .crop{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbf7ee);border-radius:20px;padding:12px 6px 10px;cursor:pointer;text-align:center;transition:transform .15s,box-shadow .15s}
+  .crop:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(60,50,20,.10)}
+  .crop img{width:68px;height:68px;object-fit:contain;display:block;margin:0 auto 6px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.14))}
+  .crop b{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em}
+  .crop[aria-pressed="true"]{border:2px solid var(--gold);background:linear-gradient(180deg,#fffaf0,#f6ecd6);box-shadow:0 10px 22px rgba(184,149,90,.25)}
+  .crop[aria-pressed="true"]:after{content:"✓";position:absolute;top:7px;right:9px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#fff;font-size:12px;font-weight:900;line-height:20px}
+
+  /* 달 */
+  .months{display:grid;grid-template-columns:repeat(12,1fr);gap:5px}
+  .mo{border:1px solid var(--line);background:var(--card);border-radius:11px;padding:9px 0;font-size:14.5px;font-weight:800;cursor:pointer;text-align:center}
+  .mo.now{border-color:var(--gold)}
+  .mo[aria-pressed="true"]{background:var(--deep);color:#fff;border-color:var(--deep)}
+
+  /* 이번 달 카드 */
+  .now-card{position:relative;overflow:hidden;background:linear-gradient(150deg,var(--deep2),var(--deep));color:#fff;border-radius:24px;padding:22px 20px 20px;margin-top:16px;box-shadow:0 18px 36px rgba(15,32,23,.22)}
+  .now-card .ico{position:absolute;right:14px;top:12px;width:92px;height:92px;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35))}
+  .now-card .when{font-size:14px;color:var(--gold2);font-weight:800;margin:0;letter-spacing:.02em}
+  .now-card h3{margin:4px 0 12px;font-size:27px;font-weight:900;letter-spacing:-.03em;padding-right:96px}
+  .now-card ul{margin:0;padding-left:20px;font-size:16.5px;color:#e6f0dc}
   .now-card li+li{margin-top:4px}
 
-  .prods{margin-top:12px;display:flex;flex-direction:column;gap:10px}
-  .prod{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
-  .prod .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .prod b{font-size:19px}
-  .prod .why{display:block;font-size:15px;color:var(--green);font-weight:700;margin-top:2px}
-  .prod .how{margin:8px 0 0;font-size:16px}
-  .prod a.calc{flex:none;font-size:14px;font-weight:800;text-decoration:none;color:var(--deep);border:2px solid var(--deep);border-radius:10px;padding:7px 10px;white-space:nowrap}
-  .empty{background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:16px;font-size:16px;color:var(--sub);margin-top:12px}
-
-  .next{margin-top:14px;background:var(--soft);border-radius:16px;padding:14px 16px;font-size:16px}
+  /* 제품 */
+  .prods{margin-top:12px;display:grid;gap:10px}
+  .prod{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+  .prod .pimg{width:64px;height:76px;border-radius:12px;background:#fff;object-fit:contain;border:1px solid #efe8d8}
+  .prod b{font-size:18px;letter-spacing:-.02em}
+  .prod .why{display:block;font-size:14.5px;color:var(--green);font-weight:700;margin-top:2px}
+  .prod .how{margin:6px 0 0;font-size:15px;color:var(--sub)}
+  .prod .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .btn{display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--deep);background:#fff;color:var(--deep);border-radius:11px;padding:8px 12px;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap}
+  .btn.go{background:var(--deep);color:#fff}
+  .btn.gold{border-color:var(--gold);color:#7a5a24}
+  .empty{background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:16px;font-size:15.5px;color:var(--sub);margin-top:12px}
+  .next{margin-top:12px;background:var(--soft);border-radius:16px;padding:13px 16px;font-size:15.5px}
   .next b{color:var(--deep)}
 
-  .year{margin-top:26px}
-  .year h3{font-size:20px;margin:0 0 10px}
-  .yr{display:grid;grid-template-columns:52px 1fr;border-top:1px solid var(--line);padding:10px 0;font-size:16px}
-  #crops{display:block}
-  #crops .grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-  #crops .gl{flex:0 0 100%;font-size:14px;font-weight:800;color:var(--sub);margin-top:4px}
+  /* 영상 */
+  .vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .vid{border:0;padding:0;background:none;text-align:left;cursor:pointer}
+  .vid .th{position:relative;display:block;border-radius:14px;overflow:hidden;aspect-ratio:16/10;background:#222}
+  .vid .th img{width:100%;height:100%;object-fit:cover;display:block}
+  .vid .th:after{content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:42px;text-align:center}
+  .vid .tag{position:absolute;left:8px;top:8px;z-index:1;background:var(--gold);color:#fff;font-size:11.5px;font-weight:800;border-radius:6px;padding:2px 7px}
+  .vid b{display:block;font-size:14px;line-height:1.4;margin-top:6px;letter-spacing:-.01em}
+  .ytbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:15px}
+
+  /* 한 해 */
+  .yr{display:grid;grid-template-columns:54px 1fr;gap:4px;border-top:1px solid var(--line);padding:11px 4px;font-size:15.5px;cursor:pointer}
   .yr .m{font-weight:900;color:var(--green)}
   .yr .s{font-weight:800}
-  .yr .p{color:var(--sub);font-size:15px}
-  .yr.cur{background:var(--soft);border-radius:10px;padding:10px 8px;border-top-color:transparent}
+  .yr .p{color:var(--sub);font-size:14.5px}
+  .yr.cur{background:#f3ead6;border-radius:12px;border-top-color:transparent}
 
-  .note{background:var(--warn);color:var(--warn-ink);border-radius:14px;padding:14px 16px;font-size:16px;margin-top:22px}
+  .note{background:var(--warn);color:var(--warn-ink);border-radius:16px;padding:14px 16px;font-size:15.5px;margin-top:26px}
   .note b{display:block;margin-bottom:4px}
   .note ul{margin:0;padding-left:20px}
   .contact{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-top:14px;font-size:16px}
@@ -76,30 +114,73 @@
   .contact .p span{color:var(--sub);font-size:15px}
   .contact a.tel{font-weight:800;font-size:17px;text-decoration:none;white-space:nowrap}
   footer{text-align:center;font-size:14px;color:var(--sub);margin-top:22px}
+
+  /* 창(제품 설명·영상) */
+  dialog{border:0;padding:0;border-radius:22px;width:min(94vw,620px);max-height:90vh;background:var(--card);color:var(--ink);box-shadow:0 30px 70px rgba(0,0,0,.35)}
+  dialog::backdrop{background:rgba(10,20,14,.62)}
+  .dlg{padding:20px 18px 18px;overflow:auto;max-height:90vh}
+  .x{position:sticky;top:0;float:right;width:36px;height:36px;border-radius:50%;border:0;background:#efe8d8;font-size:20px;cursor:pointer;z-index:2}
+  .ph{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+  .ph img{width:110px;height:130px;object-fit:contain;background:#fff;border:1px solid #efe8d8;border-radius:14px}
+  .ph h3{margin:2px 0 4px;font-size:24px;font-weight:900;letter-spacing:-.03em}
+  .ph .one{color:var(--green);font-weight:800;font-size:15px}
+  .sum{font-size:15.5px;margin:14px 0 0}
+  .effs{display:grid;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+  .effs li{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:14.5px}
+  .effs li b{display:block;font-size:15px}
+  .spec{display:grid;grid-template-columns:76px 1fr;gap:6px 10px;font-size:14.5px;margin:14px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+  .spec dt{font-weight:800;color:var(--sub)}
+  .spec dd{margin:0}
+  .dlg h4{margin:18px 0 8px;font-size:16px}
+  .dlg .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .player{width:100%;aspect-ratio:16/9;border:0;border-radius:14px;background:#000;display:block}
+  .player.tall{aspect-ratio:9/16;max-height:72vh;width:auto;margin:0 auto}
+  .vtitle{font-size:16px;font-weight:800;margin:10px 0 0}
+
+  @media (max-width:560px){
+    header h1{font-size:28px}
+    .months{grid-template-columns:repeat(6,1fr)}
+    .crops{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+    .crop img{width:58px;height:58px}
+    .now-card .ico{width:74px;height:74px}
+    .now-card h3{padding-right:78px;font-size:24px}
+    .ph{grid-template-columns:86px 1fr}
+    .ph img{width:86px;height:104px}
+  }
 </style>
 </head>
 <body>
 <header>
   <div class="in">
-    <a class="home" href="../">← 에이블팜 홈</a>
-    <h1>이번 달 할 일</h1>
-    <p>작물을 고르면 지금 시기에 할 일과 쓸 제품이 나옵니다</p>
+    <div class="top"><a class="home" href="../">← 에이블팜 홈</a><a class="yt" href="https://www.youtube.com/channel/UCiVu-ZSDBsEALPg0Li2_gaw?sub_confirmation=1" target="_blank" rel="noopener">▶ 에이농티비 구독</a></div>
+    <div class="eyebrow">Able Farm · Crop Calendar</div>
+    <h1>작물별 재배력</h1>
+    <p>작물을 고르면 이번 달 할 일과 쓸 제품, 재배 정보 영상이 나옵니다</p>
   </div>
 </header>
 
 <div class="wrap">
-  <p class="q">어떤 작물을 키우세요?</p>
-  <div class="chips" id="crops"></div>
+  <div class="sec">
+    <div class="eyebrow" style="color:var(--gold)">Step 1</div>
+    <h2>어떤 작물을 키우세요?</h2>
+    <div class="cats" id="cats" role="tablist"></div>
+    <div class="crops" id="crops"></div>
+  </div>
 
-  <p class="q">몇 월을 볼까요?</p>
-  <div class="months" id="months"></div>
+  <div class="sec">
+    <div class="eyebrow" style="color:var(--gold)">Step 2</div>
+    <h2>몇 월을 볼까요?</h2>
+    <div class="months" id="months"></div>
+  </div>
 
   <div class="now-card" id="nowCard"></div>
   <div id="prodBox"></div>
   <div class="next" id="next"></div>
 
-  <div class="year">
-    <h3 id="yearTitle">한 해 재배력</h3>
+  <div class="sec" id="vidSec"></div>
+
+  <div class="sec">
+    <h2 id="yearTitle">한 해 재배력</h2>
     <div id="yearList"></div>
   </div>
 
@@ -124,14 +205,19 @@
   <footer>(주)에이블팜 · <a href="../">www.ablefarm.co.kr</a> · <a href="../calc/">희석·사용량 계산기</a></footer>
 </div>
 
-<script src="cal-data.js?v=20261111"></script>
+<dialog id="dlg"></dialog>
+
+<script src="cal-data.js?v=20261111b"></script>
 <script src="cal-extra.js?v=20261111"></script>
+<script src="cal-media.js?v=20261111"></script>
 <script>
-// 재배력 자료는 cal-data.js(기본 11작물)·cal-extra.js(추가 31작물)에 있다 — 상담봇·현장앱도 같은 파일을 읽는다
-// 앱 전용으로 만든 31작물 재배력(cal-extra.js, 농사로 농작업일정 근거)을 더한다. 파일을 못 읽어도 기존 11작물은 그대로
+// 재배력 자료: cal-data.js(기본 11작물)·cal-extra.js(추가 31작물) — 상담봇·현장앱도 같은 파일을 읽는다
+// 제품 설명·영상: cal-media.js (현장앱 build.ps1 이 data/products.json·영상 목록에서 만든다)
 if (typeof CAL_EXTRA !== "undefined") Object.keys(CAL_EXTRA).forEach(function(k){ if (!CAL[k]) CAL[k] = CAL_EXTRA[k]; });
 if (typeof BASIS_EXTRA !== "undefined") Object.keys(BASIS_EXTRA).forEach(function(k){ if (!CAL_BASIS[k]) CAL_BASIS[k] = BASIS_EXTRA[k]; });
-// 작물이 많아져서 종류별로 묶어 보여 준다. 여기 없는 작물은 「기타」로
+var PI = typeof PROD_INFO !== "undefined" ? PROD_INFO : {};
+var VIDS = (typeof VIDEOS !== "undefined" ? VIDEOS : []).filter(function(v){ return !v.from || Date.now() >= Date.parse(v.from); });
+
 var GROUPS = [
   ["곡물·콩", ["벼","밀","콩"]],
   ["과채", ["고추","오이","토마토","수박","참외","딸기","가지","메론"]],
@@ -143,51 +229,114 @@ var CROPS = [];
 GROUPS.forEach(function(g){ g[1] = g[1].filter(function(c){ return CAL[c]; }); CROPS = CROPS.concat(g[1]); });
 var REST = Object.keys(CAL).filter(function(c){ return CROPS.indexOf(c) < 0; });
 if (REST.length){ GROUPS.push(["기타", REST]); CROPS = CROPS.concat(REST); }
+// 묶음 작물(사과·배, 마늘·양파)은 앞 작물의 3D 아이콘을 쓴다
+function icon(c){ return "icons/" + encodeURIComponent(c.split("·")[0]) + ".png"; }
 
 var $ = function(id){ return document.getElementById(id); };
-var today = new Date();
-var nowM = today.getMonth() + 1;
+var today = new Date(), nowM = today.getMonth() + 1;
 var part = today.getDate() <= 10 ? "상순" : today.getDate() <= 20 ? "중순" : "하순";
 var crop = CROPS[0], month = nowM;
-
 try { var saved = localStorage.getItem("af-cal-crop"); if (saved && CAL[saved]) crop = saved; } catch(e){}
 var qm = location.search.match(/[?&]c=([^&]+)/);
 if (qm){ var qc = decodeURIComponent(qm[1]); if (CAL[qc]) crop = qc; }
+function groupOf(c){ for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i][1].indexOf(c) >= 0) return i; return 0; }
+var cat = groupOf(crop);
 
-function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
-function calcLink(n){ return "../calc/?p=" + encodeURIComponent(n); } // 계산기 이름과 같다 (임팩트과립 6kg·8kg 포함)
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function calcLink(n){ return "../calc/?p=" + encodeURIComponent(n); }
+// 재배력 표기("임팩트과립 6kg") → 제품명. 긴 이름부터
+var PNAMES = Object.keys(PI).sort(function(a, b){ return b.length - a.length; });
+function prodOf(n){ if (PI[n]) return n; for (var i = 0; i < PNAMES.length; i++) if (n.indexOf(PNAMES[i]) === 0) return PNAMES[i]; return null; }
+function cropHit(v, c){ var ns = c.split("·"); return (v.c || []).some(function(x){ return ns.indexOf(x) >= 0; }); }
+function thumb(v){ return "https://i.ytimg.com/vi/" + v.id + "/hqdefault.jpg"; }
+// 제품 영상은 제품 설명 창에서만, 재배 정보(쇼츠)는 작물 영상 칸에서만 — 병 이름 든 쇼츠가 제품 옆에 붙지 않게
+function prodVids(p){ return VIDS.filter(function(v){ return v.kind === "제품" && (v.p || []).indexOf(p) >= 0; }); }
+function cropVids(c){ return VIDS.filter(function(v){ return v.kind === "쇼츠" && cropHit(v, c); }); }
 
 function draw(){
-  $("crops").innerHTML = GROUPS.map(function(g){ return '<div class="grp"><span class="gl">'+esc(g[0])+'</span>' + g[1].map(function(c){ return '<button class="chip" aria-pressed="'+(c===crop)+'" data-c="'+esc(c)+'">'+esc(c)+'</button>'; }).join("") + '</div>'; }).join("");
+  $("cats").innerHTML = GROUPS.map(function(g, i){ return '<button class="cat" role="tab" aria-pressed="' + (i === cat) + '" data-g="' + i + '">' + esc(g[0]) + '<small>' + g[1].length + '</small></button>'; }).join("");
+  $("crops").innerHTML = GROUPS[cat][1].map(function(c){
+    return '<button class="crop" aria-pressed="' + (c === crop) + '" data-c="' + esc(c) + '"><img loading="lazy" src="' + icon(c) + '" alt=""><b>' + esc(c) + '</b></button>';
+  }).join("");
   var mh = "";
-  for (var m = 1; m <= 12; m++) mh += '<button class="chip'+(m===nowM?' now':'')+'" aria-pressed="'+(m===month)+'" data-m="'+m+'">'+m+'월</button>';
+  for (var m = 1; m <= 12; m++) mh += '<button class="mo' + (m === nowM ? ' now' : '') + '" aria-pressed="' + (m === month) + '" data-m="' + m + '">' + m + '월</button>';
   $("months").innerHTML = mh;
 
-  var row = CAL[crop][month-1];
-  var when = month === nowM ? "지금 · "+month+"월 "+part : month+"월";
-  $("nowCard").innerHTML = '<p class="when">'+esc(crop)+' · '+when+'</p><h2>'+esc(row.s)+'</h2><ul>'+row.t.map(function(x){ return "<li>"+esc(x)+"</li>"; }).join("")+'</ul>';
+  var row = CAL[crop][month - 1];
+  var when = month === nowM ? "지금 · " + month + "월 " + part : month + "월";
+  $("nowCard").innerHTML = '<img class="ico" src="' + icon(crop) + '" alt=""><p class="when">' + esc(crop) + ' · ' + when + '</p><h3>' + esc(row.s) + '</h3><ul>' + row.t.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + '</ul>';
 
   if (row.p.length){
-    $("prodBox").innerHTML = '<p class="q" style="margin-top:18px">이 시기에 쓰는 제품</p><div class="prods">' + row.p.map(function(p){
-      return '<div class="prod"><div class="top"><div><b>'+esc(p[0])+'</b><span class="why">'+esc(p[1])+'</span></div><a class="calc" href="'+calcLink(p[0])+'">💧 사용량</a></div><p class="how">'+esc(p[2])+'</p></div>';
-    }).join("") + '</div>';
+    $("prodBox").innerHTML = '<div class="sec" style="margin-top:20px"><h2>이 시기에 쓰는 제품</h2><div class="prods">' + row.p.map(function(p){
+      var pn = prodOf(p[0]), info = pn && PI[pn];
+      return '<div class="prod">' + (info ? '<img class="pimg" loading="lazy" src="' + esc(info.img) + '" alt="' + esc(pn) + '">' : '<span></span>') +
+        '<div><b>' + esc(p[0]) + '</b><span class="why">' + esc(p[1]) + '</span><p class="how">' + esc(p[2]) + '</p><div class="acts">' +
+        (info ? '<button class="btn go" data-p="' + esc(pn) + '">제품 설명' + (prodVids(pn).length ? ' · 영상' : '') + '</button>' : '') +
+        '<a class="btn" href="' + calcLink(p[0]) + '">💧 사용량</a></div></div></div>';
+    }).join("") + '</div></div>';
   } else {
     $("prodBox").innerHTML = '<div class="empty">이 시기에는 따로 챙길 제품이 없습니다. 다음 달 준비를 미리 보세요.</div>';
   }
 
   var nx = CAL[crop][month % 12];
-  $("next").innerHTML = '<b>다음 달('+nx.m+'월) 미리 보기</b> · '+esc(nx.s)+(nx.p.length ? ' — '+nx.p.map(function(p){ return esc(p[0]); }).join(", ") : "");
+  $("next").innerHTML = '<b>다음 달(' + nx.m + '월) 미리 보기</b> · ' + esc(nx.s) + (nx.p.length ? ' — ' + nx.p.map(function(p){ return esc(p[0]); }).join(", ") : "");
+
+  var cv = cropVids(crop);
+  $("vidSec").innerHTML = '<div class="eyebrow" style="color:var(--gold)">에이농티비</div><h2>' + esc(crop) + ' 재배 정보 영상</h2>' +
+    (cv.length ? '<div class="vids">' + cv.map(vidCard).join("") + '</div>' : '<div class="empty" style="margin-top:0">' + esc(crop) + ' 영상은 준비 중입니다. 다른 작물 영상은 유튜브 채널에서 볼 수 있어요.</div>') +
+    '<div class="ytbar"><span>농사 정보 영상을 계속 받아 보세요</span><a class="btn gold" href="https://www.youtube.com/channel/UCiVu-ZSDBsEALPg0Li2_gaw?sub_confirmation=1" target="_blank" rel="noopener">▶ 에이농티비 구독</a></div>';
 
   $("yearTitle").textContent = crop + " 한 해 재배력" + (CAL_BASIS[crop] ? " · " + CAL_BASIS[crop] + (/기준\)?$/.test(CAL_BASIS[crop]) ? "" : " 기준") : "");
   $("yearList").innerHTML = CAL[crop].map(function(r){
-    return '<div class="yr'+(r.m===month?' cur':'')+'"><div class="m">'+r.m+'월</div><div><div class="s">'+esc(r.s)+'</div>'+(r.p.length ? '<div class="p">'+r.p.map(function(p){ return esc(p[0]); }).join(" · ")+'</div>' : '')+'</div></div>';
+    return '<div class="yr' + (r.m === month ? ' cur' : '') + '" data-m="' + r.m + '"><div class="m">' + r.m + '월</div><div><div class="s">' + esc(r.s) + '</div>' + (r.p.length ? '<div class="p">' + r.p.map(function(p){ return esc(p[0]); }).join(" · ") + '</div>' : '') + '</div></div>';
   }).join("");
 }
+function vidCard(v){
+  return '<button class="vid" data-v="' + esc(v.id) + '"><span class="th">' + (v.kind === "제품" ? '<i class="tag">제품</i>' : '') + '<img src="' + thumb(v) + '" alt=""></span><b>' + esc(v.t) + '</b></button>';
+}
+
+/* ---------- 창: 제품 설명 · 영상 재생 (유튜브로 나가지 않고 이 페이지 안에서) ---------- */
+var dlg = $("dlg");
+function stopPlayer(){ var el = dlg.querySelector("video"); if (el){ el.pause(); el.removeAttribute("src"); el.load(); } dlg.innerHTML = ""; }
+function openProd(pn){
+  var x = PI[pn]; if (!x) return;
+  var vs = prodVids(pn);
+  dlg.innerHTML = '<div class="dlg"><button class="x" data-x aria-label="닫기">×</button>' +
+    '<div class="ph"><img src="' + esc(x.img) + '" alt="' + esc(pn) + '"><div><div class="eyebrow" style="color:var(--gold)">Able Farm</div><h3>' + esc(pn) + '</h3><div class="one">' + esc(x.one) + '</div></div></div>' +
+    (x.sum ? '<p class="sum">' + esc(x.sum) + '</p>' : '') +
+    ((x.eff || []).length ? '<ul class="effs">' + x.eff.map(function(e){ return '<li><b>' + esc(e.항목) + '</b>' + esc(e.설명) + '</li>'; }).join("") + '</ul>' : '') +
+    '<dl class="spec">' + (x.size ? '<dt>규격</dt><dd>' + esc(x.size) + '</dd>' : '') + (x.use ? '<dt>희석 배수</dt><dd>' + esc(x.use) + '</dd>' : '') + (x.when ? '<dt>사용 시기</dt><dd>' + esc(x.when) + '</dd>' : '') + '</dl>' +
+    (vs.length ? '<h4>제품 영상</h4><div class="vids">' + vs.map(vidCard).join("") + '</div>' : '') +
+    '<div class="acts">' + (x.slug ? '<a class="btn go" href="../products/' + x.slug + '.html">제품 페이지 전체 보기</a>' : '') + '<a class="btn" href="' + calcLink(pn) + '">💧 사용량 계산</a></div>' +
+    '<p style="font-size:13px;color:var(--sub);margin:12px 0 0">제품 라벨에 적힌 사용법이 우선입니다. 병해충 방제는 등록 약제를 쓰세요.</p></div>';
+  if (!dlg.open) dlg.showModal();
+}
+function openVid(id){
+  var v = VIDS.filter(function(x){ return x.id === id; })[0]; if (!v) return;
+  var tall = v.kind === "쇼츠" || v.vert;
+  var yt = "https://www.youtube.com/" + (tall ? "shorts/" : "watch?v=") + v.id;
+  var frame = v.file
+    ? '<video class="player" controls autoplay playsinline preload="metadata" poster="' + thumb(v) + '" src="' + esc(v.file) + '"></video>'
+    : '<iframe class="player' + (tall ? ' tall' : '') + '" src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="' + esc(v.t) + '"></iframe>';
+  stopPlayer();
+  dlg.innerHTML = '<div class="dlg"><button class="x" data-x aria-label="닫기">×</button><div style="clear:both"></div>' + frame +
+    '<p class="vtitle">' + esc(v.t) + '</p><div class="acts"><a class="btn gold" href="' + yt + '" target="_blank" rel="noopener">유튜브에서 보기</a><a class="btn" href="https://www.youtube.com/channel/UCiVu-ZSDBsEALPg0Li2_gaw?sub_confirmation=1" target="_blank" rel="noopener">▶ 에이농티비 구독</a></div></div>';
+  // 직접 올린 고화질 파일을 못 읽으면 유튜브로 바꿔 튼다
+  var el = dlg.querySelector("video");
+  if (el) el.addEventListener("error", function(){ var f = document.createElement("div"); f.innerHTML = '<iframe class="player" src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; el.replaceWith(f.firstChild); });
+  if (!dlg.open) dlg.showModal();
+}
+dlg.addEventListener("close", stopPlayer);
+dlg.addEventListener("click", function(e){ if (e.target === dlg) dlg.close(); });
 
 document.addEventListener("click", function(e){
-  var b = e.target.closest("button"); if (!b) return;
-  if (b.dataset.c){ crop = b.dataset.c; try { localStorage.setItem("af-cal-crop", crop); } catch(err){} draw(); }
-  if (b.dataset.m){ month = Number(b.dataset.m); draw(); }
+  var b = e.target.closest("[data-g],[data-c],[data-m],[data-p],[data-v],[data-x]"); if (!b) return;
+  if (b.hasAttribute("data-x")){ dlg.close(); return; }
+  if (b.dataset.v){ openVid(b.dataset.v); return; }
+  if (b.dataset.p){ openProd(b.dataset.p); return; }
+  if (b.dataset.g != null){ cat = +b.dataset.g; draw(); return; }
+  if (b.dataset.c){ crop = b.dataset.c; try { localStorage.setItem("af-cal-crop", crop); } catch(err){} draw(); $("nowCard").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if (b.dataset.m){ month = +b.dataset.m; draw(); }
 });
 draw();
 </script>
