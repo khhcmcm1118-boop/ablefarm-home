@@ -3199,7 +3199,8 @@ function addCalendarCard(cropShown, calKey, month){
   }
   if(basis) html += '<div class="caution">기준 · ' + escapeHtml(basis) + '</div>';
   html += '<div class="row-line" style="color:var(--ink-soft);font-size:13px">지역·품종·재배 방식에 따라 시기가 달라질 수 있어요. (농촌진흥청 농사로 자료 기준)</div>';
-  html += '<a class="more-btn" href="' + HOMEPAGE_URL + '/calendar/?c=' + encodeURIComponent(calKey) + '" target="_blank" rel="noopener">' + escapeHtml(cropShown) + ' 재배력 전체 보기 ↗</a>';
+  // cal-link = 제품 버튼이 아니라는 표시 (모양만 more-btn 을 쓴다)
+  html += '<a class="more-btn cal-link" href="' + HOMEPAGE_URL + '/calendar/?c=' + encodeURIComponent(calKey) + '" target="_blank" rel="noopener">' + escapeHtml(cropShown) + ' 재배력 전체 보기 ↗</a>';
   c.innerHTML = html;
   wrap.appendChild(c);
   thread.appendChild(wrap);
@@ -4575,6 +4576,9 @@ window.onload = async () => {
 document.addEventListener('click', function (e) {
   var a = e.target && e.target.closest && e.target.closest('a.more-btn');
   if (!a) return;
+  // ⚠ 제품 버튼만 가로챈다. 재배력 「전체 보기」처럼 모양만 같은 버튼(data-product 없음)은
+  //   그대로 href 로 보내야 한다 — 안 그러면 버튼 글씨를 제품 이름으로 읽어 제품 소개로 가버린다.
+  if (!a.hasAttribute('data-product')) return;
   var name = a.getAttribute('data-product') || (a.textContent || '').replace(/자세히 보기.*$/, '').trim();
   if (window.parent && window.parent !== window) {
     e.preventDefault();
