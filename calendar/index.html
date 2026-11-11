@@ -58,6 +58,9 @@
   .year{margin-top:26px}
   .year h3{font-size:20px;margin:0 0 10px}
   .yr{display:grid;grid-template-columns:52px 1fr;border-top:1px solid var(--line);padding:10px 0;font-size:16px}
+  #crops{display:block}
+  #crops .grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+  #crops .gl{flex:0 0 100%;font-size:14px;font-weight:800;color:var(--sub);margin-top:4px}
   .yr .m{font-weight:900;color:var(--green)}
   .yr .s{font-weight:800}
   .yr .p{color:var(--sub);font-size:15px}
@@ -103,7 +106,8 @@
   <div class="note">
     <b>꼭 확인하세요</b>
     <ul>
-      <li>중부(경기·충청) 기준입니다. 오이·토마토·수박·딸기는 시설(하우스), 참외는 성주 시설 촉성 기준입니다. 남부는 2~3주, 제주는 3~4주 빠릅니다.</li>
+      <li>중부(경기·충청) 기준입니다. 오이·토마토·수박·딸기는 시설(하우스), 참외는 성주 시설 촉성 기준이고, 다른 작물도 「한 해 재배력」 제목에 기준 작형을 적었습니다. 남부는 2~3주, 제주는 3~4주 빠릅니다.</li>
+      <li>임팩트과립은 토양검정에서 pH 6.5 미만(산성)으로 나온 밭에만 쓰고, 석회·다른 비료와 섞지 마세요.</li>
       <li>품종·날씨·재배 방식에 따라 시기가 달라질 수 있습니다.</li>
       <li>제품 라벨에 적힌 사용법이 우선입니다.</li>
     </ul>
@@ -120,6 +124,7 @@
   <footer>(주)에이블팜 · <a href="../">www.ablefarm.co.kr</a> · <a href="../calc/">희석·사용량 계산기</a></footer>
 </div>
 
+<script src="cal-extra.js?v=20261111"></script>
 <script>
 /*
   작물별 월별 재배력 — 중부 기준. 노지 작물은 노지, 시설 과채는 CAL_BASIS 의 작형 기준.
@@ -285,7 +290,21 @@ var CAL = {
   ]
 };
 var CAL_BASIS = {"오이":"시설 반촉성", "토마토":"시설 반촉성", "수박":"시설 반촉성", "참외":"성주 시설 촉성", "딸기":"시설 촉성 (설향)"};
-var CROPS = Object.keys(CAL);
+// 앱 전용으로 만든 31작물 재배력(cal-extra.js, 농사로 농작업일정 근거)을 더한다. 파일을 못 읽어도 기존 11작물은 그대로
+if (typeof CAL_EXTRA !== "undefined") Object.keys(CAL_EXTRA).forEach(function(k){ if (!CAL[k]) CAL[k] = CAL_EXTRA[k]; });
+if (typeof BASIS_EXTRA !== "undefined") Object.keys(BASIS_EXTRA).forEach(function(k){ if (!CAL_BASIS[k]) CAL_BASIS[k] = BASIS_EXTRA[k]; });
+// 작물이 많아져서 종류별로 묶어 보여 준다. 여기 없는 작물은 「기타」로
+var GROUPS = [
+  ["곡물·콩", ["벼","밀","콩"]],
+  ["과채", ["고추","오이","토마토","수박","참외","딸기","가지","메론"]],
+  ["과수", ["사과·배","포도","복숭아","단감","아로니아","밤"]],
+  ["잎채소", ["배추","대파","쪽파","부추","시금치","상추","갓","깻잎","열무","얼갈이배추","청경채","미나리","쑥갓","아욱","근대"]],
+  ["뿌리채소", ["마늘·양파","무","당근","감자","고구마","생강","우엉","연근","도라지","더덕"]]
+];
+var CROPS = [];
+GROUPS.forEach(function(g){ g[1] = g[1].filter(function(c){ return CAL[c]; }); CROPS = CROPS.concat(g[1]); });
+var REST = Object.keys(CAL).filter(function(c){ return CROPS.indexOf(c) < 0; });
+if (REST.length){ GROUPS.push(["기타", REST]); CROPS = CROPS.concat(REST); }
 
 var $ = function(id){ return document.getElementById(id); };
 var today = new Date();
@@ -301,7 +320,7 @@ function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&
 function calcLink(n){ return "../calc/?p=" + encodeURIComponent(n); } // 계산기 이름과 같다 (임팩트과립 6kg·8kg 포함)
 
 function draw(){
-  $("crops").innerHTML = CROPS.map(function(c){ return '<button class="chip" aria-pressed="'+(c===crop)+'" data-c="'+esc(c)+'">'+esc(c)+'</button>'; }).join("");
+  $("crops").innerHTML = GROUPS.map(function(g){ return '<div class="grp"><span class="gl">'+esc(g[0])+'</span>' + g[1].map(function(c){ return '<button class="chip" aria-pressed="'+(c===crop)+'" data-c="'+esc(c)+'">'+esc(c)+'</button>'; }).join("") + '</div>'; }).join("");
   var mh = "";
   for (var m = 1; m <= 12; m++) mh += '<button class="chip'+(m===nowM?' now':'')+'" aria-pressed="'+(m===month)+'" data-m="'+m+'">'+m+'월</button>';
   $("months").innerHTML = mh;
