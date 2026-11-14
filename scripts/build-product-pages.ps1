@@ -7,6 +7,30 @@ $root = Split-Path -Parent $PSScriptRoot
 $site = 'https://www.ablefarm.co.kr'
 $j = Get-Content (Join-Path $root 'data\products.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 
+# 작물별 살포량 — 희석 계산기(calc/index.html)의 G 표를 그대로 읽는다. 값을 여기로 복사하지 않는다(계산기만 고치면 제품 페이지도 따라온다)
+# G 줄 형식: [작물, 10a 총량 최소, 최대, 1회 최소, 최대, 횟수, 시기, 방법]  (임팩트과립 6kg/8kg 같은 다른 형식은 건너뛴다)
+$calcSrc = Get-Content (Join-Path $root 'calc\index.html') -Raw -Encoding UTF8
+$CalcNames = @{}
+$CalcRates = @{}  # 계산기 P 의 희석배수 — products.json 에 희석배수가 없는 제품만 이걸로 채운다(산소탱크·엔피씰·임팩트, 2026-10-10 사용자 지정 권장값)
+foreach ($m in [regex]::Matches($calcSrc, '\{n:"([^"]+)",\s*rates:\[([\d,\s]+)\]')) {
+  $CalcNames[$m.Groups[1].Value] = $true
+  $CalcRates[$m.Groups[1].Value] = @($m.Groups[2].Value -split ',' | ForEach-Object { [int]$_.Trim() } | Sort-Object)
+}
+$Gran = @{}
+foreach ($m in [regex]::Matches($calcSrc, '"([^"]+)":\s*\{bag:(\d+)([^\[]*)rows:\[([\s\S]*?)\]\]\}')) {
+  $rows = @()
+  foreach ($r in [regex]::Matches($m.Groups[4].Value + ']','\["([^"]+)",(\d+|null),(\d+|null),(\d+|null),(\d+|null),(\d+),"([^"]*)","([^"]*)"\]')) {
+    $v = $r.Groups
+    $rows += [pscustomobject]@{ 작물=$v[1].Value; 총min=$v[2].Value; 총max=$v[3].Value; 회min=$v[4].Value; 회max=$v[5].Value; 횟수=[int]$v[6].Value; 시기=$v[7].Value; 방법=$v[8].Value }
+  }
+  if ($rows.Count -gt 0) {
+    $Gran[$m.Groups[1].Value] = [pscustomobject]@{ bag=[int]$m.Groups[2].Value; insoluble=($m.Groups[3].Value -match 'insoluble:true'); rows=$rows }
+    $CalcNames[$m.Groups[1].Value] = $true
+  }
+}
+function Rng($a, $b) { if ($a -eq 'null' -or $a -eq '') { return '' }; if ($a -eq $b) { return "$a" }; return "$a~$b" }
+function Bags($a, $b, $bag) { $x = [double]$a / $bag; $y = [double]$b / $bag; if ($x -eq $y) { return "$x" }; return "$x~$y" }
+
 $SlugMap = @{
   '구근짱'='gugeunjjang'; '산소탱크'='oxygentank'; '속딴딴'='sokddanddan'; '아미닥터'='amidoctor'; '아미루트'='amiroot'
   '엔피씰'='npseal'; '엔피칼마'='npcalma'; '원팩트'='onepact'; '유니NK칼'='uninkcal'; '유니NK칼마'='uninkcalma'
@@ -46,16 +70,10 @@ $PepperVid = @{id='ykLigc4psRY'; t='고추 탄저병 장마철 관리 — 잎·�
 $AminoRawVid = @{id='aZVt9QTNht8'; t='같은 아미노산일까? 원료와 분해 방식이 다릅니다'; d='국내산 식품용 돼지 혈액을 효소분해한 원료로 L형 아미노산 형태를 지킨다는 점을, 산분해·단순 건조 원료와 비교해 35초로 정리한 에이블팜 영상입니다. 같은 원료를 임팩트과립·임팩트골드·임팩트원에 씁니다.'; dur='PT35S'; date='2026-11-06'}
 $AminoEduVid = @{id='zStBmYupXVM'; t='아미노산이 들어있는 비료 비싸고 싼 차이? 이걸로 확인하세요'; d='단백질 원료와 분해 방식(효소분해·산분해)에 따라 아미노산 비료가 어떻게 달라지는지 연구 자료로 정리한 1분 30초 교육 영상입니다. 효소분해 아미노산을 고르는 기준을 담았습니다.'; dur='PT1M30S'; date='2026-11-03'}
 $ImpactOneHowVid = @{id='dYugMCVmhlI'; t='임팩트원 사용법 — 작물별 사용 시기'; d='꽃이 많아야 열매가 많이 달립니다. 임팩트원의 성분과 과채·과수·벼 사용 시기를 30초로 정리한 에이블팜 제품 영상입니다.'; dur='PT30S'; date='2026-11-02'}
-$ImpactOneDetailVid = @{id='TWAPUbGWYr8'; t='꽃은 해마다 피는데, 수확은 왜 다를까? 개화·수정기 영양 관리 — 임팩트원'; d='잦은 기후 변화로 꽃은 피어도 열매·낟알이 덜 차는 원인(농촌진흥청 현장 사례)과, 임팩트원의 성분별 역할(고토·망간·인산·붕소·칼리·효소분해 L-아미노산), 물 20L에 20ml(1,000배) 엽면살포와 과수·벼·과채 사용 시기를 1분 31초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M31S'; date='2026-11-12'}
 # 제품 → 제품 홍보 영상(가로, 유튜브 「동영상」)
-# 유니NK칼·칼마 겨울 하우스 웃거름 제품 영상(쇼츠 36RSZDeQ-SE 연결, 2026-11-13 공개)
-$UniNKVid = @{id='UtxhoxHv_aM'; t='겨울 하우스 웃거름 — 흡수 빠른 질산태, 유니NK칼·유니NK칼마 작물별 사용법'; d='겨울 하우스에서 흡수가 빠른 질산태 웃거름으로 유니NK칼(15-0-15, CaO 17%, 붕소)과 유니NK칼마(13-0-10, MgO 5%, CaO 12%)를 쓰는 방법을 1분 26초로 정리한 에이블팜 제품 영상입니다. 딸기·토마토·오이는 7~10일 간격으로 300평에 1회 3~5kg을 물 1톤 이상에 녹여 관주하고, 참외·수박·시금치·상추·부추와 노지 작물 사용법도 담았습니다.'; dur='PT1M26S'; date='2026-11-13'}
 $Videos = @{
-  '유니NK칼' = $UniNKVid
-  '유니NK칼마' = $UniNKVid
   '하이슈거' = @{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 단계별 밤 온도(농촌진흥청)와 꽃 필 때 임팩트원·열매 클 때 하이슈거(500~1,000배, 수확 30~50일 전 비대기·착색기 엽면살포) 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'}
-  '임팩트원' = @($ImpactOneDetailVid, @{id='kYstNonQOhQ'; t='꽃은 폈는데 열매는 어디 갔을까? 개화·수정기 영양 관리 (쇼츠)'; d='꽃이 떨어지고 열매가 덜 달리는 원인은 날씨·웃자람·꽃눈 상태 등 여러 가지이며, 그중 농가가 챙길 수 있는 꽃 필 때의 영양 관리와 임팩트원 사용량(물 20L에 20ml, 1,000배)을 27초로 정리한 쇼츠입니다.'; dur='PT27S'; date='2026-11-10'},
-                 @{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 튼실한 꽃과 고른 수정이 큰 딸기를 만드는 원리와 개화·착과기 임팩트원(1,000배 엽면살포), 비대·착색기 하이슈거 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'},
+  '임팩트원' = @(@{id='Wzy5nSeGdYo'; t='딸기 단계별 관리 — 임팩트원으로 맺고, 하이슈거로 채운다'; d='세종시 연동면 딸기 농가 사례와 함께, 튼실한 꽃과 고른 수정이 큰 딸기를 만드는 원리와 개화·착과기 임팩트원(1,000배 엽면살포), 비대·착색기 하이슈거 사용법을 2분으로 정리한 에이블팜 제품 영상입니다.'; dur='PT2M'; date='2026-10-30'},
                  @{id='13nt6XeAgAE'; t='겨울 하우스 시설채소 관리 — 뿌리는 임팩트골드, 잎은 히미업, 꽃은 임팩트원'; d='겨울 하우스 결로·저온·일조 부족(농촌진흥청) 속에서 뿌리는 임팩트골드 관주, 잎은 히미업, 꽃은 임팩트원(1,000배, 개화·착과기 엽면살포)으로 관리하는 방법을 1분 48초로 정리한 에이블팜 제품 영상입니다.'; dur='PT1M48S'; date='2026-10-30'}, $PepperVid, $ImpactOneHowVid, $AminoRawVid, $AminoEduVid)
   '임팩트규산' = $PepperVid
   '임팩트규산 골드' = $PepperVid
@@ -97,6 +115,15 @@ h2 { font-size: 21px; color: var(--dk); margin: 32px 0 10px; padding-left: 10px;
 .spec { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
 .spec dt { font-weight: 700; color: var(--mut); }
 .spec dd { margin: 0; }
+.note { font-size: 14.5px; color: var(--mut); margin: 8px 0; }
+.tblwrap { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+table.crop { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.crop th { background: var(--pale); color: var(--dk); text-align: left; padding: 9px 10px; white-space: nowrap; }
+table.crop td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+table.crop td:first-child { font-weight: 700; white-space: nowrap; }
+table.crop small { display: block; font-size: 12.5px; color: var(--mut); }
+.more { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.more a { font-weight: 700; text-decoration: none; background: var(--pale); border-radius: 10px; padding: 8px 12px; }
 .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
 .card b { display: block; color: var(--dk); }
@@ -143,6 +170,7 @@ $ld
 <style>
 $css
 </style>
+<script src="/ga.js"></script>
 </head>
 <body>
 <div class="top"><div class="in">
@@ -153,7 +181,7 @@ $css
 }
 $footer = @'
 <footer>
-  (주)에이블팜 · <a href="https://www.ablefarm.co.kr">www.ablefarm.co.kr</a> · 고객센터 02-858-6229 (평일 09:00–17:00)<br>
+  (주)에이블팜 · <a href="https://www.ablefarm.co.kr">www.ablefarm.co.kr</a> · 고객센터 02-858-6229 (평일 09:00–17:00) · <a href="/privacy.html">개인정보 처리방침</a><br>
   제품 사용 결과는 환경 조건에 따라 달라질 수 있습니다. 병해충은 해당 작물에 등록된 약제로 방제하고, 정확한 처방은 지역 농업기술센터 상담에 따르세요.
 </footer>
 </body>
@@ -165,6 +193,7 @@ New-Item -ItemType Directory -Force $outDir | Out-Null
 $utf8 = New-Object System.Text.UTF8Encoding $false
 $all = @($j.제품)
 
+$skipped = @()   # 덮어쓰지 않고 넘어간 페이지 (영상 등 이 스크립트가 모르는 내용이 있는 것)
 foreach ($p in $all) {
   $name = $p.제품명; $slug = $SlugMap[$name]
   if (-not $slug) { Write-Warning "슬러그 없음: $name"; continue }
@@ -190,7 +219,52 @@ foreach ($p in $all) {
   [void]$sb.Append((Header $title $desc $canon $img $ld))
   [void]$sb.Append("<main>`n<p class=""crumb""><a href=""../"">에이블팜</a> › <a href=""./"">제품</a> › $(E $name)</p>`n")
   [void]$sb.Append("<div class=""hero""><img src=""../$($p.이미지)"" alt=""에이블팜 $(E $name) 제품 사진""><div><div class=""cat"">$(E $p.분류)</div><h1>$(E $name)</h1><p class=""tag"">$(E $p.한줄설명)</p><p class=""sum"">$(E $p.요약)</p></div></div>`n")
-  [void]$sb.Append("<h2>사용 방법</h2>`n<dl class=""spec""><dt>희석 배수</dt><dd>$(E $p.희석배수)</dd><dt>사용 시기</dt><dd>$(E $p.사용시기)</dd><dt>사용 횟수·규격</dt><dd>$(E $p.사용횟수)</dd><dt>적용 작물</dt><dd>$(E $p.적용작물)</dd><dt>규격</dt><dd>$(E $p.규격)</dd></dl>`n")
+  # 사용 방법 — products.json 칸이 비어 있으면 계산기 G 표에서 채우고, 그래도 빈 줄은 아예 그리지 않는다
+  $gr = $Gran[$name]
+  $spec = [ordered]@{ '희석 배수'=$p.희석배수; '사용 시기'=$p.사용시기; '사용 횟수·규격'=$p.사용횟수; '적용 작물'=$p.적용작물 }
+  if ($gr) {
+    if (-not $p.희석배수) {
+      $spec.Remove('희석 배수')
+      if ($gr.insoluble) { $spec.Insert(0, '쓰는 법', '물에 녹지 않는 비료 · 흙에 뿌려 씁니다') }
+      else { $spec.Insert(0, '쓰는 법', '웃거름(추비) 전용 · 포기 사이·이랑 옆 흙에 뿌립니다. 관주는 10a(300평)당 3~5kg을 물 1톤 이상에 녹여 줍니다') }
+    }
+    if (-not $p.사용시기) { $spec['사용 시기'] = '작물마다 다릅니다 — 아래 작물별 살포량 표' }
+    if (-not $p.적용작물) { $spec['적용 작물'] = (@($gr.rows | ForEach-Object { $_.작물 }) -join ', ') }
+  }
+  $cr = $CalcRates[$name]
+  if (-not $p.희석배수 -and $cr) {
+    # 물 20ℓ당 원액 ㎖ = 20000 / 배수 (다른 제품 표기와 같은 꼴)
+    $lo = $cr[0]; $hi = $cr[-1]
+    $fmt = { param($n) $n.ToString('N0') }
+    if ($lo -eq $hi) { $spec['희석 배수'] = "$(& $fmt $lo)배 권장 (물 20ℓ당 $([math]::Round(20000 / $lo))㎖)" }
+    else { $spec['희석 배수'] = "$(& $fmt $lo)~$(& $fmt $hi)배 권장 (물 20ℓ당 $([math]::Round(20000 / $lo))~$([math]::Round(20000 / $hi))㎖)" }
+  }
+  $spec['규격'] = $p.규격
+  [void]$sb.Append("<h2>사용 방법</h2>`n<dl class=""spec"">")
+  foreach ($k in $spec.Keys) { if ($spec[$k]) { [void]$sb.Append("<dt>$(E $k)</dt><dd>$(E $spec[$k])</dd>") } }
+  [void]$sb.Append("</dl>`n")
+  if ($gr) {
+    $hasOnce = @($gr.rows | Where-Object { $_.회min -ne 'null' }).Count -gt 0
+    [void]$sb.Append("<h2>작물별 살포량</h2>`n<p class=""note"">10a = 300평 = 1,000㎡ 기준 · $($gr.bag)kg 포대</p>`n<div class=""tblwrap""><table class=""crop""><thead><tr><th>작물</th><th>300평당 총량</th>")
+    if ($hasOnce) { [void]$sb.Append("<th>1회량</th><th>시기·횟수</th>") }
+    [void]$sb.Append("</tr></thead><tbody>")
+    foreach ($r in $gr.rows) {
+      [void]$sb.Append("<tr><td>$(E $r.작물)</td><td>$(Rng $r.총min $r.총max)kg<small>$(Bags $r.총min $r.총max $gr.bag)포</small></td>")
+      if ($hasOnce) {
+        $once = Rng $r.회min $r.회max
+        $onceTxt = if ($once) { "${once}kg" } else { '' }
+        if ($r.방법 -eq '관주' -and $onceTxt) { $onceTxt += '<small>물에 녹여 관주</small>' }
+        [void]$sb.Append("<td>$onceTxt</td><td>$(E $r.시기)</td>")
+      }
+      [void]$sb.Append("</tr>")
+    }
+    [void]$sb.Append("</tbody></table></div>`n")
+    if (-not $gr.insoluble) { [void]$sb.Append("<p class=""note"">비료가 잎·줄기에 닿지 않게 하세요. 염류가 쌓인 하우스는 양을 절반으로 줄이세요. 인산 비료·황산염 비료와 한 통에 섞지 마세요.</p>`n") }
+  }
+  $links = @()
+  if ($CalcNames[$name]) { $links += "<a href=""../calc/?p=$([uri]::EscapeDataString($name))"">우리 밭 면적으로 사용량 계산하기 →</a>" }
+  if ($name -eq '유니NK칼' -or $name -eq '유니NK칼마') { $links += "<a href=""../guide/uni-nk.html"">유니NK칼·칼마 살포 안내 (인쇄용 A4) →</a>" }
+  if ($links.Count -gt 0) { [void]$sb.Append("<p class=""more"">" + ($links -join '') + "</p>`n") }
   if ($p.효과) {
     [void]$sb.Append("<h2>주요 효과</h2>`n<div class=""cards"">")
     foreach ($e in $p.효과) { [void]$sb.Append("<div class=""card""><b>$(E $e.항목)</b><span>$(E $e.설명)</span></div>") }
@@ -219,7 +293,57 @@ foreach ($p in $all) {
   foreach ($o in $all) { if ($o.제품명 -ne $name -and $SlugMap[$o.제품명]) { [void]$sb.Append("<a href=""$($SlugMap[$o.제품명]).html"">$(E $o.제품명)</a>") } }
   [void]$sb.Append("</div>`n</main>`n")
   [void]$sb.Append($footer)
-  [IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $sb.ToString(), $utf8)
+
+  # ── 손으로 덧붙인 내용 지키기 ───────────────────────────────────────────
+  # 「제품 영상」과 .more 줄의 추가 링크(인쇄용 안내·쇼츠 등)는 이 스크립트가
+  # 모르는 내용이다. 영상 연결 작업이 나중에 페이지에 직접 붙이기 때문이다.
+  # 그냥 덮어쓰면 사라진다 — 2026-11-14 실제로 6개 페이지에서 제품 영상이
+  # 지워지는 것을 확인하고 이 장치를 넣었다.
+  $outPath = Join-Path $outDir "$slug.html"
+  $page = $sb.ToString()
+  $old = ''
+  if (Test-Path -LiteralPath $outPath) { $old = [IO.File]::ReadAllText($outPath, $utf8) }
+
+  if ($old) {
+    # ① 제품 영상 블록 — <h2>제품 영상</h2> 부터 상담봇 버튼(.cta) 앞까지
+    $mv = [regex]::Match($old, '(?s)<h2>제품 영상</h2>.*?(?=<div class="cta">|</main>)')
+    if ($mv.Success -and $page -notmatch '<h2>제품 영상</h2>') {
+      $at = $page.IndexOf('<div class="cta">')
+      if ($at -ge 0) { $page = $page.Insert($at, $mv.Value) }
+    }
+
+    # ② .more 줄에 손으로 더한 링크 (스크립트가 만든 계산기 링크 말고 더 있는 것)
+    $mo = [regex]::Match($old,  '(?s)<p class="more">(.*?)</p>')
+    $mn = [regex]::Match($page, '(?s)<p class="more">(.*?)</p>')
+    if ($mo.Success -and $mn.Success) {
+      $extra = ''
+      foreach ($a in [regex]::Matches($mo.Groups[1].Value, '(?s)<a\s.*?</a>')) {
+        if (-not $mn.Groups[1].Value.Contains($a.Value)) { $extra += $a.Value }
+      }
+      if ($extra) {
+        $page = $page.Remove($mn.Index, $mn.Length).Insert($mn.Index, '<p class="more">' + $mn.Groups[1].Value + $extra + '</p>')
+      }
+    }
+
+    # ③ 그래도 잃는 게 있으면 아예 덮어쓰지 않는다.
+    #    조용히 지워지는 것보다, 안 바꾸고 알려주는 쪽이 낫다.
+    #    (영상이 둘 이상인 페이지, 구조화 데이터의 VideoObject 등)
+    $lost = @()
+    foreach ($u in [regex]::Matches($old, 'youtube-nocookie\.com/embed/[A-Za-z0-9_-]+')) {
+      if (-not $page.Contains($u.Value)) { $lost += "영상 $($u.Value -replace '.*/','')" }
+    }
+    foreach ($g in [regex]::Matches($old, 'href="\.\./guide/[^"]+"')) {
+      if (-not $page.Contains($g.Value)) { $lost += "안내 $($g.Value -replace '.*guide/','' -replace '"','')" }
+    }
+    if ($old.Contains('"VideoObject"') -and -not $page.Contains('"VideoObject"')) { $lost += 'VideoObject(구조화 데이터)' }
+    $lost = @($lost | Select-Object -Unique)
+    if ($lost.Count -gt 0) {
+      Write-Warning "$slug.html - 덮어쓰지 않았습니다. 이 페이지에만 있는 내용이 지워집니다: $($lost -join ', '). 영상·안내 연결 작업에서 다시 붙여 주세요."
+      $skipped += "$slug.html"
+      continue
+    }
+  }
+  [IO.File]::WriteAllText($outPath, $page, $utf8)
 }
 
 # 목록 페이지
@@ -231,4 +355,10 @@ foreach ($p in $all) { $s = $SlugMap[$p.제품명]; if ($s) { [void]$sb.Append("
 [void]$sb.Append("</div>`n</main>`n")
 [void]$sb.Append($footer)
 [IO.File]::WriteAllText((Join-Path $outDir 'index.html'), $sb.ToString(), $utf8)
-"생성 완료: $($all.Count)개 제품 + 목록"
+"생성 완료: $($all.Count - $skipped.Count)개 제품 + 목록"
+if ($skipped.Count -gt 0) {
+  ""
+  "덮어쓰지 않고 넘어간 페이지 $($skipped.Count)개 — 이 스크립트가 모르는 내용(제품 영상 등)이 들어 있습니다:"
+  $skipped | ForEach-Object { "  - $_" }
+  "이 페이지들을 바꾸려면, 영상 연결 작업에서 영상을 다시 붙이거나 이 스크립트가 영상까지 만들도록 고쳐야 합니다."
+}
