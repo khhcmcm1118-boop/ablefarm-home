@@ -5,6 +5,8 @@
    - 광고용 구글 신호·광고 맞춤 신호는 끈다 */
 (function () {
   var ID = 'G-K2X5EWR10H';
+  // iframe 안(예: 첫 화면에 들어간 농박사)은 세지 않음 — 한 번 방문이 두 번 잡히는 것 방지
+  try { if (window.self !== window.top) return; } catch (e) { return; }
   if (!/(^|\.)ablefarm\.co\.kr$/.test(location.hostname)) return;
   try {
     if (/[?&]notrack=1\b/.test(location.search)) localStorage.setItem('af_notrack', '1');
