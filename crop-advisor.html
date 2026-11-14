@@ -517,6 +517,17 @@
   .widget.compact .band{display:none !important}
   .widget .thread{overflow-x:hidden !important}
 </style>
+<!-- 방문 통계(GA4) — 처리방침: /privacy.html
+     ⚠ 홈페이지(index.html)가 이미 /ga.js 를 읽고, 그 안에 이 봇이 iframe 으로 들어 있다.
+       그냥 <script src="/ga.js"> 를 넣으면 홈페이지에 한 번 들어올 때마다
+       방문이 두 번 세어진다. 그래서 봇을 따로 열었을 때만 센다. -->
+<script>
+if (window.top === window.self) {
+  var afGaTag = document.createElement('script');
+  afGaTag.src = '/ga.js';
+  document.head.appendChild(afGaTag);
+}
+</script>
 </head>
 <body>
 
@@ -536,7 +547,8 @@
     </form>
     <div class="err" id="loginErr"></div>
     <div class="help">
-      등록이 안 되어 있으면 담당자에게 문의해 주세요.<br><b>02-858-6229</b>
+      등록이 안 되어 있으면 담당자에게 문의해 주세요.<br><b>02-858-6229</b><br>
+      <a href="/privacy.html" target="_blank" rel="noopener" style="color:inherit">개인정보 처리방침</a>
     </div>
   </div>
 
@@ -568,6 +580,11 @@
     </button>
     <input id="textInput" type="text" placeholder="예) 고추 키우는데 열매가 잘 안커요" />
     <button id="sendBtn">보내기</button>
+  </div>
+  <!-- 사진·질문이 AI로 전달되는 화면이라, 처리방침을 늘 보이는 곳에 둔다 -->
+  <div style="padding:6px 14px 10px;text-align:center;font-size:11px;line-height:1.6;color:var(--ink-soft);opacity:.85">
+    사진은 답변을 만드는 데만 쓰고 저장하지 않아요 ·
+    <a href="/privacy.html" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">개인정보 처리방침</a>
   </div>
 </div>
 
