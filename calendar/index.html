@@ -248,7 +248,7 @@ function calcLink(n){ return "../calc/?p=" + encodeURIComponent(n); }
 var PNAMES = Object.keys(PI).sort(function(a, b){ return b.length - a.length; });
 function prodOf(n){ if (PI[n]) return n; for (var i = 0; i < PNAMES.length; i++) if (n.indexOf(PNAMES[i]) === 0) return PNAMES[i]; return null; }
 function cropHit(v, c){ var ns = c.split("·"); return (v.c || []).some(function(x){ return ns.indexOf(x) >= 0; }); }
-function thumb(v){ return "https://i.ytimg.com/vi/" + v.id + "/hqdefault.jpg"; }
+function thumb(v){ if (v.pre && v.thumb) return v.thumb; return "https://i.ytimg.com/vi/" + v.id + "/hqdefault.jpg"; }
 // 제품 영상은 제품 설명 창에서만, 재배 정보(쇼츠)는 작물 영상 칸에서만 — 병 이름 든 쇼츠가 제품 옆에 붙지 않게
 function prodVids(p){ return VIDS.filter(function(v){ return v.kind === "제품" && (v.p || []).indexOf(p) >= 0; }); }
 function cropVids(c){ return VIDS.filter(function(v){ return v.kind === "쇼츠" && cropHit(v, c); }); }
@@ -314,16 +314,16 @@ function openProd(pn){
 function openVid(id){
   var v = VIDS.filter(function(x){ return x.id === id; })[0]; if (!v) return;
   var tall = v.kind === "쇼츠" || v.vert;
-  var yt = "https://www.youtube.com/" + (tall ? "shorts/" : "watch?v=") + v.id;
+  var yt = v.pre ? (v.share || v.url) : "https://www.youtube.com/" + (tall ? "shorts/" : "watch?v=") + v.id; // pre: 유튜브 공개 전 홈페이지 영상 파일
   var frame = v.file
     ? '<video class="player" controls autoplay playsinline preload="metadata" poster="' + thumb(v) + '" src="' + esc(v.file) + '"></video>'
     : '<iframe class="player' + (tall ? ' tall' : '') + '" src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="' + esc(v.t) + '"></iframe>';
   stopPlayer();
   dlg.innerHTML = '<div class="dlg"><button class="x" data-x aria-label="닫기">×</button><div style="clear:both"></div>' + frame +
-    '<p class="vtitle">' + esc(v.t) + '</p><div class="acts"><a class="btn gold" href="' + yt + '" target="_blank" rel="noopener">유튜브에서 보기</a><a class="btn" href="https://www.youtube.com/channel/UCiVu-ZSDBsEALPg0Li2_gaw?sub_confirmation=1" target="_blank" rel="noopener">▶ 에이농티비 구독</a></div></div>';
+    '<p class="vtitle">' + esc(v.t) + '</p><div class="acts"><a class="btn gold" href="' + yt + '" target="_blank" rel="noopener">' + (v.pre ? "안내 페이지 보기" : "유튜브에서 보기") + '</a><a class="btn" href="https://www.youtube.com/channel/UCiVu-ZSDBsEALPg0Li2_gaw?sub_confirmation=1" target="_blank" rel="noopener">▶ 에이농티비 구독</a></div></div>';
   // 직접 올린 고화질 파일을 못 읽으면 유튜브로 바꿔 튼다
   var el = dlg.querySelector("video");
-  if (el) el.addEventListener("error", function(){ var f = document.createElement("div"); f.innerHTML = '<iframe class="player" src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; el.replaceWith(f.firstChild); });
+  if (el) el.addEventListener("error", function(){ if (v.pre) return; var f = document.createElement("div"); f.innerHTML = '<iframe class="player" src="https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; el.replaceWith(f.firstChild); });
   if (!dlg.open) dlg.showModal();
 }
 dlg.addEventListener("close", stopPlayer);
