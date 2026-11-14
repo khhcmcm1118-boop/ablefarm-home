@@ -2235,7 +2235,11 @@ function isTimingQuestion(msg){ return TIMING_PATTERNS.some(p => msg.includes(p)
 function isSpacingQuestion(msg){ return SPACING_PATTERNS.some(p => msg.includes(p)); }
 function isHarvestInfoQuestion(msg){ return HARVEST_INFO_PATTERNS.some(p => msg.includes(p)); }
 function isStorageQuestion(msg){ return STORAGE_PATTERNS.some(p => msg.includes(p)); }
-function isPriceQuestion(msg){ return PRICE_PATTERNS.some(p => msg.includes(p)); }
+function isPriceQuestion(msg){
+  // "포기 간격은 얼마예요?" 처럼 간격·시기·수확을 묻는 「얼마」는 가격 질문이 아니다
+  if(isSpacingQuestion(msg) || isTimingQuestion(msg) || isHarvestInfoQuestion(msg)) return false;
+  return PRICE_PATTERNS.some(p => msg.includes(p));
+}
 
 // 희석배수·사용량 질문 → 홈페이지 희석·사용량 계산기(calc/)로 연결.
 // "배수"만으로는 잡지 않는다 (밭 배수 = 물빠짐). "몇 포기"(심는 수)도 제외
@@ -3785,6 +3789,18 @@ function handleUserMessage(raw){
   // 작물을 기다리던 중이라도 증상까지 같이 말했으면(예: "고추 정식했는데 뿌리가 안 내려요")
   // 증상 목록을 다시 보여주지 않고 아래 일반 흐름으로 바로 답한다.
   const cropInFirst = awaitingCropForExamples && detectAnyCrop(msg);
+  // 작물 이름과 재배정보 질문을 한 번에 말한 경우(예: "수박 심는 시기 알려줘") → 증상 고르기로 가지 않고 바로 답한다
+  if(cropInFirst && CROP_INFO[cropInFirst] && (isTimingQuestion(msg) || isSpacingQuestion(msg) || isHarvestInfoQuestion(msg) || isStorageQuestion(msg))){
+    const prevCrop = currentCrop;
+    currentCrop = cropInFirst;
+    if(tryAnswerCropInfo(msg)){
+      awaitingCropForExamples = false;
+      previousCrop = null;
+      return;
+    }
+    currentCrop = prevCrop;
+  }
+
   const issueHit = cropInFirst && (CROP_ISSUE_DB[cropInFirst] || []).some(it => it.keywords.some(k => msg.includes(k)));
   if(cropInFirst && (issueHit || matchProducts(msg).length > 0)){
     awaitingCropForExamples = false;
