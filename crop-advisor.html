@@ -3106,6 +3106,40 @@ function qnaWordHit(msg, k){
   return msg.includes(k) || (QNA_WORD_ALIAS[k] && QNA_WORD_ALIAS[k].test(msg));
 }
 
+/* ------------------------------------------------------------------
+   질문 글끼리 얼마나 닮았는지 — 두 글자씩 끊어 견준다
+   ------------------------------------------------------------------
+   예전에는 사람이 손으로 적어둔 keywords 만 보고 찾았다. 그래서
+   ① 새 Q&A의 키워드가 부실하면 못 찾고,
+   ② 농민이 한 글자 다르게 쓰면(차광망 → 차광막) 못 찾고,
+   ③ 짧게 물으면(「인삼 차광망」) 「언제·어떻게」가 없다고 버렸다.
+   실제로 사장님이 「겨울 인삼밭 차광막 걷어야?」로 물었을 때 못 답했다.
+
+   이제는 Q&A의 질문 글 자체와 견준다. 두 글자씩 끊어 겹치는 비율을 세므로
+   말끝이나 한 글자 차이는 넘어간다. 짧은 쪽을 기준으로 나눠, 질문이 길어도
+   짧게 물은 농민이 불리하지 않다.
+   실측: 「겨울 인삼밭 차광막 걷어야?」 → 맞는 글 0.70, 나머지는 모두 0.10.
+   차이가 크게 벌어져서 0.45를 문턱으로 잡아도 엉뚱한 답이 나오지 않는다.
+------------------------------------------------------------------- */
+function qnaBigrams(s){
+  const t = String(s || '').replace(/[^가-힣0-9a-zA-Z]/g, '');
+  const out = Object.create(null);
+  for(let i = 0; i < t.length - 1; i++) out[t.substr(i, 2)] = 1;
+  return out;
+}
+function qnaSimilarity(msg, q){
+  const a = qnaBigrams(msg), b = qnaBigrams(q);
+  const ka = Object.keys(a), kb = Object.keys(b);
+  if(!ka.length || !kb.length) return 0;
+  /* ⚠ 너무 짧은 말에는 쓰지 않는다. "사과" 는 두 글자 조각이 하나뿐이라
+     사과가 들어간 Q&A 와 1.00 으로 닮은 것이 되어, 작물 이름만 말해도
+     엉뚱한 Q&A 가 나왔다(증상 흐름을 가로챘다). 네 글자부터 본다. */
+  if(ka.length < 3) return 0;
+  const shared = ka.filter(k => b[k]).length;
+  return shared / Math.min(ka.length, kb.length);
+}
+const QNA_SIM_ENOUGH = 0.45;   // 이만큼 닮았으면 그것만으로 받아들인다
+
 function findQnaAnswer(msg){
   if(!QNA_ITEMS.length) return null;
   if(pendingQuestion || pendingConfirmIssue || symptomStage > 0) return null;
@@ -3117,14 +3151,19 @@ function findQnaAnswer(msg){
     const cropHit = cropWords.some(c => msg.includes(c) || (QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(msg))) || (currentCrop && cropWords.includes(currentCrop));
     if(!cropHit) return;
     const isCropWord = k => cropWords.includes(k) || cropWords.some(c => QNA_CROP_WORDS[c] && QNA_CROP_WORDS[c].test(k));
-    let hits = (item.keywords || []).filter(k => !isCropWord(k) && !QNA_GENERIC.test(k) && qnaWordHit(msg, k)).length;
+    const hits = (item.keywords || []).filter(k => !isCropWord(k) && !QNA_GENERIC.test(k) && qnaWordHit(msg, k)).length;
+    const sim = qnaSimilarity(msg, item.q);   // 질문 글끼리 닮은 정도
+    let score = hits + sim * 3;
     // "엘니뇨 때문에 걱정", "한파 오면 어떻게" 처럼 짧은 겨울 대비 질문은 공통 글로 받는다
     // (작물이 얼었다는 증상은 빼서 언 피해 흐름으로 보낸다)
     // 작물 이름이 들어간 질문("이상기후로 고추 잎이 말려요")은 작물·증상 흐름이 먼저다
     const commonOnly = cropWords.includes("공통") && !detectAnyCrop(msg.replace(/한파|폭설|엘니뇨|엘리뇨|이상기후/g, "")) &&!/얼었|얼어|냉해|동해 ?입|잎|열매|뿌리|줄기/.test(msg);
-    if(hits < 1){ if(!commonOnly) return; hits = 0.5; }
-    else if(hits < 2 && !QNA_CUE.test(msg) && !commonOnly) return;
-    if(hits > bestScore || (hits === bestScore && best && item.date > best.date)){ best = item; bestScore = hits; }
+    // 질문 글이 많이 닮았으면 키워드가 없어도, 짧게 물어도 받아들인다
+    if(sim < QNA_SIM_ENOUGH){
+      if(hits < 1){ if(!commonOnly) return; score = 0.5; }
+      else if(score < 2 && !QNA_CUE.test(msg) && !commonOnly) return;
+    }
+    if(score > bestScore || (score === bestScore && best && item.date > best.date)){ best = item; bestScore = score; }
   });
   return best;
 }
