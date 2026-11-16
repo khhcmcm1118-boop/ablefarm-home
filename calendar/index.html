@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>작물별 재배력 · 이번 달 할 일 | (주)에이블팜</title>
-<meta name="description" content="벼·고추·사과·복숭아·배추·감자 등 42개 작물 — 이번 달 할 일과 쓸 제품, 재배 정보 영상을 작물별로 알려드립니다.">
+<meta name="description" content="벼·고추·사과·복숭아·배추·감자·대추 등 45개 작물 — 이번 달 할 일과 쓸 제품, 재배 정보 영상을 작물별로 알려드립니다.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="작물별 재배력 · 이번 달 할 일 | (주)에이블팜">
 <meta property="og:description" content="작물을 고르면 이번 달 할 일과 쓸 제품, 재배 정보 영상이 바로 나옵니다.">
@@ -216,19 +216,21 @@
 // 제품 설명·영상: cal-media.js (현장앱 build.ps1 이 data/products.json·영상 목록에서 만든다)
 if (typeof CAL_EXTRA !== "undefined") Object.keys(CAL_EXTRA).forEach(function(k){ if (!CAL[k]) CAL[k] = CAL_EXTRA[k]; });
 if (typeof BASIS_EXTRA !== "undefined") Object.keys(BASIS_EXTRA).forEach(function(k){ if (!CAL_BASIS[k]) CAL_BASIS[k] = BASIS_EXTRA[k]; });
+// 사과는 기본 「사과·배」 재배력을 그대로 쓰고, 배는 따로 만든 재배력(cal-extra)으로 보여 준다 (2026-11-16)
+if (CAL["사과·배"] && !CAL["사과"]){ CAL["사과"] = CAL["사과·배"]; if (CAL_BASIS["사과·배"]) CAL_BASIS["사과"] = CAL_BASIS["사과·배"]; }
 var PI = typeof PROD_INFO !== "undefined" ? PROD_INFO : {};
 var VIDS = (typeof VIDEOS !== "undefined" ? VIDEOS : []).filter(function(v){ return !v.from || Date.now() >= Date.parse(v.from); });
 
 var GROUPS = [
   ["곡물·콩", ["벼","밀","콩"]],
   ["과채", ["고추","오이","토마토","수박","참외","딸기","가지","메론","호박"]],
-  ["과수", ["사과·배","포도","복숭아","단감","아로니아","밤"]],
+  ["과수", ["사과","배","포도","복숭아","단감","대추","아로니아","밤"]],
   ["잎채소", ["배추","대파","쪽파","부추","시금치","상추","갓","깻잎","열무","얼갈이배추","청경채","미나리","쑥갓","아욱","근대"]],
   ["뿌리채소", ["마늘·양파","무","당근","감자","고구마","생강","우엉","연근","도라지","더덕"]]
 ];
 var CROPS = [];
 GROUPS.forEach(function(g){ g[1] = g[1].filter(function(c){ return CAL[c]; }); CROPS = CROPS.concat(g[1]); });
-var REST = Object.keys(CAL).filter(function(c){ return CROPS.indexOf(c) < 0; });
+var REST = Object.keys(CAL).filter(function(c){ return CROPS.indexOf(c) < 0 && c !== "사과·배"; });
 if (REST.length){ GROUPS.push(["기타", REST]); CROPS = CROPS.concat(REST); }
 // 묶음 작물(사과·배, 마늘·양파)은 앞 작물의 3D 아이콘을 쓴다
 function icon(c){ return "icons/" + encodeURIComponent(c.split("·")[0]) + ".png"; }
@@ -237,9 +239,9 @@ var $ = function(id){ return document.getElementById(id); };
 var today = new Date(), nowM = today.getMonth() + 1;
 var part = today.getDate() <= 10 ? "상순" : today.getDate() <= 20 ? "중순" : "하순";
 var crop = CROPS[0], month = nowM;
-try { var saved = localStorage.getItem("af-cal-crop"); if (saved && CAL[saved]) crop = saved; } catch(e){}
+try { var saved = localStorage.getItem("af-cal-crop"); if (saved === "사과·배") saved = "사과"; if (saved && CAL[saved]) crop = saved; } catch(e){}
 var qm = location.search.match(/[?&]c=([^&]+)/);
-if (qm){ var qc = decodeURIComponent(qm[1]); if (CAL[qc]) crop = qc; }
+if (qm){ var qc = decodeURIComponent(qm[1]); if (qc === "사과·배") qc = "사과"; if (CAL[qc]) crop = qc; }
 function groupOf(c){ for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i][1].indexOf(c) >= 0) return i; return 0; }
 var cat = groupOf(crop);
 
