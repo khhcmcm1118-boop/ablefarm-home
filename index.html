@@ -1053,6 +1053,11 @@ class Component extends DCLogic {
       .then((r) => r.json())
       .then((j) => this.setState({ qaAll: Array.isArray(j) ? j : [] }))
       .catch(() => {});
+    // 재배력에 없는 작물 아이콘 목록 — 매주 예약작업이 새 작물 아이콘을 만들어 여기에 보탠다
+    fetch('assets/crop-icons/list.json', { cache: 'no-cache' })
+      .then((r) => r.json())
+      .then((j) => this.setState({ qaIconsExtra: Array.isArray(j) ? j : [] }))
+      .catch(() => {});
   }
 
   qnaSave(list) {
@@ -1088,15 +1093,17 @@ class Component extends DCLogic {
       .sort((a, b) => cnt[b] - cnt[a] || a.localeCompare(b, 'ko'));
     if (cnt['공통·기타']) names.push('공통·기타');
     const crop = names.includes(s.qaCrop) ? s.qaCrop : '';
-    // 재배력 페이지의 작물 사진 아이콘을 같이 쓴다. 아이콘이 없는 작물은 글자 한 자로 대신한다
+    // 재배력 페이지의 작물 사진 아이콘을 같이 쓰고, 거기 없는 작물은 assets/crop-icons 에서 찾는다. 둘 다 없으면 글자 한 자
     const ICONS = '가지 감자 갓 고구마 고추 근대 깻잎 단감 당근 대추 대파 더덕 도라지 딸기 마늘 메론 무 미나리 밀 밤 배 배추 벼 복숭아 부추 사과 상추 생강 수박 시금치 쑥갓 아로니아 아욱 양파 얼갈이배추 연근 열무 오이 우엉 쪽파 참외 청경채 콩 토마토 포도 호박'.split(' ');
     const chip = (name, key, n) => {
       const on = crop === key;
-      const hasIcon = ICONS.includes(key);
+      const inCal = ICONS.includes(key);
+      const inExtra = !inCal && (s.qaIconsExtra || []).includes(key);
+      const hasIcon = inCal || inExtra;
       const mono = key === '' ? '전체' : key === '공통·기타' ? '공통' : key.slice(0, 1);
       return {
         name, n, hasIcon, noIcon: !hasIcon, mono,
-        icon: hasIcon ? 'calendar/icons/' + encodeURIComponent(key) + '.png' : '',
+        icon: hasIcon ? (inCal ? 'calendar/icons/' : 'assets/crop-icons/') + encodeURIComponent(key) + '.png' : '',
         monoSize: mono.length > 1 ? '15px' : '22px',
         ringBg: hasIcon ? '#fff' : 'radial-gradient(circle at 35% 30%, #f4f7ec 0%, #e3ecd6 100%)',
         ring: on ? '0 0 0 2px #16271c, 0 0 0 5px #fbfaf5, 0 0 0 6px #c9a961' : '0 0 0 1px #e2ddcb, 0 3px 8px rgba(22,39,28,.07)',
