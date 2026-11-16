@@ -64,6 +64,18 @@
   .af-btn{cursor:pointer;transition:transform .12s ease,filter .12s ease}
   .af-btn:hover{filter:brightness(1.06)}
   .af-btn:active{transform:translateY(1px)}
+  /* 농사 Q&A 작물 고르기 — 컴퓨터는 바둑판, 휴대폰은 옆으로 넘기는 한 줄 */
+  .af-qcrop{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px 4px}
+  .af-qtile{display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 2px 6px;border-radius:14px;cursor:pointer;transition:background .18s ease}
+  .af-qtile:hover{background:#f6f3ea}
+  .af-qtile:hover .af-qring{transform:translateY(-2px);box-shadow:0 8px 18px rgba(22,39,28,.14)}
+  .af-qring{width:58px;height:58px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .2s ease}
+  .af-qring img{width:78%;height:78%;object-fit:contain}
+  @media (max-width:640px){
+    .af-qcrop{display:flex;overflow-x:auto;gap:2px;margin:0 -18px;padding:0 14px 4px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .af-qcrop::-webkit-scrollbar{display:none}
+    .af-qtile{flex:0 0 74px;scroll-snap-align:start}
+  }
   details{overflow:hidden}
   summary{cursor:pointer;list-style:none}
   summary::-webkit-details-marker{display:none}
@@ -687,6 +699,34 @@
       <!-- 농사 Q&A (data/qna.json) -->
       <div style="margin-bottom:34px">
         <input placeholder="작물이나 궁금한 말로 찾기 (예: 양파, 수정벌)" value="{{ qaWord }}" onChange="{{ qaSetWord }}" style="width:100%;box-sizing:border-box;padding:13px 15px;border:1px solid #dcd8c7;border-radius:11px;font-size:14.5px;font-family:inherit;background:#fff;color:#16241a;outline:none;margin-bottom:12px">
+        <!-- 작물 고르기 — 공개된 글의 작물로 자동으로 만들어진다 -->
+        <div style="background:#fbfaf5;border:1px solid #e2ddcb;border-radius:20px;padding:20px 18px 14px;margin:4px 0 18px;box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 10px 30px -18px rgba(22,39,28,.25);overflow:hidden">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 4px 14px;margin-bottom:12px;border-bottom:1px solid #ebe6d6">
+            <div>
+              <div style="font-size:11px;font-weight:800;letter-spacing:.16em;color:#b08d4f;margin-bottom:4px">BY CROP</div>
+              <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;color:#16241a">작물별로 보기</div>
+            </div>
+            <div style="font-size:13px;color:#6b7465;white-space:nowrap"><b style="color:#16241a">{{ qaCropLabel }}</b> · 질문 {{ qaCropN }}건</div>
+          </div>
+          <div class="af-qcrop">
+            <sc-for list="{{ qaCrops }}" as="c" hint-placeholder-count="10">
+              <div class="af-qtile" onClick="{{ c.onClick }}" title="{{ c.name }} 질문 보기">
+                <div class="af-qring" style="box-shadow:{{ c.ring }};background:{{ c.ringBg }}">
+                  <sc-if value="{{ c.hasIcon }}" hint-placeholder-val="{{ true }}">
+                    <img src="{{ c.icon }}" alt="" loading="lazy">
+                  </sc-if>
+                  <sc-if value="{{ c.noIcon }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:{{ c.monoSize }};font-weight:800;letter-spacing:-.03em;color:#4a7c59;font-family:'Noto Serif KR',serif">{{ c.mono }}</span>
+                  </sc-if>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;max-width:100%">
+                  <span style="font-size:13px;font-weight:{{ c.weight }};color:{{ c.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+                  <span style="flex:none;min-width:17px;padding:1px 5px;border-radius:100px;font-size:10.5px;font-weight:800;text-align:center;background:{{ c.nBg }};color:{{ c.nFg }}">{{ c.n }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
         <sc-if value="{{ qaEmpty }}" hint-placeholder-val="{{ false }}">
           <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:18px 22px;font-size:14px;color:#6b7465">찾는 내용이 아직 없습니다. 아래에서 직접 문의해 주세요.</div>
         </sc-if>
@@ -1036,8 +1076,39 @@ class Component extends DCLogic {
     // 공개일이 된 글만 보인다 — 매일 자정(한국 시간)에 2건씩 열린다
     const live = (s.qaAll || []).filter((x) => x.date <= kst)
       .sort((a, b) => (a.date === b.date ? (a.id < b.id ? 1 : -1) : (a.date < b.date ? 1 : -1)));
+    // 작물 메뉴 — 「마늘·양파」 같은 글은 마늘·양파 양쪽에 보이고, 작물이 아닌 갈래는 「공통·기타」로 묶는다
+    const ETC = ['공통', '저장고', '지원사업', '농기계', '종자'];
+    const cropsOf = (x) => {
+      const p = String(x.crop || '').split('·').map((t) => t.trim()).filter(Boolean);
+      return p.some((t) => ETC.includes(t)) || !p.length ? ['공통·기타'] : p;
+    };
+    const cnt = {};
+    live.forEach((x) => cropsOf(x).forEach((c) => { cnt[c] = (cnt[c] || 0) + 1; }));
+    const names = Object.keys(cnt).filter((c) => c !== '공통·기타')
+      .sort((a, b) => cnt[b] - cnt[a] || a.localeCompare(b, 'ko'));
+    if (cnt['공통·기타']) names.push('공통·기타');
+    const crop = names.includes(s.qaCrop) ? s.qaCrop : '';
+    // 재배력 페이지의 작물 사진 아이콘을 같이 쓴다. 아이콘이 없는 작물은 글자 한 자로 대신한다
+    const ICONS = '가지 감자 갓 고구마 고추 근대 깻잎 단감 당근 대추 대파 더덕 도라지 딸기 마늘 메론 무 미나리 밀 밤 배 배추 벼 복숭아 부추 사과 상추 생강 수박 시금치 쑥갓 아로니아 아욱 양파 얼갈이배추 연근 열무 오이 우엉 쪽파 참외 청경채 콩 토마토 포도 호박'.split(' ');
+    const chip = (name, key, n) => {
+      const on = crop === key;
+      const hasIcon = ICONS.includes(key);
+      const mono = key === '' ? '전체' : key === '공통·기타' ? '공통' : key.slice(0, 1);
+      return {
+        name, n, hasIcon, noIcon: !hasIcon, mono,
+        icon: hasIcon ? 'calendar/icons/' + encodeURIComponent(key) + '.png' : '',
+        monoSize: mono.length > 1 ? '15px' : '22px',
+        ringBg: hasIcon ? '#fff' : 'radial-gradient(circle at 35% 30%, #f4f7ec 0%, #e3ecd6 100%)',
+        ring: on ? '0 0 0 2px #16271c, 0 0 0 5px #fbfaf5, 0 0 0 6px #c9a961' : '0 0 0 1px #e2ddcb, 0 3px 8px rgba(22,39,28,.07)',
+        fg: on ? '#16241a' : '#54604f', weight: on ? '800' : '600',
+        nBg: on ? '#16271c' : '#efebdf', nFg: on ? '#fff' : '#8a9280',
+        onClick: () => this.setState({ qaCrop: key, qaShow: 6, qaOpen: null }),
+      };
+    };
+    const qaCrops = [chip('전체', '', live.length)].concat(names.map((c) => chip(c, c, cnt[c])));
+    const byCrop = crop ? live.filter((x) => cropsOf(x).includes(crop)) : live;
     const word = (s.qaWord || '').trim();
-    const hits = word ? live.filter((x) => (x.crop + ' ' + x.q + ' ' + x.a).includes(word)) : live;
+    const hits = word ? byCrop.filter((x) => (x.crop + ' ' + x.q + ' ' + x.a).includes(word)) : byCrop;
     const show = s.qaShow || 6;
     const todayN = live.filter((x) => x.date === kst).length;
     return {
@@ -1045,6 +1116,9 @@ class Component extends DCLogic {
       qaWord: s.qaWord || '',
       qaSetWord: (e) => this.setState({ qaWord: e.target.value, qaShow: 6 }),
       qaCount: live.length,
+      qaCrops,
+      qaCropLabel: crop || '전체 작물',
+      qaCropN: hits.length,
       qaEmpty: hits.length === 0,
       qaList: hits.slice(0, show).map((x) => {
         const open = s.qaOpen === x.id;
