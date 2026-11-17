@@ -1197,7 +1197,7 @@ class Component extends DCLogic {
         if (!sent) {
           // 접수 주소가 없거나 전송 실패 → 메일로 보내게 한다
           const text = '이름: ' + name + '\n작물: ' + crop + '\n연락처: ' + phone + '\n\n' + body;
-          location.href = 'mailto:' + Component.CONTACT_MAIL + '?subject=' + encodeURIComponent('에이블팜 고객문의') + '&body=' + encodeURIComponent(text);
+          location.href = 'mailto:' + Component.CONTACT_MAIL + '?subject=' + encodeURIComponent('에이블팜 농사문의') + '&body=' + encodeURIComponent(text);
           this.setState({ qMsg: '메일 앱이 열리면 보내기를 눌러 주세요. 열리지 않으면 ' + Component.CONTACT_MAIL + ' 또는 02-858-6229로 연락 주세요.' });
           return;
         }
