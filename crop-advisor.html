@@ -3143,6 +3143,27 @@ function qnaSimilarity(msg, q){
 const QNA_SIM_ENOUGH = 0.45;   // 이만큼 닮았으면 그것만으로 받아들인다
 const QNA_SIM_STRONG = 0.55;   // 증상처럼 읽히는 문장은 이만큼 닮아야 Q&A로 답한다
 
+/* ------------------------------------------------------------------
+   방금 한 Q&A 답을 되묻는지 알아본다
+   ------------------------------------------------------------------
+   「단감은 언제 따요?」 → 답에 「색도 4」가 나오고 → 「색도4가 뭔가요?」
+   예전에는 이 되묻기에 「어떤 작물이신가요?」로 되돌아갔다. 방금 자기가 한
+   답 속의 말인데도 못 알아들은 것이다.
+   방금 한 답·질문에 있던 말을 농민이 집어 물으면 되묻기로 본다.
+   흔한 말은 빼서 「비료 언제 줘요?」 같은 새 질문을 되묻기로 오해하지 않는다.
+------------------------------------------------------------------- */
+let lastQna = null;
+const QNA_FOLLOWUP_STOP = ["하나요","있어요","합니다","됩니다","그리고","하지만","수확","저장","관리","작물","농가","정도","경우","때문","이상","이하","하면","해서","으로","에서","까지","부터","보다","처럼","주세요","좋습니다","가능","사용","방법","시기","온도","습도"];
+function qnaFollowUpTerm(msg){
+  if(!lastQna) return null;
+  const pool = String(lastQna.a || '') + ' ' + String(lastQna.q || '');
+  const words = (pool.match(/[가-힣A-Za-z]{2,}/g) || []).filter(w => !QNA_FOLLOWUP_STOP.includes(w));
+  const found = words.filter(w => msg.includes(w));
+  if(!found.length) return null;
+  found.sort((a, b) => b.length - a.length);
+  return found[0];
+}
+
 function findQnaAnswer(msg){
   if(!QNA_ITEMS.length) return null;
   if(pendingQuestion || pendingConfirmIssue || symptomStage > 0) return null;
@@ -3618,6 +3639,8 @@ function handleUserMessage(raw){
   const qaHit = findQnaAnswer(msg);
   if(qaHit){
     resetSymptomState();
+    lastQna = qaHit;                                   // 되묻기에 답하려면 방금 한 답을 기억해야 한다
+    if(!currentCrop && CROP_LIST_RAW.includes(qaHit.crop)) currentCrop = qaHit.crop;
     showTyping(()=>{
       addBubble(`${qaHit.a}\n\n출처: ${qaHit.src}`, 'bot');
       const links = (qaHit.links || []).map(l => `<a href="${escapeHtml(l.u)}" target="_blank" rel="noopener">📄 ${escapeHtml(l.t)}</a>`);
@@ -3944,6 +3967,19 @@ function handleUserMessage(raw){
         showPartCategoryChips();
       }
     });
+    return;
+  }
+
+  /* 2.9) 방금 받은 Q&A 답을 되묻는 경우 — 「색도4가 뭔가요?」
+     봇이 자기가 방금 한 답 속의 말을 설명하지 못하고 「어떤 작물이신가요?」로
+     되돌아가던 것을 막는다. 방금 한 답에 들어 있던 말을 농민이 집어 물으면
+     그 답을 함께 붙여 중계에 넘긴다 — 작물과 앞뒤 사정을 알아야 제대로 풀어준다.
+     (「색도 4」의 4는 단감 기준 숫자다. 망고·포도는 칼라차트를 써도 숫자가 다르고
+      배는 요오드 반응으로 본다 — 작물을 모르면 설명이 틀린다) */
+  const followUpTerm = qnaFollowUpTerm(msg);
+  if(followUpTerm){
+    const ctx = "농민이 방금 받은 답: " + lastQna.a + "\n이어서 묻습니다: " + msg;
+    tryAnswerUnanswered(ctx, "되묻기");
     return;
   }
 
