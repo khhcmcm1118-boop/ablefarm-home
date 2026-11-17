@@ -743,6 +743,14 @@
               </div>
             </sc-for>
           </div>
+          <!-- 고른 작물의 재배력으로 잇기 -->
+          <sc-if value="{{ qaCalHas }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ qaCalUrl }}" class="af-btn" style="display:flex;align-items:center;gap:10px;margin:14px 4px 4px;padding:11px 14px;border-radius:12px;background:#e9efdd;border:1px solid #cfdcbb;color:#16241a;text-decoration:none">
+              <span style="flex:none;font-size:18px">📅</span>
+              <span style="flex:1;min-width:0;font-size:14px"><b>{{ qaCalName }} 재배력</b> — 이번 달 할 일과 시기별 관리 보기</span>
+              <span style="flex:none;font-weight:800;color:#4a7c59">→</span>
+            </a>
+          </sc-if>
         </div>
         <sc-if value="{{ qaEmpty }}" hint-placeholder-val="{{ false }}">
           <div style="background:#fff;border:1px solid #dcd8c7;border-radius:14px;padding:18px 22px;font-size:14px;color:#6b7465">찾는 내용이 아직 없습니다. 아래에서 직접 문의해 주세요.</div>
@@ -758,6 +766,18 @@
               <sc-if value="{{ x.open }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:0 20px 20px">
                   <div style="background:#e9efdd;border-radius:12px;padding:16px 18px;font-size:14.5px;line-height:1.75;color:#2f3a2b;white-space:pre-wrap">{{ x.answer }}</div>
+                  <!-- 재배력으로 잇기: 이 작물의 이번 달 할 일·관리 시기 -->
+                  <sc-if value="{{ x.hasCal }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+                      <sc-for list="{{ x.cal }}" as="k" hint-placeholder-count="0">
+                        <a href="{{ k.u }}" class="af-btn" style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;background:#16271c;color:#fff;text-decoration:none">
+                          <span style="flex:none;font-size:22px;line-height:1">📅</span>
+                          <span style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:800">{{ k.t }}</b><span style="display:block;font-size:12.5px;color:#c7e3a8">이번 달 할 일 · 시기별 관리를 한눈에</span></span>
+                          <span style="flex:none;font-weight:800;color:#a9d18a">→</span>
+                        </a>
+                      </sc-for>
+                    </div>
+                  </sc-if>
                   <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
                     <sc-for list="{{ x.links }}" as="l" hint-placeholder-count="0">
                       <a href="{{ l.u }}" style="font-size:13.5px;font-weight:700;color:#4a7c59">{{ l.t }} →</a>
@@ -1130,6 +1150,11 @@ class Component extends DCLogic {
         onClick: () => this.setState({ qaCrop: key, qaShow: 6, qaOpen: null }),
       };
     };
+    // 재배력(calendar/?c=작물)으로 잇기 — calendar/cal-data.js 의 CAL 작물 이름과 같아야 열린다 (2026-11-17 기준 목록)
+    const CAL_KEYS = '벼 고추 마늘·양파 배추 사과·배 포도 오이 토마토 수박 참외 딸기 가지 메론 복숭아 단감 아로니아 밤 콩 밀 대파 쪽파 부추 시금치 상추 갓 깻잎 열무 얼갈이배추 청경채 미나리 쑥갓 아욱 근대 무 당근 감자 고구마 생강 우엉 연근 도라지 더덕 호박 배 대추 사과'.split(' ');
+    const calKey = (c) => (CAL_KEYS.includes(c) ? c : (c === '마늘' || c === '양파') ? '마늘·양파' : '');
+    const calOf = (x) => [...new Set(cropsOf(x).map(calKey).filter(Boolean))]
+      .map((k) => ({ t: k + ' 재배력 보기', u: 'calendar/?c=' + encodeURIComponent(k) }));
     const qaCrops = [chip('전체', '', live.length)].concat(names.map((c) => chip(c, c, cnt[c])));
     const byCrop = crop ? live.filter((x) => cropsOf(x).includes(crop)) : live;
     const word = (s.qaWord || '').trim();
@@ -1143,12 +1168,17 @@ class Component extends DCLogic {
       qaCount: live.length,
       qaCrops,
       qaCropLabel: crop || '전체 작물',
+      qaCalHas: !!calKey(crop),
+      qaCalName: calKey(crop),
+      qaCalUrl: 'calendar/?c=' + encodeURIComponent(calKey(crop)),
       qaCropN: hits.length,
       qaEmpty: hits.length === 0,
       qaList: hits.slice(0, show).map((x) => {
         const open = s.qaOpen === x.id;
+        const cal = calOf(x);
         return {
           open, title: '[' + x.crop + '] ' + x.q, date: x.date, answer: x.a, src: x.src,
+          cal, hasCal: cal.length > 0,
           links: (x.links || []).map((l) => ({ t: l.t, u: l.u })),
           caret: open ? '−' : '＋',
           onToggle: () => this.setState({ qaOpen: open ? null : x.id }),
