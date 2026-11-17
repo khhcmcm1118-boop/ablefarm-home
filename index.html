@@ -64,6 +64,11 @@
   .af-btn{cursor:pointer;transition:transform .12s ease,filter .12s ease}
   .af-btn:hover{filter:brightness(1.06)}
   .af-btn:active{transform:translateY(1px)}
+  /* 상단 「회사정보」 펼침 메뉴 */
+  .af-navitem{display:flex;flex-direction:column;gap:2px;padding:11px 14px;border-radius:11px;color:#16241a;text-decoration:none;transition:background .15s ease}
+  .af-navitem:hover{background:#eef2e4;filter:none}
+  .af-navitem b{font-size:14px;font-weight:700;letter-spacing:-.01em}
+  .af-navitem small{font-size:11.5px;font-weight:500;color:#8a9280}
   /* 농사 Q&A 작물 고르기 — 컴퓨터는 바둑판, 휴대폰은 옆으로 넘기는 한 줄 */
   .af-qcrop{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px 4px}
   .af-qtile{display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 2px 6px;border-radius:14px;cursor:pointer;transition:background .18s ease}
@@ -154,7 +159,19 @@
       <img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:46px;width:auto;display:block;mix-blend-mode:multiply">
     </div>
     <div class="af-navlinks" style="display:flex;gap:26px;color:#4c554a;font-weight:600">
-      <span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개<br></span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a><a href="calc/" onClick="{{ calcOpen }}" class="af-btn" style="color:inherit;text-decoration:none">희석 계산기</a><a href="calendar/" class="af-btn" style="color:inherit;text-decoration:none">재배력</a><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
+      <!-- 회사정보: 누르면 회사소개·주요제품·제품소개·카다로그가 펼쳐진다 -->
+      <span class="af-navinfo" style="position:relative;display:inline-flex">
+        <span class="af-btn" onClick="{{ navInfoToggle }}" style="display:inline-flex;align-items:center;gap:5px;color:{{ navInfoFg }}">회사정보<span style="display:inline-block;font-size:10px;transition:transform .2s ease;transform:rotate({{ navInfoRot }})">▼</span></span>
+        <sc-if value="{{ navInfoOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ navInfoClose }}" style="position:fixed;inset:0;z-index:40"></div>
+          <div class="af-navmenu" onClick="{{ navInfoClose }}" style="position:absolute;top:calc(100% + 14px);left:-18px;z-index:41;min-width:236px;padding:8px;background:#fffdf8;border:1px solid #e2ddcb;border-radius:16px;box-shadow:0 18px 40px -12px rgba(22,39,28,.28);animation:af-rise .22s cubic-bezier(.22,1,.36,1) both">
+            <div class="af-btn af-navitem" onClick="{{ goAbout }}"><b>회사소개</b><small>에이블팜은 어떤 회사인가요</small></div>
+            <div class="af-btn af-navitem" onClick="{{ goDetail }}"><b>주요제품</b><small>대표 제품 한눈에 보기</small></div>
+            <div class="af-btn af-navitem" onClick="{{ goProducts }}"><b>제품소개</b><small>작물별 전체 제품</small></div>
+            <a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn af-navitem"><b>카다로그</b><small>제품 카탈로그 펼쳐 보기</small></a>
+          </div>
+        </sc-if>
+      </span><a href="calc/" onClick="{{ calcOpen }}" class="af-btn" style="color:inherit;text-decoration:none">희석 계산기</a><a href="calendar/" class="af-btn" style="color:inherit;text-decoration:none">재배력</a><span class="af-btn" onClick="{{ goQna }}">농사문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span>
     </div>
   </div>
   <span class="af-btn" onClick="{{ goQna }}" style="flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px">문의하기 →</span>
@@ -675,13 +692,13 @@
 </div>
 </sc-if>
 
-<!-- ================= 고객문의 서브화면 ================= -->
+<!-- ================= 농사문의 서브화면 ================= -->
 <sc-if value="{{ isQna }}" hint-placeholder-val="{{ false }}">
 <div>
   <div class="af-sec" style="max-width:900px;margin:0 auto;padding:26px 40px 0">
     <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#8a9280">
       <span class="af-btn" onClick="{{ goHome }}" style="font-weight: 700; color: #4a7c59; font-size: 17px">← 홈으로</span>
-      <span>·</span><span style="color:#16241a;font-weight:600">고객문의</span>
+      <span>·</span><span style="color:#16241a;font-weight:600">농사문의</span>
     </div>
   </div>
   <!-- 고객 문의 게시판 (Q&A) -->
@@ -689,7 +706,7 @@
     <div style="max-width:900px;margin:0 auto">
       <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px">
         <div>
-          <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:10px">Q&amp;A · 고객 문의</div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#4a7c59;margin-bottom:10px">Q&amp;A · 농사 문의</div>
           <h2 style="margin:0;font-weight:800;font-size:36px;letter-spacing:-.02em;color:#16241a">에이블팜 농사 Q&amp;A</h2>
           <p style="margin:10px 0 0;font-size:14px;color:#6b7465">에이블팜이 농촌진흥청 자료로 정리해 매일 2건씩 올립니다.</p>
         </div>
@@ -886,7 +903,7 @@
 <div class="af-footer" style="padding:40px;background:#0f1c14;color:#8a9585;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;font-size:13px">
   <div><div class="af-btn" onClick="{{ goHome }}" style="display:inline-block;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:14px"><img src="assets/logo-full.jpg" alt="(주)에이블팜 Able FARM · 메인으로" style="height:52px;width:auto;display:block;mix-blend-mode:multiply"></div><p style="margin:0;line-height:1.7;max-width:260px">작물과 생육 시기에 맞춘 액상 영양·유기농업자재 — (주)에이블팜 Able FARM.</p></div>
   <div><div style="color:#fff;font-weight:700;margin-bottom:12px">제품</div><div style="line-height:2">임팩트 라인업<br>규산·칼슘 영양제<br>토양개량제<br>작물별 처방</div></div>
-  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">회사</div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px"><span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개</span><span class="af-btn" onClick="{{ goQna }}">고객문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a></div></div>
+  <div><div style="color:#fff;font-weight:700;margin-bottom:12px">회사</div><div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px"><span class="af-btn" onClick="{{ goAbout }}">회사소개</span><span class="af-btn" onClick="{{ goDetail }}">주요제품</span><span class="af-btn" onClick="{{ goProducts }}">제품소개</span><span class="af-btn" onClick="{{ goQna }}">농사문의</span><span class="af-btn" onClick="{{ goBuy }}">구매문의</span><a href="catalog/index.html" onClick="{{ catOpen }}" class="af-btn" style="color:inherit;text-decoration:none">카다로그</a></div></div>
   <div><div style="color:#fff;font-weight:700;margin-bottom:12px">고객센터</div><div style="line-height:2">전화 02-858-6229<br>팩스 02-6442-6229<br>평일 09:00–17:00<br><a href="privacy.html" style="color:#fff;font-weight:700;text-decoration:underline">개인정보 처리방침</a></div></div>
 </div>
 
@@ -1771,6 +1788,11 @@ class Component extends DCLogic {
         if (this.state.view !== 'home') this.setState({ view: 'home' }, () => setTimeout(jump, 60));
         else jump();
       },
+      navInfoOpen: !!this.state.navInfo,
+      navInfoToggle: () => this.setState({ navInfo: !this.state.navInfo }),
+      navInfoClose: () => this.setState({ navInfo: false }),
+      navInfoRot: this.state.navInfo ? '180deg' : '0deg',
+      navInfoFg: this.state.navInfo ? '#16241a' : 'inherit',
       isHome: this.state.view === 'home',
       isDetail: this.state.view === 'detail',
       products: cat,
