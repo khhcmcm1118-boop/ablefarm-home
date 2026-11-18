@@ -81,7 +81,7 @@ button { font-family: inherit; }
 }
 main { max-width: 820px; margin: 0 auto; padding: 0 16px 40px; }
 .hero { margin: 22px 0 0; background: linear-gradient(135deg, #1f4d27 0%, #2E7D32 55%, #7DB82A 100%); color: #fff; border-radius: 22px; padding: 26px 22px 22px; position: relative; overflow: hidden; }
-.hero::after { content: "🌱"; position: absolute; right: 14px; bottom: -14px; font-size: 110px; opacity: .18; }
+
 .hero .kick { font-size: 14px; font-weight: 800; color: #d9f0bf; margin: 0; }
 .hero h1 { font-size: 32px; line-height: 1.25; margin: 6px 0 8px; font-weight: 900; letter-spacing: -0.5px; }
 .hero p { margin: 0; font-size: 16px; color: #eaf6dc; max-width: 560px; }
@@ -277,16 +277,68 @@ footer { max-width: 820px; margin: 0 auto; padding: 18px 16px 40px; font-size: 1
   .crops, .oops { grid-template-columns: 1fr; }
   .card, .card .inner { min-height: 205px; }
 }
+/* ===== 고급 마감 (2026-11-18) — 그림 문자 대신 금색 번호·선 아이콘, 버튼은 3가지(진초록·금색·테두리)로 통일 ===== */
+:root { --gold: #b8913a; --gold2: #d9b765; --cream: #fbf8f0; }
+.ico { display: inline-block; vertical-align: -3px; flex: none; }
+.top nav a { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: #f1f5ee; border: 1px solid rgba(255,255,255,.28); font-weight: 700; transition: background .2s, border-color .2s; }
+.top nav a:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.5); }
+.top nav a.bot { background: linear-gradient(180deg, var(--gold2), var(--gold)); border-color: transparent; color: #241a05; }
+.top nav a.bot:hover { filter: brightness(1.06); }
+.top nav a.tel { background: transparent; color: #f1f5ee; }
+.tabs a.ask { display: flex; align-items: center; gap: 6px; }
+h2 { display: flex; align-items: center; gap: 12px; letter-spacing: -0.4px; }
+h2 .ey { flex: none; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: .5px; font-variant-numeric: tabular-nums; background: #fffdf6; }
+.pill { gap: 7px; transition: transform .15s ease, filter .2s ease, background .2s; }
+.pill:hover { transform: translateY(-1px); }
+.pill.y { background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #241a05; box-shadow: 0 6px 14px -8px rgba(120,90,20,.7); }
+.pill.w { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); }
+.pill.w:hover { background: rgba(255,255,255,.1); }
+.board .bubble { box-shadow: 0 6px 18px -10px rgba(0,0,0,.5); }
+.chip { font-weight: 700; transition: background .2s, color .2s, border-color .2s; }
+.chip:hover { border-color: var(--md); }
+.chip.on { background: var(--dk); border-color: var(--dk); }
+.step { border-width: 1px; box-shadow: 0 1px 0 rgba(0,0,0,.03); transition: transform .15s ease, box-shadow .2s ease; }
+.step.on:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -14px rgba(30,70,30,.6); }
+.step .no { color: var(--gold); letter-spacing: .3px; }
+.step .st { background: var(--dk); color: #fff; }
+.step.soon .st { background: #f0efe9; color: #8b8f86; }
+.seenbtn { display: inline-flex; align-items: center; gap: 7px; background: var(--dk); border-radius: 999px; padding: 11px 20px; }
+.seenbtn.done { background: #fff; color: #b3261e; border: 1.5px solid #e9b3ae; }
+.player { border-width: 1px; border-color: var(--line); box-shadow: 0 14px 30px -24px rgba(20,50,20,.6); }
+.crop { border-width: 1px; transition: transform .15s ease, box-shadow .2s ease; }
+.crop:hover { transform: translateY(-2px); box-shadow: 0 12px 22px -16px rgba(30,70,30,.55); }
+.crop .tip { background: var(--cream); border: 1px solid #efe6cf; }
+.crop .tip b { display: inline-block; margin-right: 6px; font-size: 10.5px; letter-spacing: .6px; color: var(--gold); border: 1px solid var(--gold2); border-radius: 4px; padding: 0 4px; vertical-align: 1px; }
+.mo { font-weight: 700; border-width: 1px; }
+.mo.on { background: var(--dk); border-color: var(--dk); }
+.todo { border-width: 1px; border-color: var(--line); box-shadow: 0 14px 30px -26px rgba(20,50,20,.6); }
+.card .f { background: #fff; border: 1px solid #ece3cf; box-shadow: 0 8px 18px -16px rgba(80,60,20,.6); }
+.card .em2 { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+.card .s { color: #8a7a55; }
+.card .hint { color: var(--gold); }
+.card .b { border-width: 1px; }
+details { border-width: 1px; }
+summary .no { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--gold2); color: var(--gold); font-size: 12px; font-weight: 800; flex: none; }
+.soil .bx { border-width: 1px; }
+.soil .bx h4 { color: var(--dk); display: flex; align-items: center; gap: 8px; }
+.soil .bx h4::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(var(--gold2), var(--gold)); }
+ol.how li { border-width: 1px; }
+ol.how li::before { background: var(--dk); }
+.qtabs .chip { padding: 6px 13px; }
+.qa .lnk .tg, .qa .lnk .tg { display: inline-block; margin-right: 6px; font-size: 10.5px; letter-spacing: .4px; color: #fff; background: var(--dk); border-radius: 4px; padding: 0 5px; vertical-align: 1px; font-weight: 700; }
+.vid { border-width: 1px; transition: transform .15s ease, box-shadow .2s ease; }
+.vid:hover { transform: translateY(-2px); box-shadow: 0 12px 22px -16px rgba(30,70,30,.55); }
+.hand { background: linear-gradient(135deg, #1f4d27, #2E7D32); box-shadow: 0 18px 36px -26px rgba(20,60,20,.9); }
 </style>
 <script src="/ga.js"></script>
 </head>
 <body>
 <div class="top"><div class="in">
   <a href="../"><img src="../assets/logo-full.jpg" alt="(주)에이블팜 홈으로"></a>
-  <nav><a class="cal" href="../calendar/">재배력</a><a class="bot" href="../crop-advisor.html?from=garden">농박사에게 묻기</a><a class="tel" href="tel:02-858-6229" aria-label="고객센터 02-858-6229 전화">📞<span class="num"> 02-858-6229</span><span class="sh"> 전화</span></a></nav>
+  <nav><a class="cal" href="../calendar/"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>재배력</span></a><a class="bot" href="../crop-advisor.html?from=garden"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>농박사에게 묻기</span></a><a class="tel" href="tel:02-858-6229" aria-label="고객센터 02-858-6229 전화"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span class="num">02-858-6229</span><span class="sh">전화</span></a></nav>
 </div></div>
 <div class="tabs"><div class="in">
-  <a href="#steps"><i>01</i>첫걸음 수업</a><a href="#recess"><i>02</i>쉬는 시간</a><a href="#crops"><i>03</i>쉬운 작물</a><a href="#month"><i>04</i>이달 할 일</a><a href="#oops"><i>05</i>초보 실수</a><a href="#nextyear"><i>06</i>이듬해·흙</a><a href="#faq"><i>07</i>질문 게시판</a><a href="#vids"><i>08</i>작물편</a><a class="ask" href="#hand">✋ 질문하기</a>
+  <a href="#steps"><i>01</i>첫걸음 수업</a><a href="#recess"><i>02</i>쉬는 시간</a><a href="#crops"><i>03</i>쉬운 작물</a><a href="#month"><i>04</i>이달 할 일</a><a href="#oops"><i>05</i>초보 실수</a><a href="#nextyear"><i>06</i>이듬해·흙</a><a href="#faq"><i>07</i>질문 게시판</a><a href="#vids"><i>08</i>작물편</a><a class="ask" href="#hand"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg> 질문하기</a>
 </div></div>
 <script>
 /* 선택바 — 지금 보고 있는 칸에 밑줄, 휴대폰에선 그 메뉴가 보이게 옆으로 맞춤 */
@@ -305,6 +357,13 @@ document.addEventListener('DOMContentLoaded', function () {
     es.forEach(function (e) { if (e.isIntersecting) mark(e.target.id); });
   }, { rootMargin: '-120px 0px -65% 0px' });
   links.forEach(function (a) { var s = document.querySelector(a.getAttribute('href')); if (s) io.observe(s); });
+  // 맨 위(칠판)로 돌아오면 밑줄을 지우고 선택바도 처음으로
+  var first = document.getElementById('steps');
+  window.addEventListener('scroll', function () {
+    if (first && first.getBoundingClientRect().top > 160 && cur !== null) {
+      cur = null; links.forEach(function (a) { a.classList.remove('on'); }); bar.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, { passive: true });
 });
 </script>
 
@@ -315,13 +374,13 @@ document.addEventListener('DOMContentLoaded', function () {
   <div>
     <div class="bubble">안녕하세요, <b>에이블 농박사</b>예요. 텃밭 처음이시죠? 자리 고르기부터 흙 관리까지 한 교시씩 같이 해 봐요. 수업을 듣고 「다 봤어요」 도장도 모아 보세요. 모르는 건 언제든 <b>손 들고</b> 물어보세요!</div>
     <div class="prog"><b id="progTxt">첫걸음 0 / 8 교시 들었어요</b><div class="bar"><i id="progBar"></i></div></div>
-    <div class="row"><a class="pill y" href="#steps">📚 1교시부터 듣기</a><a class="pill w" href="#hand">✋ 지금 질문하기</a></div>
+    <div class="row"><a class="pill y" href="#steps"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> 1교시부터 듣기</a><a class="pill w" href="#hand"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg> 지금 질문하기</a></div>
   </div>
 </section>
 
 <!-- ① 첫걸음 -->
 <section id="steps">
-<h2><span class="em">📚</span>첫걸음 시간표 (8교시 중 1교시 공개)</h2>
+<h2><span class="ey">01</span>첫걸음 시간표 (8교시 중 1교시 공개)</h2>
 <p class="lead">땅 고르기부터 물 주기까지 8교시를 준비하고 있어요. 30초 영상으로 순서대로 따라 해요. 새 교시가 나오는 대로 여기에 열려요.</p>
 <div class="steps" id="stepList"></div>
 <div class="player" id="player">
@@ -336,26 +395,26 @@ document.addEventListener('DOMContentLoaded', function () {
       <li>차 매연·먼지에서 떨어진 곳</li>
       <li>처음엔 5㎡(한 평 반)면 충분 — 상추·쑥갓·시금치부터 <span class="src">농촌진흥청</span></li>
     </ul>
-    <button class="seenbtn" id="seenBtn" type="button">✔ 다 봤어요</button>
+    <button class="seenbtn" id="seenBtn" type="button">다 봤어요</button>
   </div>
 </div>
 </section>
 
 <!-- 쉬는 시간 궁금증 -->
 <section id="recess">
-<h2><span class="em">⏱</span>쉬는 시간 궁금증</h2>
+<h2><span class="ey">02</span>쉬는 시간 궁금증</h2>
 <p class="lead">쉬는 시간마다 제일 많이 받는 질문이에요. 30초 영상으로 하나씩 답해 드릴게요. 답은 지금도 아래 「질문 게시판」에서 볼 수 있어요.</p>
 <div class="recess" id="recessList"></div>
 </section>
 
 <!-- ② 쉬운 작물 -->
 <section id="crops">
-<h2><span class="em">🥬</span>처음 키우기 쉬운 작물 12가지</h2>
+<h2><span class="ey">03</span>처음 키우기 쉬운 작물 12가지</h2>
 <p class="lead">농촌진흥청은 상추·시금치·쑥갓·감자·강낭콩 같은 작물을 「쉬움」, 오이·수박·참외를 「어려움」으로 나눠요. 쉬운 것부터 시작하세요.</p>
 <div class="filters" id="cropFilter">
   <button class="chip on" data-f="all" type="button">전체</button>
-  <button class="chip" data-f="spring" type="button">🌸 봄에 시작</button>
-  <button class="chip" data-f="fall" type="button">🍂 가을에 시작</button>
+  <button class="chip" data-f="spring" type="button">봄에 시작</button>
+  <button class="chip" data-f="fall" type="button">가을에 시작</button>
   <button class="chip" data-f="seed" type="button">씨앗으로</button>
   <button class="chip" data-f="plant" type="button">모종으로</button>
 </div>
@@ -365,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- ③ 이달 할 일 -->
 <section id="month">
-<h2><span class="em">🗓</span>이달의 텃밭 할 일</h2>
+<h2><span class="ey">04</span>이달의 텃밭 할 일</h2>
 <p class="lead">지금 달이 먼저 열려요. 한 일은 체크해 두세요.</p>
 <div class="months" id="monthBtns"></div>
 <div class="todo" id="todo"></div>
@@ -374,18 +433,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- ④ 초보 실수 -->
 <section id="oops">
-<h2><span class="em">😅</span>텃밭 초보가 자주 하는 실수 12가지</h2>
+<h2><span class="ey">05</span>텃밭 초보가 자주 하는 실수 12가지</h2>
 <p class="lead">카드를 눌러 뒤집어 보세요. 왜 문제인지, 어떻게 하면 되는지 나와요. 몇 개나 해 봤나요?</p>
 <div class="oops" id="oopsList"></div>
 </section>
 
 <!-- ⑤ 이듬해 · 흙 -->
 <section id="nextyear">
-<h2><span class="em">🤔</span>첫해는 잘 됐는데, 왜 이듬해엔 안 될까?</h2>
+<h2><span class="ey">06</span>첫해는 잘 됐는데, 왜 이듬해엔 안 될까?</h2>
 <p class="lead">텃밭 2년 차에 많이 겪는 일이에요. 흔한 원인 8가지와 알아채는 법, 대처법이에요.</p>
 <div id="nyList"></div>
 
-<h2 style="margin-top:36px"><span class="em">🪱</span>흙 관리, 이렇게 하세요</h2>
+<h2 style="margin-top:36px"><span class="ey">06</span>흙 관리, 이렇게 하세요</h2>
 <p class="lead">흙이 건강해야 해마다 잘 돼요. 초보가 기억할 것만 모았어요.</p>
 
 <h3>1. 돌려짓기 — 같은 「집안」은 자리를 바꿔요</h3>
@@ -404,33 +463,33 @@ document.addEventListener('DOMContentLoaded', function () {
 <p class="note">텃밭을 3~5칸으로 나눠 해마다 칸을 돌리고, 흙심을 살리는 콩과 작물을 섞어 넣으면 좋아요. 고추는 가지과이지만 쉬는 기간 자료는 따로 없어요.</p>
 
 <div class="soil" style="margin-top:14px">
-  <div class="bx"><h4>🍂 다 썩은 퇴비</h4><ul>
+  <div class="bx"><h4>다 썩은 퇴비</h4><ul>
     <li>냄새 없는 「다 썩은(완숙) 퇴비」만</li>
     <li>심기 2~3주 전에 넣고 흙과 섞기</li>
     <li>봄 3월 하순~4월 상순 / 가을 8월 상순~중순</li>
     <li>10㎡(약 3평)에 10~20kg 안팎 — 「많이」가 아니라 「알맞게」</li>
   </ul></div>
-  <div class="bx"><h4>🪨 석회</h4><ul>
+  <div class="bx"><h4>석회</h4><ul>
     <li>퇴비와 같이 심기 2~3주 전</li>
     <li>10㎡에 1~2kg 안팎, 흙 검사 결과가 있으면 그대로</li>
     <li>시금치·완두·강낭콩·양파는 산성 흙에 특히 약해요</li>
     <li>화학비료는 그보다 늦게, 밭 만들기 1주 전</li>
   </ul></div>
-  <div class="bx"><h4>⛰ 이랑과 물 빠짐</h4><ul>
+  <div class="bx"><h4>이랑과 물 빠짐</h4><ul>
     <li>두둑 높이 20~30cm, 고랑 폭 30cm 안팎</li>
     <li>고추·감자·고구마는 좁고 높은 두둑, 잎채소는 넓은 두둑</li>
     <li>비 온 뒤 고랑에 물이 고이지 않게</li>
   </ul></div>
-  <div class="bx"><h4>🖤 덮기(멀칭)</h4><ul>
+  <div class="bx"><h4>덮기(멀칭)</h4><ul>
     <li>검정 비닐·부직포로 두둑을 덮으면 잡초가 덜 나요</li>
     <li>볏짚·우드칩 같은 식물 재료도 돼요</li>
     <li>흙이 덜 마르고 덜 굳어요</li>
   </ul></div>
-  <div class="bx"><h4>🌾 쉬는 땅엔 풋거름</h4><ul>
+  <div class="bx"><h4>쉬는 땅엔 풋거름</h4><ul>
     <li>작물을 쉬는 동안 풋거름 작물(예: 헤어리베치·보리)을 길러 갈아엎으면 흙이 부드러워지고 물을 잘 머금어요</li>
     <li>흙에 쌓인 비료 성분을 줄이는 방법으로도 소개돼요</li>
   </ul></div>
-  <div class="bx"><h4>❄ 겨울 정리</h4><ul>
+  <div class="bx"><h4>겨울 정리</h4><ul>
     <li>수확 끝난 작물·시든 포기는 걷어 내기</li>
     <li>눈·비 대비 물길(배수로) 점검</li>
     <li>쓴 화분·상자는 씻어 말리고, 남은 씨앗은 밀봉해 냉장</li>
@@ -451,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- ⑥ 궁금해요 -->
 <section id="faq">
-<h2><span class="em">🙋</span>질문 게시판</h2>
+<h2><span class="ey">07</span>질문 게시판</h2>
 <p class="lead">다른 분들이 물어본 걸 주제별로 모아 뒀어요. 질문을 누르면 제가 답해 드려요. 찾는 게 없으면 맨 아래에서 손 들고 물어보세요.</p>
 <div class="qtabs filters" id="qTabs"></div>
 <div id="faqList"></div>
@@ -460,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- ⑦ 작물편 -->
 <section id="vids">
-<h2><span class="em">🍉</span>작물편 — 조금 익숙해지면 도전!</h2>
+<h2><span class="ey">08</span>작물편 — 조금 익숙해지면 도전!</h2>
 <p class="lead">오이·참외·수박·호박은 「어려운 작물」이에요. 첫걸음을 마친 뒤 도전해 보세요. 심는 때·간격·줄기 정리·수확을 30초 영상으로 정리했어요.</p>
 <div class="vids">
   <a class="vid" href="../guide/home-garden-vines.html#cucumber"><img src="../assets/video/garden-cucumber.jpg" alt="텃밭 오이 영상" loading="lazy"><div><b>텃밭 오이</b><small>심는 때 3월 상순~4월 중순(보온)</small><br><span class="lv m">어려움</span></div></a>
@@ -474,13 +533,13 @@ document.addEventListener('DOMContentLoaded', function () {
 <section class="hand" id="hand">
   <img src="../assets/garden/nongbaksa.jpg" alt="에이블 농박사" width="720" height="1072" loading="lazy">
   <div>
-    <h2>✋ 손 들고 질문하기</h2>
+    <h2>손 들고 질문하기</h2>
     <p>여기 없는 질문, 잎이 이상할 때 — 우리 밭 사진을 보여 주시면 농박사가 같이 봐 드려요.</p>
     <div class="row">
-      <a class="pill y" href="../crop-advisor.html?from=garden">농박사에게 물어보기 →</a>
-      <a class="pill w" href="tel:02-858-6229">📞 전화로 묻기</a>
-      <a class="pill w" href="../#qna">농사문의 남기기</a>
-      <a class="pill w" href="../calendar/">작물별 재배력</a>
+      <a class="pill y" href="../crop-advisor.html?from=garden"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg> 농박사에게 물어보기</a>
+      <a class="pill w" href="tel:02-858-6229"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> 전화로 묻기</a>
+      <a class="pill w" href="../#qna"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> 농사문의 남기기</a>
+      <a class="pill w" href="../calendar/"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> 작물별 재배력</a>
     </div>
   </div>
 </section>
@@ -546,11 +605,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     stepList.innerHTML = html;
     var cnt = STEPS.filter(function (s) { return store.seen[s.n]; }).length;
-    document.getElementById('progTxt').textContent = '첫걸음 ' + cnt + ' / 8 교시 들었어요' + (cnt === 8 ? ' 🎉 졸업!' : '');
+    document.getElementById('progTxt').textContent = '첫걸음 ' + cnt + ' / 8 교시 들었어요' + (cnt === 8 ? ' · 졸업!' : '');
     document.getElementById('progBar').style.width = (cnt / 8 * 100) + '%';
     var b = document.getElementById('seenBtn');
     b.className = 'seenbtn' + (store.seen[1] ? ' done' : '');
-    b.textContent = store.seen[1] ? '✔ 다 봤어요 (도장 찍힘)' : '✔ 다 봤어요';
+    b.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + (store.seen[1] ? ' 다 봤어요 · 도장 찍힘' : ' 다 봤어요');
   }
   stepList.addEventListener('click', function (e) {
     var el = e.target.closest('.step'); if (!el || el.disabled) return;
@@ -589,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cropList.innerHTML = CROPS.filter(function (c) { return f === 'all' || c.tags.indexOf(f) >= 0; }).map(function (c) {
       return '<div class="crop"><div class="hd"><img class="ic" src="' + cropIcon(c.n) + '" alt="" width="52" height="52" loading="lazy"><h4>' + esc(c.n) + '</h4><span class="lv ' + LV[c.lv][0] + '">' + LV[c.lv][1] + '</span></div>' +
         '<dl><dt>심는 때</dt><dd>' + esc(c.when) + '</dd><dt>첫 수확</dt><dd>' + esc(c.first) + '</dd></dl>' +
-        '<div class="tip">💡 ' + esc(c.tip) + '</div></div>';
+        '<div class="tip"><b>TIP</b>' + esc(c.tip) + '</div></div>';
     }).join('');
   }
   document.getElementById('cropFilter').addEventListener('click', function (e) {
@@ -653,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ];
   document.getElementById('oopsList').innerHTML = OOPS.map(function (o, i) {
     return '<button type="button" class="card" aria-label="실수 ' + (i + 1) + ' 카드 뒤집기"><div class="inner">' +
-      '<div class="f"><span class="em2">' + o.e + '</span><div class="t">' + esc(o.t) + '</div><div class="s">#' + esc(o.s) + '</div><div class="hint">눌러서 뒤집기 ↻</div></div>' +
+      '<div class="f"><span class="em2">' + (i < 9 ? '0' : '') + (i + 1) + '</span><div class="t">' + esc(o.t) + '</div><div class="s">#' + esc(o.s) + '</div><div class="hint">눌러서 뒤집기 ↻</div></div>' +
       '<div class="b"><b>왜 문제일까?</b><p>' + esc(o.why) + '</p><b class="ok">이렇게 하세요</b><p>' + esc(o.how) + '</p></div>' +
       '</div></button>';
   }).join('');
@@ -671,7 +730,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { e: '🪴', t: '작년 화분·상토를 그대로', why: '쓰던 화분과 흙에는 지난번 병·벌레가 남아 있을 수 있어요.', see: '화분·상자 텃밭에서만 같은 문제가 되풀이돼요.', fix: '화분은 씻어 말리고, 상토는 새것 또는 밀봉해 둔 것을 써요.' }
   ];
   document.getElementById('nyList').innerHTML = NY.map(function (x, i) {
-    return '<details' + (i === 0 ? ' open' : '') + '><summary><span>' + x.e + '</span>' + esc(x.t) + '</summary><div class="why3">' +
+    return '<details' + (i === 0 ? ' open' : '') + '><summary><span class="no">' + (i < 9 ? '0' : '') + (i + 1) + '</span>' + esc(x.t) + '</summary><div class="why3">' +
       '<div><b>왜 그럴까</b>' + esc(x.why) + '</div><div><b>이럴 때 의심해요</b>' + esc(x.see) + '</div><div><b>이렇게 해요</b>' + esc(x.fix) + '</div></div></details>';
   }).join('');
 
@@ -692,7 +751,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ---------- 질문 게시판 ----------
   // [주제, 질문, 답, 첫걸음 교시, 궁금증 번호] — 답은 농촌진흥청 농사로 자료를 다시 쓴 것(원문 아님)
-  var TOPICS = [['all', '📋 전체'], ['prep', '🧭 준비'], ['plant', '🌱 심기'], ['water', '💧 물'], ['feed', '🍚 거름·비료'], ['soil', '🪱 흙 관리'], ['bug', '🐛 병·벌레·잡초'], ['harvest', '🧺 수확'], ['season', '☔ 계절'], ['pot', '🪴 베란다·화분'], ['etc', '💬 기타']];
+  var TOPICS = [['all', '전체'], ['prep', '준비'], ['plant', '심기'], ['water', '물'], ['feed', '거름·비료'], ['soil', '흙 관리'], ['bug', '병·벌레·잡초'], ['harvest', '수확'], ['season', '계절'], ['pot', '베란다·화분'], ['etc', '기타']];
   var QA = [
     ['prep', '텃밭 자리는 어디가 좋아요?', '해가 잘 들고 물이 잘 빠지는 곳이 첫째예요. 물을 자주 줘야 하니 수도와 집이 가까우면 훨씬 편해요.', 1],
     ['prep', '처음엔 얼마나 크게 시작해요?', '한 평 반(5㎡)이면 상추·쑥갓처럼 빨리 크는 채소로 충분해요. 20㎡쯤 되면 고추·감자·고구마도 넣을 수 있어요.'],
@@ -741,8 +800,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('');
     document.getElementById('faqList').innerHTML = QA.filter(function (q) { return curT === 'all' || q[0] === curT; }).map(function (q) {
       var link = '';
-      if (q[3]) link += '<span class="lnk">' + (STEPS[q[3] - 1].ready ? '<a href="#steps">🎬 ' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 수업 보기</a>' : '🎬 ' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 — 영상 준비 중') + '</span>';
-      if (q[4]) link += '<span class="lnk">⏱ 쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
+      if (q[3]) link += '<span class="lnk">' + (STEPS[q[3] - 1].ready ? '<a href="#steps"><b class="tg">수업</b>' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 수업 보기</a>' : '<b class="tg">수업</b>' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 — 영상 준비 중') + '</span>';
+      if (q[4]) link += '<span class="lnk"><b class="tg">궁금증</b>쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
       return '<details class="qa"' + (q[4] ? ' data-ask="' + q[4] + '"' : '') + '><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p></div></details>';
     }).join('');
   }
