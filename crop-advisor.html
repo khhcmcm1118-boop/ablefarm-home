@@ -805,8 +805,32 @@ const PRODUCTS = {
     caution: "고농도 혈액아미노산 제제예요. 정확한 배합 기준은 담당자에게 확인해주세요.",
     nutrient: "혈액아미노산(고농도), 몰리브덴·붕소 등 미량요소",
     keywords: ["침수","물에 잠겼","물잠김","장마로 잠겼","뿌리가 숨","과습"]
+  },
+  /* 2026-11-19 사용자 지시: 「수박 열매가 안 커요」에는 임팩트골드 5리터(관주용).
+     keywords 를 비워 두어 일반 점수 매기기에는 끼지 않고, 작물별 교체(CROP_PRODUCT_SWAP)로만 나온다. */
+  impactgold5L: {
+    name: "임팩트골드 5리터(관주용)",
+    tag: "관주 · 수세 회복 · 비대기 뿌리 힘",
+    cause: "열매가 커지는 비대기에 뿌리 힘(수세)이 떨어지면 물과 양분을 충분히 끌어올리지 못해 열매가 잘 안 커요. 연속 착과나 고온·가뭄, 하우스 흙에 쌓인 염류도 뿌리 흡수를 막는 원인이 돼요. 착과 뒤 물을 고르게 주고, 뿌리 쪽으로 관주해 수세를 살려 주세요.",
+    effect: "수세 회복·세력 유지, 뿌리 발달 촉진, 토양개량·염류 해소, 이상기후 피해 회복",
+    usage: "1,000평당 5리터를 물에 타서 관주, 7~10일 간격 (회복이 급할 땐 3~5일 간격 2~3회)",
+    timing: "착과 뒤 열매 비대기, 수세가 떨어졌을 때",
+    caution: "관주용 제품이에요. 잎에 뿌릴 때는 임팩트골드 1리터 제품을 1,000배로 희석해 쓰세요.",
+    nutrient: "아미노산·해조추출물·목초액",
+    keywords: []
   }
 };
+
+/* 작물별 제품 교체 — 일반 키워드로 고른 제품이 그 작물에는 맞지 않을 때 (사용자가 확인한 것만 넣는다)
+   2026-11-19: 수박 열매 비대 → 파이널솔루션 대신 임팩트골드 5리터 */
+const CROP_PRODUCT_SWAP = {
+  "수박": [{from:"finalsolution", to:"impactgold5L", when:/안 ?커|안 ?굵|비대|크기가 작|알이 작|작아|자잘|안 ?자라/}]
+};
+function cropProductSwap(key, msg){
+  const rules = CROP_PRODUCT_SWAP[currentCrop] || [];
+  const r = rules.find(x => x.from === key && x.when.test(msg || ""));
+  return r ? r.to : key;
+}
 
 const CROP_RESTRICTED_KEY = "byeomilkongae";
 const RESTRICTED_CROPS = ["콩","대두","콩류"];
@@ -1574,6 +1598,9 @@ const CROP_ISSUE_DB = {
 };
 // "멜론"/"메론" 두 표기 모두 같은 병해충 데이터를 쓰도록 별칭 연결
 CROP_ISSUE_DB["멜론"] = CROP_ISSUE_DB["메론"];
+/* 2026-11-19 사용자 지시: 배추가 시들 때 — 흐린 날이 이어져 광합성을 못 한 경우
+   생육 초·중기 산소탱크, 생육 후기 엔피칼마. (무는 배추[0]을 복사하므로 맨 뒤에 붙인다) */
+CROP_ISSUE_DB["배추"].push({keywords:["시들","시드","시듦","축 처","축처","처져","힘이 없","힘없"], part:"잎", symptom:"배추가 시들어요", label:"일조 부족 시듦", cause:"흐리거나 비 오는 날이 이어져 햇빛이 모자라면 잎이 광합성을 충분히 못 해 양분을 만들지 못하고, 뿌리 힘도 함께 떨어져 배추가 축 처지며 시들 수 있어요. 흙이 오래 젖어 있으면 뿌리가 숨쉬기 어려워 더 심해져요. 고랑 물을 빼 주고, 생육 초·중기에는 뿌리 활력을 돕는 관리를, 속이 차는 생육 후기에는 칼슘·마그네슘 보충을 해 주세요. 뿌리에 혹이 있거나 밑동이 물러 냄새가 나면 다른 원인일 수 있으니 농업기술센터 진단을 받아 보세요.", product:"oxygentank", companion:"npcalma"});
 // "무": 김장 무 언 피해(배추 항목을 뿌리 부위로) + 열무와 같은 병해충 자료
 CROP_ISSUE_DB["무"] = [Object.assign({}, CROP_ISSUE_DB["배추"][0], {part:"뿌리", symptom:"추위에 무가 얼었어요"}), ...CROP_ISSUE_DB["열무"]];
 // 겨울 시설채소: 결로·다습 → 잿빛곰팡이병·노균병 (농촌진흥청 주간농사정보 제44호·농사로 병해충 정보)
@@ -3128,7 +3155,11 @@ function revealProduct(afterRegion){
   showTyping(()=>{
     addCard(p);
     if(lastSecond){
-      addBubble(`증상에 따라서는 ${PRODUCTS[lastSecond].name}도 함께 고려해보시면 좋아요.`, 'bot');
+      // 배추 시듦(2026-11-19): 산소탱크는 생육 초·중기, 엔피칼마는 생육 후기 — 시기로 나눠 안내
+      const stagePair = (lastRecommended === "oxygentank" && lastSecond === "npcalma");
+      addBubble(stagePair
+        ? `위 산소탱크는 생육 초·중기에 쓰시고, 속이 차는 생육 후기에는 ${PRODUCTS[lastSecond].name}를 써 주세요.`
+        : `증상에 따라서는 ${PRODUCTS[lastSecond].name}도 함께 고려해보시면 좋아요.`, 'bot');
       addCard(PRODUCTS[lastSecond]);
     }
     if(afterRegion){
@@ -4653,7 +4684,7 @@ function continueSymptomEscalation(msgForMatching){
   const ranked = matchProducts(symptomAccumulated);
   if(ranked.length){
     showTyping(()=>{
-      const topKey = ranked[0][0];
+      const topKey = cropProductSwap(ranked[0][0], symptomAccumulated);
       lastRecommended = topKey; lastRecommendedCrop = currentCrop;
       lastSecond = null;
       questionCount += 1;
@@ -4750,7 +4781,7 @@ function processSymptom(msgForMatching, justLearnedCrop){
     // 제품 키워드가 2개 이상 겹치면(예: "정식했는데"+"뿌리") 그 추천이 더 확실하니 되묻지 않는다.
     if(ranked[0][1] < 2 && tryFuzzyConfirmOnly(msgForMatching)) return;
 
-    const topKey = ranked[0][0];
+    const topKey = cropProductSwap(ranked[0][0], msgForMatching);
     const topScore = ranked[0][1];
     lastRecommended = topKey; lastRecommendedCrop = currentCrop;
     lastSecond = null;
