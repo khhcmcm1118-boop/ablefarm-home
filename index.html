@@ -1034,22 +1034,27 @@ class Component extends DCLogic {
     sources.push('data/prices.json');
 
     for (const url of sources) {
+      // 실시간 서버가 응답 없이 멈추면 칸이 빈 채로 남는다 → 3초만 기다리고 저장된 시세 파일로 넘어간다
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctrl && url === Component.PRICE_API ? setTimeout(() => ctrl.abort(), 3000) : null;
       try {
-        const r = await fetch(url, { cache: 'no-store' });
-        if (!r.ok) continue;
+        const r = await fetch(url, ctrl ? { cache: 'no-store', signal: ctrl.signal } : { cache: 'no-store' });
+        if (!r.ok) { if (timer) clearTimeout(timer); continue; }
         const j = await r.json();
+        if (timer) clearTimeout(timer);
         if (j && Array.isArray(j['품목']) && j['품목'].length) {
-          this.applyPrices(j, url === Component.PRICE_API);
+          // data/prices.json 도 KAMIS 실제 값이다 — 예시처럼 흔들지 않는다
+          this.applyPrices(j, true, url === Component.PRICE_API);
           return;
         }
-      } catch (e) { /* 다음 소스로 */ }
+      } catch (e) { if (timer) clearTimeout(timer); /* 다음 소스로 */ }
     }
-    this.applyPrices(Component.PRICE_FALLBACK, false);
+    this.applyPrices(Component.PRICE_FALLBACK, false, false);
   }
 
-  applyPrices(j, isLive) {
+  applyPrices(j, isLive, fromApi) {
     const live = j['품목'].map((it) => ({ ...it, base: it.price }));
-    this.setState({ priceData: j, live, priceLive: !!isLive });
+    this.setState({ priceData: j, live, priceLive: !!isLive, priceFromApi: !!fromApi });
     if (this._tick) clearInterval(this._tick);
     // 실제 KAMIS 데이터일 때는 숫자를 절대 흔들지 않는다 (표시 예시일 때만 연출)
     if (!isLive) this._tick = setInterval(() => this.tickPrices(), 3800);
@@ -1726,7 +1731,7 @@ class Component extends DCLogic {
     }
     const priceSource = pd && pd['_출처'] ? pd['_출처'] : 'KAMIS 농산물유통정보';
     const isLive = !!this.state.priceLive;
-    const priceBadge = isLive ? '실시간' : '표시 예시';
+    const priceBadge = isLive ? (this.state.priceFromApi ? '실시간' : 'KAMIS') : '표시 예시';
     const priceBadgeBg = isLive ? '#e9efdd' : '#f3ece0';
     const priceBadgeFg = isLive ? '#4a7c59' : '#a08050';
     const priceNote = isLive
