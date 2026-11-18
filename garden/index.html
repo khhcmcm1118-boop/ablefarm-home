@@ -109,7 +109,7 @@ h3 { font-size: 18px; color: var(--dk); margin: 22px 0 8px; }
 .crops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .crop { background: #fff; border: 1.5px solid var(--line); border-radius: 16px; padding: 14px; }
 .crop .hd { display: flex; align-items: center; gap: 8px; }
-.crop .ic { font-size: 30px; line-height: 1; }
+.crop .ic { width: 52px; height: 52px; flex: none; object-fit: contain; background: #fff; border-radius: 12px; }
 .crop h4 { margin: 0; font-size: 18px; color: var(--dk); }
 .lv { display: inline-block; font-size: 11.5px; font-weight: 900; padding: 1px 8px; border-radius: 99px; margin-left: auto; white-space: nowrap; }
 .lv.e { background: #dff3d0; color: #2f6b12; }
@@ -207,12 +207,25 @@ ol.how li::before { content: counter(s); position: absolute; left: 10px; top: 8p
 .lead { position: relative; min-height: 58px; padding: 9px 13px 9px 13px; margin-left: 56px; background: var(--pale); border-radius: 4px 16px 16px 16px; color: var(--ink); }
 .lead::before { content: ""; position: absolute; left: -56px; top: 0; width: 44px; height: 56px; border-radius: 10px; background: #dfe9d4 url(../assets/garden/nongbaksa.jpg) 50% 7% / cover; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
 /* 쉬는 시간 궁금증 */
-.recess { display: flex; gap: 12px; overflow-x: auto; padding: 6px 2px 12px; scroll-snap-type: x mandatory; }
-.memo { flex: 0 0 186px; scroll-snap-align: start; background: #fffbe9; border: 1px solid #efe2a9; border-radius: 6px; padding: 13px; box-shadow: 2px 3px 0 #efe2a9; transform: rotate(-1deg); }
+/* 카드는 제자리에서 천천히 살랑살랑 움직이고, 마우스를 올리면 멈추고 커진다. 누르면 질문 게시판의 그 질문으로 */
+/* 한 화면에 4장(휴대폰 2장), 스크롤바를 움직이면 4장(2장)씩 딱 맞춰 넘어간다 */
+.recess { --per: 4; --gap: 16px; display: flex; gap: var(--gap); overflow-x: auto; padding: 16px 12px 20px; scroll-padding-inline: 12px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+.memo:nth-child(4n+1) { scroll-snap-align: start; }
+@media (max-width: 620px) { .recess { --per: 2; --gap: 12px; } .memo:nth-child(4n+1) { scroll-snap-align: none; } .memo:nth-child(2n+1) { scroll-snap-align: start; } }
+.memo { flex: 0 0 calc((100% - (var(--per) - 1) * var(--gap)) / var(--per)); min-height: 128px;font: inherit; color: var(--ink); text-align: left; cursor: pointer; background: #fffbe9; border: 1px solid #efe2a9; border-radius: 6px; padding: 13px; box-shadow: 2px 3px 0 #efe2a9; transform: rotate(-1deg); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; position: relative; }
 .memo:nth-child(even) { transform: rotate(1.2deg); background: #f2f9ee; border-color: #cfe4c4; box-shadow: 2px 3px 0 #cfe4c4; }
-.memo .n { font-size: 12.5px; color: var(--mut); font-weight: 700; }
-.memo .q { font-weight: 900; margin: 4px 0 8px; font-size: 16px; line-height: 1.4; }
-.memo .e { font-size: 13px; color: var(--md); font-weight: 700; }
+.memo { --r: -1deg; animation: memoFloat 4.2s ease-in-out infinite; }
+.memo:nth-child(even) { --r: 1.2deg; animation-duration: 4.8s; animation-delay: -2.1s; }
+.memo:nth-child(3n) { animation-delay: -1.2s; }
+@keyframes memoFloat { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-7px) rotate(calc(var(--r) * -0.6)); } }
+@media (prefers-reduced-motion: reduce) { .memo { animation: none; } }
+.memo:hover, .memo:focus-visible { animation: none; transform: scale(1.1) rotate(0deg); z-index: 2; border-color: var(--md); box-shadow: 0 12px 24px -6px rgba(30,60,30,.35); outline: none; }
+.memo .n { display: block; font-size: 12.5px; color: var(--mut); font-weight: 700; }
+.memo .q { display: block; font-weight: 900; margin: 4px 0 8px; font-size: 16px; line-height: 1.4; }
+.memo .e { display: block; font-size: 13px; color: var(--md); font-weight: 700; }
+.memo:hover .e, .memo:focus-visible .e { text-decoration: underline; }
+.qa.hit { border-color: var(--md); box-shadow: 0 0 0 4px rgba(125,184,42,.35); animation: hitflash 1.6s ease 1; }
+@keyframes hitflash { 0%, 40% { background: #f3fae8; } 100% { background: #fff; } }
 /* 질문 게시판 */
 .qtabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
 .qtabs::-webkit-scrollbar { display: none; }
@@ -535,10 +548,13 @@ footer { max-width: 820px; margin: 0 auto; padding: 18px 16px 40px; font-size: 1
     { ic: '🥕', n: '무 (가을)', lv: 'e', tags: 'fall seed', when: '9월 초 씨뿌림', first: '대략 10월 상순~11월 중순 (농가 기준)', tip: '옮겨 심으면 뿌리가 갈라져요. 꼭 씨로 심어요.' }
   ];
   var LV = { e: ['e', '쉬움'], m: ['m', '보통'], n: ['n', '작은 텃밭용'] };
+  // 작물 그림 = 우리가 만든 3D 작물 아이콘(재배력과 같은 것, calendar/icons). 강낭콩만 따로 만든 것(assets/garden)
+  var ICON_OF = { '들깨(잎)': '깻잎', '방울토마토': '토마토', '배추 (가을)': '배추', '무 (가을)': '무' };
+  function cropIcon(n) { if (n === '강낭콩') return '../assets/garden/icon-kidneybean.png'; return '../calendar/icons/' + encodeURIComponent(ICON_OF[n] || n) + '.png'; }
   var cropList = document.getElementById('cropList');
   function drawCrops(f) {
     cropList.innerHTML = CROPS.filter(function (c) { return f === 'all' || c.tags.indexOf(f) >= 0; }).map(function (c) {
-      return '<div class="crop"><div class="hd"><span class="ic">' + c.ic + '</span><h4>' + esc(c.n) + '</h4><span class="lv ' + LV[c.lv][0] + '">' + LV[c.lv][1] + '</span></div>' +
+      return '<div class="crop"><div class="hd"><img class="ic" src="' + cropIcon(c.n) + '" alt="" width="52" height="52" loading="lazy"><h4>' + esc(c.n) + '</h4><span class="lv ' + LV[c.lv][0] + '">' + LV[c.lv][1] + '</span></div>' +
         '<dl><dt>심는 때</dt><dd>' + esc(c.when) + '</dd><dt>첫 수확</dt><dd>' + esc(c.first) + '</dd></dl>' +
         '<div class="tip">💡 ' + esc(c.tip) + '</div></div>';
     }).join('');
@@ -632,9 +648,14 @@ footer { max-width: 820px; margin: 0 auto; padding: 18px 16px 40px; font-size: 1
     '퇴비 듬뿍 넣을수록 좋죠?', '같은 자리에 또 심어도 돼요?', '매일 물 주는데 왜 안 크죠?', '날 풀렸는데 고추 지금 심어도?', '잎이 누런 건 비료가 모자라서?', '아까워서 못 솎겠어요',
     '상추 어떻게 따요?', '배추 꼭 묶어야 속이 차요?', '베란다 방향별로 뭘 키워요?', '장마 오기 전에 뭘 해요?', '상추 잎에 꼬불꼬불 하얀 길', '열무 어린잎 구멍 송송'
   ];
-  document.getElementById('recessList').innerHTML = ASKS.map(function (q, i) {
-    return '<div class="memo"><div class="n">궁금증 ' + (i + 1) + ' · 영상 준비 중</div><div class="q">' + esc(q) + '</div><div class="e">답은 질문 게시판에서 먼저 보기 ↓</div></div>';
-  }).join('');
+  function memoHTML(copy) {
+    return ASKS.map(function (q, i) {
+      return '<button type="button" class="memo" data-ask="' + (i + 1) + '"' + (copy ? ' aria-hidden="true" tabindex="-1"' : '') + '>' +
+        '<span class="n">궁금증 ' + (i + 1) + ' · 영상 준비 중</span><span class="q">' + esc(q) + '</span><span class="e">눌러서 답 보기 →</span></button>';
+    }).join('');
+  }
+  var recess = document.getElementById('recessList');
+  recess.innerHTML = memoHTML(false);
 
   // ---------- 질문 게시판 ----------
   // [주제, 질문, 답, 첫걸음 교시, 궁금증 번호] — 답은 농촌진흥청 농사로 자료를 다시 쓴 것(원문 아님)
@@ -689,11 +710,24 @@ footer { max-width: 820px; margin: 0 auto; padding: 18px 16px 40px; font-size: 1
       var link = '';
       if (q[3]) link += '<span class="lnk">' + (STEPS[q[3] - 1].ready ? '<a href="#steps">🎬 ' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 수업 보기</a>' : '🎬 ' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 — 영상 준비 중') + '</span>';
       if (q[4]) link += '<span class="lnk">⏱ 쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
-      return '<details class="qa"><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p></div></details>';
+      return '<details class="qa"' + (q[4] ? ' data-ask="' + q[4] + '"' : '') + '><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p></div></details>';
     }).join('');
   }
   document.getElementById('qTabs').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b) return; curT = b.getAttribute('data-t'); drawQA(); });
   drawQA();
+
+  // 쉬는 시간 카드를 누르면 → 질문 게시판에서 그 질문의 주제 탭을 열고, 답을 펼쳐 보여 준다
+  recess.addEventListener('click', function (e) {
+    var m = e.target.closest('.memo'); if (!m) return;
+    var n = m.getAttribute('data-ask');
+    var hit = QA.filter(function (q) { return String(q[4]) === n; })[0];
+    curT = hit ? hit[0] : 'all'; drawQA();
+    var d = document.querySelector('#faqList details[data-ask="' + n + '"]');
+    if (!d) { document.getElementById('faq').scrollIntoView({ behavior: 'smooth' }); return; }
+    d.open = true; d.classList.add('hit');
+    d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { d.classList.remove('hit'); }, 2600);
+  });
 })();
 </script>
 </body>
