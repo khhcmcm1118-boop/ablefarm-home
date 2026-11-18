@@ -305,7 +305,13 @@ h2 .ey { flex: none; display: inline-grid; place-items: center; width: 38px; hei
 .seenbtn { display: inline-flex; align-items: center; gap: 7px; background: var(--dk); border-radius: 999px; padding: 11px 20px; }
 .seenbtn.done { background: #fff; color: #b3261e; border: 1.5px solid #e9b3ae; }
 .player { border-width: 1px; border-color: var(--line); box-shadow: 0 14px 30px -24px rgba(20,50,20,.6); }
-.crop { border-width: 1px; transition: transform .15s ease, box-shadow .2s ease; }
+.crop { border-width: 1px; transition: transform .15s ease, box-shadow .2s ease, border-color .2s; display: flex; flex-direction: column; }
+a.crop { text-decoration: none; color: var(--ink); cursor: pointer; }
+a.crop:hover { border-color: var(--md); }
+.crop .more { margin-top: auto; padding-top: 10px; font-size: 13.5px; font-weight: 800; color: var(--dk); }
+.crop .tip { margin-bottom: 0; }
+a.crop:hover .more { color: var(--md); text-decoration: underline; }
+.crop .more.off { color: #9aa093; font-weight: 600; }
 .crop:hover { transform: translateY(-2px); box-shadow: 0 12px 22px -16px rgba(30,70,30,.55); }
 .crop .tip { background: var(--cream); border: 1px solid #efe6cf; }
 .crop .tip b { display: inline-block; margin-right: 6px; font-size: 10.5px; letter-spacing: .6px; color: var(--gold); border: 1px solid var(--gold2); border-radius: 4px; padding: 0 4px; vertical-align: 1px; }
@@ -643,12 +649,19 @@ document.addEventListener('DOMContentLoaded', function () {
   // 작물 그림 = 우리가 만든 3D 작물 아이콘(재배력과 같은 것, calendar/icons). 강낭콩만 따로 만든 것(assets/garden)
   var ICON_OF = { '들깨(잎)': '깻잎', '방울토마토': '토마토', '배추 (가을)': '배추', '무 (가을)': '무' };
   function cropIcon(n) { if (n === '강낭콩') return '../assets/garden/icon-kidneybean.png'; return '../calendar/icons/' + encodeURIComponent(ICON_OF[n] || n) + '.png'; }
+  // 작물을 누르면 재배력(calendar/?c=작물)으로. 강낭콩은 재배력에 없다(재배력 「콩」은 밭 메주콩이라 다른 작물)
+  var CAL_OF = { '들깨(잎)': '깻잎', '방울토마토': '토마토', '배추 (가을)': '배추', '무 (가을)': '무', '강낭콩': null };
+  function calOf(n) { return (n in CAL_OF) ? CAL_OF[n] : n; }
   var cropList = document.getElementById('cropList');
   function drawCrops(f) {
     cropList.innerHTML = CROPS.filter(function (c) { return f === 'all' || c.tags.indexOf(f) >= 0; }).map(function (c) {
-      return '<div class="crop"><div class="hd"><img class="ic" src="' + cropIcon(c.n) + '" alt="" width="52" height="52" loading="lazy"><h4>' + esc(c.n) + '</h4><span class="lv ' + LV[c.lv][0] + '">' + LV[c.lv][1] + '</span></div>' +
+      var cal = calOf(c.n);
+      var body = '<div class="hd"><img class="ic" src="' + cropIcon(c.n) + '" alt="" width="52" height="52" loading="lazy"><h4>' + esc(c.n) + '</h4><span class="lv ' + LV[c.lv][0] + '">' + LV[c.lv][1] + '</span></div>' +
         '<dl><dt>심는 때</dt><dd>' + esc(c.when) + '</dd><dt>첫 수확</dt><dd>' + esc(c.first) + '</dd></dl>' +
-        '<div class="tip"><b>TIP</b>' + esc(c.tip) + '</div></div>';
+        '<div class="tip"><b>TIP</b>' + esc(c.tip) + '</div>';
+      return cal
+        ? '<a class="crop go" href="../calendar/?c=' + encodeURIComponent(cal) + '" aria-label="' + esc(c.n) + ' 재배력 보기">' + body + '<span class="more">' + esc(cal) + ' 재배력 보기 →</span></a>'
+        : '<div class="crop">' + body + '<span class="more off">재배력은 준비 중이에요</span></div>';
     }).join('');
   }
   document.getElementById('cropFilter').addEventListener('click', function (e) {
