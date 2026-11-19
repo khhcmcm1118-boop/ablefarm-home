@@ -4,19 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>에이블팜 작물 고민 상담봇</title>
-<!-- 휴대폰 홈화면에 「에이블 농박사」로 담아 앱처럼 쓰는 설정 (2026-11-09)
-     안내: 09_웹사이트\홈페이지추가개발\상담봇_앱설정_적용방법.md -->
-<link rel="manifest" href="crop-advisor.webmanifest">
+<!-- 앱 설치 기능은 끔 (2026-11-19 사용자 지시) — 홈페이지 페이지로만 연다.
+     예전 설정: 2026-11-09 「에이블 농박사」 홈 화면 앱 (crop-advisor.webmanifest, 삭제) -->
 <meta name="theme-color" content="#1E5C1E">
 <link rel="apple-touch-icon" href="assets/advisor/apple-touch-icon.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="에이블 농박사">
-<script>
-/* 링크로 들어온 손님에게 크롬이 「앱 설치」 띠를 저절로 띄우지 않게 한다 (2026-11-19 사용자 지시).
-   직원은 크롬 메뉴 → 「홈 화면에 추가」로 지금처럼 설치할 수 있다. */
-window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); });
-</script>
 <style>
   :root{
     --dark-green:#1E5C1E;
