@@ -1981,9 +1981,10 @@ function renderPending(p){
   return warnBox('아직 이관하지 않은 출고완료 ' + pendText(p),
     '<div class="tiny muted" style="margin:2px 0 8px">' + esc(p.first) + ' ~ ' + esc(p.last) +
       ' · 위 <b>「출고완료 → 일자별전체 이관」</b> 을 누르면 아래가 모두 넘어갑니다. ' +
-      '이관하기 전까지는 순위·정산·지역별 실적에 잡히지 않습니다.</div>' +
+      '이관하기 전까지는 순위·정산·지역별 실적에 잡히지 않습니다. ' +
+      '아래 금액은 <b>무엇이 넘어가는지</b> 보여주는 숫자라 샘플도 넣은 그대로입니다 — 매출(샘플 제외)과 다릅니다.</div>' +
     '<div class="scroll" style="max-height:34vh"><table><thead><tr><th>일자</th>' +
-      '<th class="num">주문</th><th class="num">줄</th><th class="num">금액</th>' +
+      '<th class="num">주문</th><th class="num">줄</th><th class="num">금액(샘플 포함)</th>' +
       '</tr></thead><tbody>' +
       p.days.map(function(x){
         return '<tr><td class="tiny">' + esc(x.ymd) + '</td>' +
