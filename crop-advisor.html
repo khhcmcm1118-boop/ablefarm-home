@@ -509,6 +509,8 @@
 <style>
   html.embed body{padding:0 !important;display:block !important;min-height:0 !important;background:#FAF7F0}
   html.embed .widget{max-width:none !important;height:100vh;border:0 !important;border-radius:0 !important;box-shadow:none !important}
+  /* 휴대폰 홈페이지 안에서는 맨 아래에 「상담 닫기」 버튼이 떠 있다 — 그 높이만큼 비워 보내기 버튼·안내문과 겹치지 않게 (2026-11-19) */
+  @media (max-width:760px){ html.embed .widget{padding-bottom:calc(46px + env(safe-area-inset-bottom)) !important;box-sizing:border-box} }
 </style>
 <style>
   /* 대화가 시작되면 얼굴 영역을 접고 대화창을 넓게 */
@@ -2238,6 +2240,18 @@ function answerProductInfo(key){
 const GWANJU_HOUSE_PATTERNS = ["관주","하우스"];
 function isGwanjuOrHouseQuestion(msg){ return GWANJU_HOUSE_PATTERNS.some(p => msg.includes(p)); }
 
+// 하우스 "시설" 관리(비닐·보온·폭설·난방) 질문 — 작물 영양 문제가 아니라 제품 추천으로 보내지 않는다
+// (2026-11-19 「겨울 하우스 비닐 관리는?」에 임팩트골드 관주 안내가 나가던 것 고침)
+const GH_FACILITY_WORDS = /비닐|피복|보온|커튼|폭설|눈이|적설|제설|강풍|태풍|골조|보강|지주|난방|온풍기|열풍기|화재|방풍|세척|닦/;
+function isGreenhouseFacilityQuestion(msg){
+  if(/관주|비료|영양제|제품|추천|멀칭/.test(msg)) return false;
+  if(/결로|물방울|이슬|습해|습도|다습|곰팡이|노균/.test(msg)) return false; // 결로·다습은 진단 흐름(GH_DEW)
+  const house = /하우스|온실|시설재배|시설채소/.test(msg);
+  if(house && GH_FACILITY_WORDS.test(msg)) return true;
+  return /비닐/.test(msg) && /관리|교체|세척|닦|보온|폭설|겨울/.test(msg) && !/비닐을 덮|비닐 덮/.test(msg);
+}
+const GH_FACILITY_ANSWER = "겨울 하우스 비닐은 이렇게 관리해 주세요(농촌진흥청 주간농사정보 기준).\n\n① 빛 확보 — 겨울엔 해가 짧아 비닐이 더러우면 작물이 빛을 못 받아요. 먼지·흙 앙금이 낀 비닐은 물로 씻어 주세요. 묽은 세제를 뿌린 뒤 맑은 물로 헹구면 더 밝아져요.\n\n② 보온 — 찢어진 곳은 테이프로 바로 막아 밤 온도가 갑자기 떨어지지 않게 하고, 다겹보온커튼·이중 피복·하우스 안 소형 터널로 보온력을 높여 주세요. 밤 최저온도는 열매채소 12℃, 잎채소 8℃ 이상이 기준이에요.\n\n③ 폭설·강풍 대비 — 비닐하우스 끈을 팽팽하게 당겨 두고, 오래된 하우스는 보강 지주를 세워 주세요. 눈은 쌓이기 전에 쓸어 내리고, 하우스 사이 눈과 바깥 배수로도 정리해 주세요. 작물이 없는 하우스는 비닐을 미리 걷어 두면 무너짐을 막을 수 있어요.\n\n④ 습기 — 해 뜬 뒤 창을 조금씩 열어 습기를 빼 주세요. 비닐에 물방울이 많이 맺히면 잿빛곰팡이병 같은 병이 생기기 쉬워요.";
+
 // 벼(수도작) + 유기농업자재 + 밑거름 조합일 때만 하이그로퍼골드 추천
 const ORGANIC_PATTERNS = ["유기농","유기질비료","유기자재","무농약"];
 const BASEFERT_PATTERNS = ["밑거름","기비"];
@@ -3942,6 +3956,15 @@ function handleUserMessage(raw){
   if(currentCrop === "벼" && isOrganicBaseFertQuestion(msg)){
     showTyping(()=>{
       addBubble("벼(수도작) 밑거름으로 유기농업자재를 찾으신다면 하이그로퍼골드를 추천드려요. 농촌진흥청에 유기농업자재로 공시된 제품이고, 토양 지력을 개선하고 작물 생육에 도움이 되는 미생물 활성을 촉진해줘요. 지효성이 좋아서 벼는 10a(300평)당 80~100kg 정도 밑거름으로 사용하시면 돼요.", 'bot');
+      setChips(followUpChips());
+    });
+    return;
+  }
+
+  // -1.15) 하우스 비닐·보온·폭설 같은 시설 관리 질문 → 제품 추천 대신 시설 관리 요령
+  if(isGreenhouseFacilityQuestion(msg)){
+    showTyping(()=>{
+      addBubble(GH_FACILITY_ANSWER, 'bot');
       setChips(followUpChips());
     });
     return;

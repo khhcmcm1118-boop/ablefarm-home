@@ -132,6 +132,10 @@
     .af-cta{width:100% !important;text-align:center !important;display:block !important}
     .af-botpanel{right:0 !important;bottom:0 !important;width:100vw !important;height:100dvh !important;border-radius:0 !important}
     .af-botfab{right:14px !important;bottom:14px !important}
+    /* 상담창이 열려 있으면 「상담 닫기」를 작게 줄여 맨 아래로 — 보내기 버튼과 겹치지 않게 (2026-11-19)
+       상담봇(crop-advisor embed) 쪽이 화면 아래에 이 버튼 높이만큼 빈자리를 둔다 */
+    body:has(.af-botpanel) .af-botfab{bottom:max(6px, env(safe-area-inset-bottom)) !important;right:10px !important;padding:6px 14px 6px 8px !important;gap:6px !important;font-size:13px !important}
+    body:has(.af-botpanel) .af-botfab > span:first-child{width:24px !important;height:24px !important;font-size:13px !important}
     input,textarea{font-size:16px !important}
   }
 @keyframes afCatFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
