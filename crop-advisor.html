@@ -12,6 +12,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="에이블 농박사">
+<script>
+/* 링크로 들어온 손님에게 크롬이 「앱 설치」 띠를 저절로 띄우지 않게 한다 (2026-11-19 사용자 지시).
+   직원은 크롬 메뉴 → 「홈 화면에 추가」로 지금처럼 설치할 수 있다. */
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); });
+</script>
 <style>
   :root{
     --dark-green:#1E5C1E;

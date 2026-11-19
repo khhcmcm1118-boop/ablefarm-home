@@ -4,7 +4,7 @@
   "description": "작물과 증상을 말하거나 고르면 원인·관리법과 맞는 제품을 안내합니다.",
   "id": "/crop-advisor.html",
   "start_url": "/crop-advisor.html?from=app",
-  "scope": "/",
+  "scope": "/crop-advisor.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FAF7F0",
