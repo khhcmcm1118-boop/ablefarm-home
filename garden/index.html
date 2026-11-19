@@ -299,6 +299,7 @@ h2 .ey { flex: none; display: inline-grid; place-items: center; width: 38px; hei
 .chip.on { background: var(--dk); border-color: var(--dk); }
 .step { border-width: 1px; box-shadow: 0 1px 0 rgba(0,0,0,.03); transition: transform .15s ease, box-shadow .2s ease; }
 .step.on:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -14px rgba(30,70,30,.6); }
+.step.now { border-color: var(--md); background: #f1f8ee; box-shadow: 0 0 0 2px var(--md) inset; }
 .step .no { color: var(--gold); letter-spacing: .3px; }
 .step .st { background: var(--dk); color: #fff; }
 .step.soon .st { background: #f0efe9; color: #8b8f86; }
@@ -386,15 +387,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <!-- ① 첫걸음 -->
 <section id="steps">
-<h2><span class="ey">01</span>첫걸음 시간표 (8교시 중 1교시 공개)</h2>
-<p class="lead">땅 고르기부터 물 주기까지 8교시를 준비하고 있어요. 30초 영상으로 순서대로 따라 해요. 새 교시가 나오는 대로 여기에 열려요.</p>
+<h2><span class="ey">01</span>첫걸음 시간표 (8교시)</h2>
+<p class="lead">땅 고르기부터 물 주기까지 8교시예요. 30~40초 영상으로 순서대로 따라 해요. 듣고 싶은 교시를 누르면 바로 아래에서 수업이 시작돼요.</p>
 <div class="steps" id="stepList"></div>
 <div class="player" id="player">
   <div class="frame"><video id="pv" controls preload="none" playsinline poster="../assets/video/garden-step1.jpg" title="텃밭 첫걸음 ① 텃밭 자리 고르기 (에이농티비)"><source src="../assets/video/garden-step1.mp4" type="video/mp4"></video></div>
   <div class="txt">
-    <span class="src" style="margin:0">1교시</span>
-    <h3>텃밭 자리 고르기</h3>
-    <ul>
+    <span class="src" style="margin:0" id="pvNo">1교시</span>
+    <h3 id="pvTitle">텃밭 자리 고르기</h3>
+    <ul id="pvList">
       <li>햇빛이 잘 드는 곳</li>
       <li>물 빠짐이 좋은 흙 — 진흙과 모래가 알맞게 섞인 모래참흙</li>
       <li>물 쓰기 편하고 집에서 가까운 곳</li>
@@ -590,21 +591,39 @@ document.addEventListener('DOMContentLoaded', function () {
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   // ---------- ① 첫걸음 ----------
+  // 2026-11-19: 2~8교시 영상 공개(홈페이지만 — 유튜브는 1교시만). 교시를 누르면 아래 플레이어가 그 교시로 바뀐다
   var STEPS = [
-    { n: 1, t: '텃밭 자리 고르기', ready: true },
-    { n: 2, t: '내 밭 흙 알아보기' },
-    { n: 3, t: '퇴비·밑거름 넣는 때' },
-    { n: 4, t: '땅 갈고 두둑 만들기' },
-    { n: 5, t: '비닐 덮기(멀칭)' },
-    { n: 6, t: '무엇을 언제 심나' },
-    { n: 7, t: '얼마나 깊이 심나' },
-    { n: 8, t: '물 주기 기초' }
+    { n: 1, t: '텃밭 자리 고르기', ready: true, pts: ['햇빛이 잘 드는 곳', '물 빠짐이 좋은 흙 — 진흙과 모래가 알맞게 섞인 모래참흙', '물 쓰기 편하고 집에서 가까운 곳', '차 매연·먼지에서 떨어진 곳', '처음엔 5㎡(한 평 반)면 충분 — 상추·쑥갓·시금치부터'] },
+    { n: 2, t: '내 밭 흙 알아보기', ready: true, pts: ['가장 정확한 건 농업기술센터 흙 검사(토양검정) — 비료를 알맞게 쓰는 기본이에요', '퇴비·비료 뿌리기 전, 겉흙 한 삽 걷고 15cm 깊이까지 고르게 떠요', '밭 안 5곳 이상에서 떠서 섞어 1~2kg → 시·군 농업기술센터 (산도·양분 처방서)', '집에서: 흙을 쥐었다 놓아 바로 부서지면 마른 흙, 질척하면 물기 많은 흙', '비 온 다음 날 물이 고이는 자리는 물 빠짐이 나쁜 곳'] },
+    { n: 3, t: '퇴비·밑거름 넣는 때', ready: true, pts: ['씨뿌리기·모종 심기 2~3주 전 — 봄 3월 하순~4월 상순, 가을 8월 상순~중순', '살 때 볼 것: 냄새 없이 다 썩었는지 · 포대의 원료 · 뒷면 사용법과 주의 문구', '10㎡(약 3평)에 퇴비 10~20kg + 석회 1~2kg', '화학비료는 밭 만들기 1주 전 · 자라는 중엔 포기에서 10cm 떨어져 주고 흙 덮기', '많이 넣는다고 좋은 게 아니에요 — 정해진 양만'] },
+    { n: 4, t: '땅 갈고 두둑 만들기', ready: true, pts: ['거름 넣고 2~3주 뒤 (봄이면 4월 중순~5월 상순)', '흙을 삽 한 자루 깊이로 뒤집어 고르게', '두둑 높이 20~30cm · 고랑 폭 30cm 안팎', '고추·감자·고구마는 좁은 두둑에 한 줄, 잎채소는 넓은 두둑에 여러 줄', '비 온 뒤 고랑에 물이 고이지 않게'] },
+    { n: 5, t: '비닐 덮기(멀칭)', ready: true, pts: ['심기 3~4일 전에 덮으면 흙이 따뜻해져 뿌리가 잘 내려요', '투명 비닐은 흙을 빨리 데우고, 검은 비닐은 잡초가 훨씬 덜 나요', '두께 0.02~0.03mm 얇은 비닐이면 충분', '볏짚·부직포를 깔아도 좋아요 — 고랑엔 부직포'] },
+    { n: 6, t: '무엇을 언제 심나', ready: true, pts: ['시금치 2월부터 · 씨감자 3월 · 강낭콩 3월 하순부터', '상추·쑥갓 같은 잎채소 4월', '고추·토마토·가지는 늦서리 뒤 (중부 5월 상순~중순) · 고구마 순 5월', '가을: 9월 초 배추는 모종, 무는 꼭 씨로 · 마늘 중부 10월 중·하순'] },
+    { n: 7, t: '얼마나 깊이 심나', ready: true, pts: ['씨앗은 크기의 2~3배 깊이, 2~3알씩 넣고 물 듬뿍', '상추처럼 작은 씨는 흙을 얇게', '모종은 5~10cm 구덩이에 물 먼저, 모종 판에 있던 높이만큼만 묻기', '씨감자는 위로 흙 5cm, 마늘은 쪽 길이의 2~3배'] },
+    { n: 8, t: '물 주기 기초', ready: true, pts: ['심은 직후 일주일에 2~3번, 뿌리 내린 뒤 1~2번', '오전에, 흙 깊이 스며들게 넉넉히', '늘 젖은 흙은 뿌리가 숨을 못 쉬어요', '주기 전 손가락으로 흙 만져 보기 · 화분은 바닥 구멍에 물방울 맺힐 만큼', '10월 속 차는 배추는 마르지 않게'] }
   ];
+  var cur = 1;
+  function showStep(n) {
+    var s = STEPS[n - 1]; if (!s || !s.ready) return;
+    cur = n;
+    var v = document.getElementById('pv');
+    v.pause();
+    v.setAttribute('poster', '../assets/video/garden-step' + n + '.jpg');
+    v.setAttribute('title', '텃밭 첫걸음 ' + n + '교시 ' + s.t + ' (에이블 농박사)');
+    v.querySelector('source').setAttribute('src', '../assets/video/garden-step' + n + '.mp4');
+    v.load();
+    document.getElementById('pvNo').textContent = n + '교시';
+    document.getElementById('pvTitle').textContent = s.t;
+    document.getElementById('pvList').innerHTML = s.pts.map(function (p, i) {
+      return '<li>' + esc(p) + (i === s.pts.length - 1 ? ' <span class="src">농촌진흥청</span>' : '') + '</li>';
+    }).join('');
+    drawSteps();
+  }
   var stepList = document.getElementById('stepList');
   function drawSteps() {
     var html = '';
     STEPS.forEach(function (s) {
-      var cls = 'step' + (s.ready ? ' on' : ' soon') + (store.seen[s.n] ? ' seen' : '');
+      var cls = 'step' + (s.ready ? ' on' : ' soon') + (store.seen[s.n] ? ' seen' : '') + (s.n === cur ? ' now' : '');
       html += '<button type="button" class="' + cls + '" data-n="' + s.n + '"' + (s.ready ? '' : ' disabled') + '>' +
         '<span class="no">' + s.n + '교시</span><span class="tt">' + esc(s.t) + '</span>' +
         '<span class="st">' + (s.ready ? '▶ 수업 듣기' : '준비 중') + '</span></button>';
@@ -614,18 +633,19 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('progTxt').textContent = '첫걸음 ' + cnt + ' / 8 교시 들었어요' + (cnt === 8 ? ' · 졸업!' : '');
     document.getElementById('progBar').style.width = (cnt / 8 * 100) + '%';
     var b = document.getElementById('seenBtn');
-    b.className = 'seenbtn' + (store.seen[1] ? ' done' : '');
-    b.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + (store.seen[1] ? ' 다 봤어요 · 도장 찍힘' : ' 다 봤어요');
+    b.className = 'seenbtn' + (store.seen[cur] ? ' done' : '');
+    b.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' + (store.seen[cur] ? ' 다 봤어요 · 도장 찍힘' : ' 다 봤어요');
   }
   stepList.addEventListener('click', function (e) {
     var el = e.target.closest('.step'); if (!el || el.disabled) return;
+    showStep(+el.getAttribute('data-n'));
     document.getElementById('player').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
   document.getElementById('seenBtn').addEventListener('click', function () {
-    store.seen[1] = !store.seen[1]; save(); drawSteps();
+    store.seen[cur] = !store.seen[cur]; save(); drawSteps();
   });
   document.getElementById('pv').addEventListener('ended', function () {
-    if (!store.seen[1]) { store.seen[1] = true; save(); drawSteps(); }
+    if (!store.seen[cur]) { store.seen[cur] = true; save(); drawSteps(); }
   });
   drawSteps();
 
