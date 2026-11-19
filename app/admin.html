@@ -626,7 +626,7 @@
               <button class="btn sm dark" id="btnDashLoad">조회</button>
             </div>
             <span class="grow"></span>
-            <button class="btn sm green" id="btnExport">출고완료 → 일자별전체 이관</button>
+            <button class="btn sm green" id="btnExport">출고완료 → 일자별전체 이관<span id="exPend"></span></button>
           </div>
         </div>
 
@@ -1915,7 +1915,7 @@ function renderDash(){
 
   renderStockCharts();
 
-  var w = '';
+  var w = renderPending(d.pend);   // 이관 대기를 맨 위에 — 사장님이 제일 먼저 봐야 하는 것 (2026-11-19)
   if (d.late.length) w += warnBox('출하일이 지난 미출고 ' + d.late.length + '건', orderTable(d.late, '출하예정일'));
   if (d.nostock.length) w += warnBox('재고없음으로 회신된 주문 ' + d.nostock.length + '건',
     orderTable(d.nostock, '출하예정일', '물류메모'));
@@ -1963,6 +1963,38 @@ function loadDashOrders(){
       }).join('') : '<tr><td colspan="9" class="muted">이 기간에 주문이 없습니다.</td></tr>') + '</tbody>';
   }).catch(function(){});
 }
+/* ── 이관 대기 — 출고완료인데 아직 「일자별전체」로 안 넘어간 줄 ──────────────────
+ *
+ * 2026-11-19 사장님 요청: 「다 이관했는지 확인이 안 된다」.
+ * 위쪽 기간 조회와 **상관없이 전체 기간**을 센다 — 이관 버튼도 기간을 가리지 않기 때문이다.
+ *   건 = 주문 수 · 줄 = 품목 줄 수(「일자별전체」에 생길 줄 수)
+ * 날짜는 주문의 일자다. 남은 것이 있으면 날짜별 표를 띄워, 어느 날 것이 빠졌는지 바로 보이게 한다.
+ */
+function pendText(p){
+  return num(p.orders) + '건 · ' + num(p.rows) + '줄 · ' + won(p.amt);
+}
+function renderPending(p){
+  var tag = $('#exPend');
+  if (!p){ if (tag) tag.textContent = ''; return ''; }
+  if (!p.rows){ if (tag) tag.textContent = ' · 남은 것 없음'; return ''; }
+  if (tag) tag.textContent = ' · ' + num(p.rows) + '줄 남음';
+  return warnBox('아직 이관하지 않은 출고완료 ' + pendText(p),
+    '<div class="tiny muted" style="margin:2px 0 8px">' + esc(p.first) + ' ~ ' + esc(p.last) +
+      ' · 위 <b>「출고완료 → 일자별전체 이관」</b> 을 누르면 아래가 모두 넘어갑니다. ' +
+      '이관하기 전까지는 순위·정산·지역별 실적에 잡히지 않습니다.</div>' +
+    '<div class="scroll" style="max-height:34vh"><table><thead><tr><th>일자</th>' +
+      '<th class="num">주문</th><th class="num">줄</th><th class="num">금액</th>' +
+      '</tr></thead><tbody>' +
+      p.days.map(function(x){
+        return '<tr><td class="tiny">' + esc(x.ymd) + '</td>' +
+          '<td class="num">' + num(x.orders) + '건</td>' +
+          '<td class="num">' + num(x.rows) + '줄</td>' +
+          '<td class="num">' + won(x.amt) + '</td></tr>';
+      }).join('') +
+      '<tr><td class="tiny"><b>합계</b></td><td class="num"><b>' + num(p.orders) + '건</b></td>' +
+      '<td class="num"><b>' + num(p.rows) + '줄</b></td><td class="num"><b>' + won(p.amt) + '</b></td></tr>' +
+      '</tbody></table></div>');
+}
 function warnBox(title, inner){ return '<div class="warnbox"><h3>' + esc(title) + '</h3>' + inner + '</div>'; }
 /* 「기간 내 주문」과 똑같은 표 — 챙겨야 할 주문 목록도 같은 모양으로 보이게 한다 */
 function orderTable(groups, dateLabel, memoLabel){
@@ -1993,7 +2025,13 @@ document.addEventListener('click', function(e){
 });
 $('#btnExport').addEventListener('click', function(){
   var b = this;
-  ask('출고완료된 주문을 「일자별전체」로 옮깁니다.\n한 번 옮긴 주문은 되돌릴 수 없습니다.', {
+  // 무엇이 몇 건 넘어가는지 **누르기 전에** 보여준다 (2026-11-19 사장님 요청)
+  var p = S.dash && S.dash.pend;
+  if (p && !p.rows) { toast('이관할 것이 없습니다. 전부 넘어가 있습니다.', 'ok'); return; }
+  var msg = p ? '출고완료 ' + pendText(p) + ' 을 「일자별전체」로 옮깁니다.\n(' + p.first + ' ~ ' + p.last + ')\n'
+                + '한 번 옮긴 주문은 되돌릴 수 없습니다.'
+              : '출고완료된 주문을 「일자별전체」로 옮깁니다.\n한 번 옮긴 주문은 되돌릴 수 없습니다.';
+  ask(msg, {
     title: '일자별전체로 이관', yes: '이관하기'
   }).then(function(go){
     if (!go) return;
