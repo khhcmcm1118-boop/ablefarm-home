@@ -247,6 +247,10 @@ ol.how li::before { content: counter(s); position: absolute; left: 10px; top: 8p
 .qa .ans { display: flex; gap: 10px; margin-top: 8px; }
 .qa .ans img { width: 38px; height: 48px; border-radius: 9px; object-fit: cover; object-position: 50% 7%; flex: none; }
 .qa .ans p { margin: 0; font-size: 15.5px; }
+.qa .ans { flex-wrap: wrap; }
+.qa .ans p { flex: 1 1 0; min-width: 0; }
+.qa .ans .askv { flex-basis: 100%; width: 100%; max-width: 280px; aspect-ratio: 9 / 16; margin: 8px 0 2px 48px; border-radius: 14px; background: #10261a; box-shadow: 0 8px 22px -14px rgba(0,0,0,.6); }
+@media (max-width: 560px) { .qa .ans .askv { margin-left: 0; max-width: 100%; } }
 .qa .lnk { display: block; margin-top: 6px; font-size: 13.5px; color: var(--md); font-weight: 800; }
 /* 손 들고 질문하기 */
 .hand { margin: 34px 0 0; background: var(--md); color: #fff; border-radius: 20px; padding: 18px; display: flex; gap: 16px; align-items: center; }
@@ -773,10 +777,12 @@ document.addEventListener('DOMContentLoaded', function () {
     '퇴비 듬뿍 넣을수록 좋죠?', '같은 자리에 또 심어도 돼요?', '매일 물 주는데 왜 안 크죠?', '날 풀렸는데 고추 지금 심어도?', '잎이 누런 건 비료가 모자라서?', '아까워서 못 솎겠어요',
     '상추 어떻게 따요?', '배추 꼭 묶어야 속이 차요?', '베란다 방향별로 뭘 키워요?', '장마 오기 전에 뭘 해요?', '상추 잎에 꼬불꼬불 하얀 길', '열무 어린잎 구멍 송송'
   ];
+  // 2026-11-19: 궁금증 1~6 영상 공개(홈페이지만) — assets/video/garden-askN.mp4 · 답을 펼치면 그 안에서 재생
+  var ASK_VIDEO = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true };
   function memoHTML(copy) {
     return ASKS.map(function (q, i) {
       return '<button type="button" class="memo" data-ask="' + (i + 1) + '"' + (copy ? ' aria-hidden="true" tabindex="-1"' : '') + '>' +
-        '<span class="n">궁금증 ' + (i + 1) + ' · 영상 준비 중</span><span class="q">' + esc(q) + '</span><span class="e">눌러서 답 보기 →</span></button>';
+        '<span class="n">궁금증 ' + (i + 1) + ' · ' + (ASK_VIDEO[i + 1] ? '▶ 30초 영상' : '영상 준비 중') + '</span><span class="q">' + esc(q) + '</span><span class="e">' + (ASK_VIDEO[i + 1] ? '눌러서 영상·답 보기 →' : '눌러서 답 보기 →') + '</span></button>';
     }).join('');
   }
   var recess = document.getElementById('recessList');
@@ -834,8 +840,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('faqList').innerHTML = QA.filter(function (q) { return curT === 'all' || q[0] === curT; }).map(function (q) {
       var link = '';
       if (q[3]) link += '<span class="lnk">' + (STEPS[q[3] - 1].ready ? '<a href="#steps"><b class="tg">수업</b>' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 수업 보기</a>' : '<b class="tg">수업</b>' + q[3] + '교시 「' + esc(STEPS[q[3] - 1].t) + '」 — 영상 준비 중') + '</span>';
-      if (q[4]) link += '<span class="lnk"><b class="tg">궁금증</b>쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
-      return '<details class="qa"' + (q[4] ? ' data-ask="' + q[4] + '"' : '') + '><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p></div></details>';
+      var vid = '';
+      if (q[4] && ASK_VIDEO[q[4]]) vid = '<video class="askv" controls preload="none" playsinline poster="../assets/video/garden-ask' + q[4] + '.jpg" title="텃밭 궁금증 ' + q[4] + ' (에이블 농박사)"><source src="../assets/video/garden-ask' + q[4] + '.mp4" type="video/mp4"></video>';
+      else if (q[4]) link += '<span class="lnk"><b class="tg">궁금증</b>쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
+      return '<details class="qa"' + (q[4] ? ' data-ask="' + q[4] + '"' : '') + '><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p>' + vid + '</div></details>';
     }).join('');
   }
   document.getElementById('qTabs').addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b) return; curT = b.getAttribute('data-t'); drawQA(); });
