@@ -138,9 +138,12 @@ async function buildRegions() {
     const lat = num(s.Instl_La), lon = num(s.Instl_Lo);
     const a = (s.Instl_Adres || '').replace(/\s+/g, ' ').trim().split(' ');
     if (!lat || !lon || a.length < 2) continue;
-    const prov = a[0];
+    let prov = a[0];
+    // 관측소 주소가 옛 행정구역인 곳은 지금 이름으로 (여주군→여주시 등), 「경상남도 부산시」 같은 잘못 적힌 주소도 바로잡는다
+    if (a[1] === '부산시') prov = '부산광역시';
     const metro = /(특별시|광역시|특별자치시)$/.test(prov);
-    const city = metro ? prov : a[1];
+    let city = metro ? prov : a[1];
+    city = { '여주군': '여주시', '당진군': '당진시', '청원군': '청주시', '군위군': '군위군' }[city] || city;
     if (!metro && !/(시|군)$/.test(city)) continue;
     const ps = provShort(prov);
     const name = `${ps} · ${metro ? ps + '시' : city}`;
