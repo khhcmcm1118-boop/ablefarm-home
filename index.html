@@ -85,6 +85,9 @@
   summary{cursor:pointer;list-style:none}
   summary::-webkit-details-marker{display:none}
   img,video{max-width:100%}
+  /* 휴대폰에서 화면이 옆으로 넓어지지 않게 — 넓어지면 농박사 버튼·상담창이 화면 밖으로 밀린다 (2026-11-21) */
+  html,body{overflow-x:clip}
+  .af-2col>*,.af-3col>*{min-width:0}
 
   /* ===== 태블릿 / 모바일 (미디어쿼리는 인라인으로 표현할 수 없어 이곳에 둡니다) =====
      주의: React가 인라인 스타일을 재직렬화하므로 [style*=...] 선택자는 쓰지 않습니다.
@@ -130,7 +133,7 @@
 
     /* 터치 영역 · iOS 자동확대 방지 */
     .af-cta{width:100% !important;text-align:center !important;display:block !important}
-    .af-botpanel{right:0 !important;bottom:0 !important;width:100vw !important;height:100dvh !important;border-radius:0 !important}
+    .af-botpanel{left:0 !important;right:0 !important;bottom:0 !important;width:auto !important;height:100dvh !important;border-radius:0 !important}
     .af-botfab{right:14px !important;bottom:14px !important}
     /* 상담창이 열려 있으면 「상담 닫기」를 작게 줄여 맨 아래로 — 보내기 버튼과 겹치지 않게 (2026-11-19)
        상담봇(crop-advisor embed) 쪽이 화면 아래에 이 버튼 높이만큼 빈자리를 둔다 */
@@ -334,7 +337,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap">
           <div style="font-size:20px;font-weight:700;letter-spacing:.1em;color:#4a7c59">PRODUCT DETAIL</div>
-          <div style="display:flex;gap:7px">
+          <div style="display:flex;flex-wrap:wrap;gap:7px">
             <sc-for list="{{ hiTabs }}" as="t" hint-placeholder-count="5">
               <span class="af-btn" onClick="{{ t.onClick }}" style="flex:none;white-space:nowrap;padding:7px 14px;border-radius:100px;font-size:12.5px;font-weight:700;border:1px solid #cbd7bb;background:{{ t.bg }};color:{{ t.fg }}">{{ t.name }}</span>
             </sc-for>
@@ -851,7 +854,7 @@
 <!-- ===== 작물 고민 상담봇 (모든 화면 공통) ===== -->
 <sc-if value="{{ botOpen }}" hint-placeholder-val="{{ false }}">
   <div class="af-botpanel" style="position:fixed;right:24px;bottom:96px;z-index:60;width:400px;height:min(680px,calc(100vh - 128px));background:#faf7f0;border-radius:20px;overflow:hidden;box-shadow:0 24px 60px -18px rgba(22,39,28,.45);border:1px solid #dcd8c7;display:flex;flex-direction:column">
-    <div style="flex:none;display:flex;justify-content:flex-end;background:#1E5C1E;padding:6px 8px 0">
+    <div class="af-botbar" title="끌어서 옮기기 · 두 번 누르면 원래 자리로" style="flex:none;display:flex;align-items:center;justify-content:space-between;background:#1E5C1E;padding:6px 8px 0"><span class="af-botbar-hint" style="font-size:11.5px;font-weight:700;color:#a9cfa9;padding:0 6px 2px;user-select:none">⠿ 끌어서 옮기기 · 오른쪽 아래 모서리로 크기 조절</span>
       <span class="af-btn" onClick="{{ botToggle }}" title="닫기" style="padding:4px 10px;color:#cfe6cf;font-size:13px;font-weight:700">닫기 ✕</span>
     </div>
     <iframe src="crop-advisor.html?embed=1" title="에이블팜 작물 고민 상담봇" style="flex:1;width:100%;border:0;display:block"></iframe>
@@ -1868,6 +1871,67 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<!-- 농박사 상담창: 컴퓨터에서 마우스로 옮기기·크기 조절 (휴대폰은 전체 화면 그대로) 2026-11-21 -->
+<style>
+  @media (max-width:1024px){ .af-botbar-hint,.af-botgrip{display:none !important} }
+  @media (min-width:1025px){ .af-botbar{cursor:move} }
+  .af-botgrip{position:absolute;right:0;bottom:0;width:22px;height:22px;cursor:nwse-resize;z-index:2;
+    background:linear-gradient(135deg,transparent 0 50%,#9bb79b 50% 58%,transparent 58% 70%,#9bb79b 70% 78%,transparent 78%)}
+  .af-botpanel.af-dragging iframe{pointer-events:none}
+</style>
+<style id="af-botgeo"></style>
+<script>
+(function(){
+  var KEY='af-botgeo-v1', MINW=320, MINH=420, geo=null;
+  var desk=window.matchMedia('(min-width:1025px)');
+  try{ geo=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ geo=null; }
+  var sheet=document.getElementById('af-botgeo');
+  function clamp(g){
+    var vw=window.innerWidth, vh=window.innerHeight;
+    g.w=Math.max(MINW,Math.min(g.w,vw-16)); g.h=Math.max(MINH,Math.min(g.h,vh-16));
+    g.x=Math.max(8,Math.min(g.x,vw-g.w-8)); g.y=Math.max(8,Math.min(g.y,vh-g.h-8));
+    return g;
+  }
+  function apply(){
+    if(!geo){ sheet.textContent=''; return; }
+    var g=clamp({x:geo.x,y:geo.y,w:geo.w,h:geo.h});
+    sheet.textContent='@media (min-width:1025px){.af-botpanel{left:'+g.x+'px !important;top:'+g.y+'px !important;right:auto !important;bottom:auto !important;width:'+g.w+'px !important;height:'+g.h+'px !important}}';
+  }
+  function save(){ try{ geo?localStorage.setItem(KEY,JSON.stringify(geo)):localStorage.removeItem(KEY); }catch(e){} }
+  function start(e,panel,mode){
+    if(!desk.matches||e.button!==0) return;
+    var r=panel.getBoundingClientRect(), sx=e.clientX, sy=e.clientY;
+    var g0={x:r.left,y:r.top,w:r.width,h:r.height};
+    panel.classList.add('af-dragging'); e.preventDefault();
+    function move(ev){
+      var dx=ev.clientX-sx, dy=ev.clientY-sy;
+      geo = mode==='move' ? {x:g0.x+dx,y:g0.y+dy,w:g0.w,h:g0.h} : {x:g0.x,y:g0.y,w:g0.w+dx,h:g0.h+dy};
+      geo=clamp(geo); apply();
+    }
+    function up(){
+      panel.classList.remove('af-dragging');
+      window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',up);
+      save();
+    }
+    window.addEventListener('pointermove',move); window.addEventListener('pointerup',up);
+  }
+  function hook(panel){
+    if(panel.__afdd) return; panel.__afdd=1;
+    if(!panel.querySelector('.af-botgrip')){ var grip=document.createElement('div'); grip.className='af-botgrip'; grip.title='끌어서 크기 조절'; panel.appendChild(grip); }
+  }
+  document.addEventListener('pointerdown',function(e){
+    var panel=e.target.closest&&e.target.closest('.af-botpanel'); if(!panel) return;
+    if(e.target.closest('.af-botgrip')) return start(e,panel,'size');
+    if(e.target.closest('.af-botbar') && !e.target.closest('.af-btn')) return start(e,panel,'move');
+  });
+  document.addEventListener('dblclick',function(e){
+    if(e.target.closest&&e.target.closest('.af-botbar')&&!e.target.closest('.af-btn')){ geo=null; apply(); save(); }
+  });
+  new MutationObserver(function(){ var p=document.querySelector('.af-botpanel'); if(p) hook(p); }).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('resize',apply);
+  apply();
+})();
 </script>
 </body>
 </html>
