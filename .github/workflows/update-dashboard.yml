@@ -1,0 +1,38 @@
+name: 오늘 농업현황 자료 갱신
+
+on:
+  schedule:
+    # 한국시간 07:20 · 12:20 · 18:20 (기상청 예보 발표 뒤)
+    - cron: '20 22 * * *'
+    - cron: '20 3 * * *'
+    - cron: '20 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dashboard
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 자료 모으기
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/update-dashboard.mjs
+      - name: 변경사항 커밋
+        run: |
+          git config user.name  "ablefarm-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/dashboard.json
+          git diff --staged --quiet && echo "변경 없음" && exit 0
+          git commit -m "chore: 오늘 농업현황 자료 갱신"
+          git pull --rebase origin main
+          git push
