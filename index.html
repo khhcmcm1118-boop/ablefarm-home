@@ -854,7 +854,7 @@
 <!-- ===== 작물 고민 상담봇 (모든 화면 공통) ===== -->
 <sc-if value="{{ botOpen }}" hint-placeholder-val="{{ false }}">
   <div class="af-botpanel" style="position:fixed;right:24px;bottom:96px;z-index:60;width:400px;height:min(680px,calc(100vh - 128px));background:#faf7f0;border-radius:20px;overflow:hidden;box-shadow:0 24px 60px -18px rgba(22,39,28,.45);border:1px solid #dcd8c7;display:flex;flex-direction:column">
-    <div class="af-botbar" title="끌어서 옮기기 · 두 번 누르면 원래 자리로" style="flex:none;display:flex;align-items:center;justify-content:space-between;background:#1E5C1E;padding:6px 8px 0"><span class="af-botbar-hint" style="font-size:11.5px;font-weight:700;color:#a9cfa9;padding:0 6px 2px;user-select:none">⠿ 끌어서 옮기기 · 오른쪽 아래 모서리로 크기 조절</span>
+    <div class="af-botbar" title="끌어서 옮기기 · 두 번 누르면 원래 자리로" style="flex:none;display:flex;align-items:center;justify-content:space-between;background:#1E5C1E;padding:6px 8px 0"><span class="af-botbar-hint" style="font-size:11.5px;font-weight:700;color:#a9cfa9;padding:0 6px 2px;user-select:none">⠿ 끌어서 옮기기 · 테두리를 끌면 크기 조절</span>
       <span class="af-btn" onClick="{{ botToggle }}" title="닫기" style="padding:4px 10px;color:#cfe6cf;font-size:13px;font-weight:700">닫기 ✕</span>
     </div>
     <iframe src="crop-advisor.html?embed=1" title="에이블팜 작물 고민 상담봇" style="flex:1;width:100%;border:0;display:block"></iframe>
@@ -1872,13 +1872,26 @@ class Component extends DCLogic {
   }
 }
 </script>
-<!-- 농박사 상담창: 컴퓨터에서 마우스로 옮기기·크기 조절 (휴대폰은 전체 화면 그대로) 2026-11-21 -->
+<!-- 농박사 상담창: 컴퓨터에서 마우스로 옮기기·크기 조절 (휴대폰은 전체 화면 그대로) 2026-11-21
+     크기 조절: 테두리 네 변·네 모서리 어디든 끌면 됨 (둥근 모서리 한 곳만 잡게 하면 잘 안 잡혀서 11-21 바꿈) -->
 <style>
-  @media (max-width:1024px){ .af-botbar-hint,.af-botgrip{display:none !important} }
-  @media (min-width:1025px){ .af-botbar{cursor:move} }
-  .af-botgrip{position:absolute;right:0;bottom:0;width:22px;height:22px;cursor:nwse-resize;z-index:2;
-    background:linear-gradient(135deg,transparent 0 50%,#9bb79b 50% 58%,transparent 58% 70%,#9bb79b 70% 78%,transparent 78%)}
+  .af-rz{position:absolute;z-index:3;display:none}
+  @media (min-width:1025px){
+    .af-botbar{cursor:move}
+    .af-rz{display:block}
+    .af-rz-n{top:0;left:14px;right:14px;height:7px;cursor:ns-resize}
+    .af-rz-s{bottom:0;left:14px;right:14px;height:7px;cursor:ns-resize}
+    .af-rz-w{left:0;top:14px;bottom:14px;width:7px;cursor:ew-resize}
+    .af-rz-e{right:0;top:14px;bottom:14px;width:5px;cursor:ew-resize}
+    .af-rz-nw{left:0;top:0;width:16px;height:16px;cursor:nwse-resize}
+    .af-rz-ne{right:0;top:0;width:16px;height:16px;cursor:nesw-resize}
+    .af-rz-sw{left:0;bottom:0;width:16px;height:16px;cursor:nesw-resize}
+    .af-rz-se{right:4px;bottom:4px;width:20px;height:20px;cursor:nwse-resize;border-radius:0 0 14px 0;
+      background:linear-gradient(135deg,transparent 0 45%,#7fa07f 45% 53%,transparent 53% 64%,#7fa07f 64% 72%,transparent 72%)}
+  }
+  @media (max-width:1024px){ .af-botbar-hint{display:none !important} }
   .af-botpanel.af-dragging iframe{pointer-events:none}
+  .af-botpanel.af-dragging{user-select:none}
 </style>
 <style id="af-botgeo"></style>
 <script>
@@ -1887,7 +1900,7 @@ class Component extends DCLogic {
   var desk=window.matchMedia('(min-width:1025px)');
   try{ geo=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ geo=null; }
   var sheet=document.getElementById('af-botgeo');
-  function clamp(g){
+  function clampMove(g){
     var vw=window.innerWidth, vh=window.innerHeight;
     g.w=Math.max(MINW,Math.min(g.w,vw-16)); g.h=Math.max(MINH,Math.min(g.h,vh-16));
     g.x=Math.max(8,Math.min(g.x,vw-g.w-8)); g.y=Math.max(8,Math.min(g.y,vh-g.h-8));
@@ -1895,10 +1908,20 @@ class Component extends DCLogic {
   }
   function apply(){
     if(!geo){ sheet.textContent=''; return; }
-    var g=clamp({x:geo.x,y:geo.y,w:geo.w,h:geo.h});
+    var g=clampMove({x:geo.x,y:geo.y,w:geo.w,h:geo.h});
     sheet.textContent='@media (min-width:1025px){.af-botpanel{left:'+g.x+'px !important;top:'+g.y+'px !important;right:auto !important;bottom:auto !important;width:'+g.w+'px !important;height:'+g.h+'px !important}}';
   }
   function save(){ try{ geo?localStorage.setItem(KEY,JSON.stringify(geo)):localStorage.removeItem(KEY); }catch(e){} }
+  /* 크기 조절: 잡은 변·모서리만 움직이고 반대쪽은 그 자리에 둔다 */
+  function resize(g0,dir,dx,dy){
+    var vw=window.innerWidth, vh=window.innerHeight;
+    var L=g0.x, T=g0.y, R=g0.x+g0.w, B=g0.y+g0.h;
+    if(dir.indexOf('w')>=0) L=Math.max(8,Math.min(L+dx,R-MINW));
+    if(dir.indexOf('e')>=0) R=Math.min(vw-8,Math.max(R+dx,L+MINW));
+    if(dir.indexOf('n')>=0) T=Math.max(8,Math.min(T+dy,B-MINH));
+    if(dir.indexOf('s')>=0) B=Math.min(vh-8,Math.max(B+dy,T+MINH));
+    return {x:L,y:T,w:R-L,h:B-T};
+  }
   function start(e,panel,mode){
     if(!desk.matches||e.button!==0) return;
     var r=panel.getBoundingClientRect(), sx=e.clientX, sy=e.clientY;
@@ -1906,8 +1929,8 @@ class Component extends DCLogic {
     panel.classList.add('af-dragging'); e.preventDefault();
     function move(ev){
       var dx=ev.clientX-sx, dy=ev.clientY-sy;
-      geo = mode==='move' ? {x:g0.x+dx,y:g0.y+dy,w:g0.w,h:g0.h} : {x:g0.x,y:g0.y,w:g0.w+dx,h:g0.h+dy};
-      geo=clamp(geo); apply();
+      geo = mode==='move' ? clampMove({x:g0.x+dx,y:g0.y+dy,w:g0.w,h:g0.h}) : resize(g0,mode,dx,dy);
+      apply();
     }
     function up(){
       panel.classList.remove('af-dragging');
@@ -1917,12 +1940,16 @@ class Component extends DCLogic {
     window.addEventListener('pointermove',move); window.addEventListener('pointerup',up);
   }
   function hook(panel){
-    if(panel.__afdd) return; panel.__afdd=1;
-    if(!panel.querySelector('.af-botgrip')){ var grip=document.createElement('div'); grip.className='af-botgrip'; grip.title='끌어서 크기 조절'; panel.appendChild(grip); }
+    if(panel.querySelector('.af-rz')) return;
+    ['n','s','e','w','nw','ne','sw','se'].forEach(function(d){
+      var h=document.createElement('div'); h.className='af-rz af-rz-'+d; h.setAttribute('data-rz',d);
+      h.title='끌어서 크기 조절'; panel.appendChild(h);
+    });
   }
   document.addEventListener('pointerdown',function(e){
     var panel=e.target.closest&&e.target.closest('.af-botpanel'); if(!panel) return;
-    if(e.target.closest('.af-botgrip')) return start(e,panel,'size');
+    var rz=e.target.closest('[data-rz]');
+    if(rz) return start(e,panel,rz.getAttribute('data-rz'));
     if(e.target.closest('.af-botbar') && !e.target.closest('.af-btn')) return start(e,panel,'move');
   });
   document.addEventListener('dblclick',function(e){
