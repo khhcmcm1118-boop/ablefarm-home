@@ -406,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <li>차 매연·먼지에서 떨어진 곳</li>
       <li>처음엔 5㎡(한 평 반)면 충분 — 상추·쑥갓·시금치부터 <span class="src">농촌진흥청</span></li>
     </ul>
+    <p id="pvYt" style="margin:0 0 8px;font-size:13.5px;font-weight:800"><a href="https://www.youtube.com/shorts/lq9ugAGGVyQ" target="_blank" rel="noopener" style="color:var(--md)">▶ 유튜브에서 보기</a></p>
     <button class="seenbtn" id="seenBtn" type="button">다 봤어요</button>
   </div>
 </div>
@@ -606,6 +607,8 @@ document.addEventListener('DOMContentLoaded', function () {
     { n: 7, t: '얼마나 깊이 심나', ready: true, pts: ['씨앗은 크기의 2~3배 깊이, 2~3알씩 넣고 물 듬뿍', '상추처럼 작은 씨는 흙을 얇게', '모종은 5~10cm 구덩이에 물 먼저, 모종 판에 있던 높이만큼만 묻기', '씨감자는 위로 흙 5cm, 마늘은 쪽 길이의 2~3배'] },
     { n: 8, t: '물 주기 기초', ready: true, pts: ['심은 직후 일주일에 2~3번, 뿌리 내린 뒤 1~2번', '오전에, 흙 깊이 스며들게 넉넉히', '늘 젖은 흙은 뿌리가 숨을 못 쉬어요', '주기 전 손가락으로 흙 만져 보기 · 화분은 바닥 구멍에 물방울 맺힐 만큼', '10월 속 차는 배추는 마르지 않게'] }
   ];
+  // 2026-11-21: 유튜브 공개된 교시 → 「유튜브에서 보기」 (텃밭 영상은 매주 토 11:00 공개)
+  var STEP_YT = { 1: 'lq9ugAGGVyQ' };
   var cur = 1;
   function showStep(n) {
     var s = STEPS[n - 1]; if (!s || !s.ready) return;
@@ -617,6 +620,8 @@ document.addEventListener('DOMContentLoaded', function () {
     v.querySelector('source').setAttribute('src', '../assets/video/garden-step' + n + '.mp4');
     v.load();
     document.getElementById('pvNo').textContent = n + '교시';
+    var yt = document.getElementById('pvYt');
+    if (STEP_YT[n]) { yt.style.display = ''; yt.querySelector('a').setAttribute('href', 'https://www.youtube.com/shorts/' + STEP_YT[n]); } else yt.style.display = 'none';
     document.getElementById('pvTitle').textContent = s.t;
     document.getElementById('pvList').innerHTML = s.pts.map(function (p, i) {
       return '<li>' + esc(p) + (i === s.pts.length - 1 ? ' <span class="src">농촌진흥청</span>' : '') + '</li>';
@@ -779,6 +784,8 @@ document.addEventListener('DOMContentLoaded', function () {
   ];
   // 2026-11-19: 궁금증 1~6 영상 공개(홈페이지만) — assets/video/garden-askN.mp4 · 답을 펼치면 그 안에서 재생
   var ASK_VIDEO = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true };
+  // 2026-11-21: 유튜브 공개된 궁금증 → 답 안에 「유튜브에서 보기」
+  var ASK_YT = { 1: '-58CzSt22oc' };
   function memoHTML(copy) {
     return ASKS.map(function (q, i) {
       return '<button type="button" class="memo" data-ask="' + (i + 1) + '"' + (copy ? ' aria-hidden="true" tabindex="-1"' : '') + '>' +
@@ -843,6 +850,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var vid = '';
       if (q[4] && ASK_VIDEO[q[4]]) vid = '<video class="askv" controls preload="none" playsinline poster="../assets/video/garden-ask' + q[4] + '.jpg" title="텃밭 궁금증 ' + q[4] + ' (에이블 농박사)"><source src="../assets/video/garden-ask' + q[4] + '.mp4" type="video/mp4"></video>';
       else if (q[4]) link += '<span class="lnk"><b class="tg">궁금증</b>쉬는 시간 궁금증 ' + q[4] + ' — 30초 영상 준비 중</span>';
+      if (q[4] && ASK_YT[q[4]]) link += '<span class="lnk"><a href="https://www.youtube.com/shorts/' + ASK_YT[q[4]] + '" target="_blank" rel="noopener"><b class="tg">유튜브</b>유튜브에서 보기</a></span>';
       return '<details class="qa"' + (q[4] ? ' data-ask="' + q[4] + '"' : '') + '><summary>' + esc(q[1]) + '</summary><div class="ans"><img src="../assets/garden/nongbaksa.jpg" alt="" loading="lazy"><p>' + esc(q[2]) + ' <span class="src">농촌진흥청</span>' + link + '</p>' + vid + '</div></details>';
     }).join('');
   }
