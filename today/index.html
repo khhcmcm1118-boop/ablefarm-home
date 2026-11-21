@@ -183,12 +183,12 @@
 (function(){
   /* 작물: 시세 강조 품목 · 병해충 키 · 시설작물 여부 · 「할 만함」 작업 이름 */
   var CROPS = {
-    '딸기':     {price:['딸기'],               house:true,  work:'엽면살포'},
-    '오이':     {price:['오이'],               house:true,  work:'엽면살포'},
-    '토마토':   {price:['토마토'],             house:true,  work:'엽면살포'},
-    '시설 고추':{price:['청양고추'],           house:true,  work:'엽면살포'},
-    '배추·무':  {price:['배추','무'],          house:false, work:'엽면살포'},
-    '마늘·양파':{price:['깐마늘','양파'],      house:false, work:'엽면살포'},
+    '딸기':     {price:['딸기'],               house:true,  work:'엽면시비'},
+    '오이':     {price:['오이'],               house:true,  work:'엽면시비'},
+    '토마토':   {price:['토마토'],             house:true,  work:'엽면시비'},
+    '시설 고추':{price:['청양고추'],           house:true,  work:'엽면시비'},
+    '배추·무':  {price:['배추','무'],          house:false, work:'엽면시비'},
+    '마늘·양파':{price:['깐마늘','양파'],      house:false, work:'엽면시비'},
     '사과·배':  {price:['사과','배 '],         house:false, work:'과원 작업'},
     '벼·맥류':  {price:['쌀'],                 house:false, work:'논·밭 작업'}
   };
@@ -285,11 +285,12 @@
     var pd = P[0] && P[0].day; setText('pNote', '고른 작물이 맨 위에 초록색으로 나옵니다. 상품 등급 기준' + (pd ? ' · ' + md(pd) + ' 발표' : '') + '.');
 
     /* 병해충 (월간 예보) */
-    var pl = (PEST && PEST.crops && PEST.crops[cn]) || [];
+    var pestOld = PEST && PEST.period && PEST.period.slice(-10).replace(/-/g, '') < (DATA.base || '').replace(/-/g, ''); // 발표 기간이 지나면 쓰지 않는다
+    var pl = (!pestOld && PEST && PEST.crops && PEST.crops[cn]) || [];
     $('pest').innerHTML = pl.length ? pl.map(function(x){
       return '<div><span>' + esc(x[0]) + '</span><span class="lv' + (/주의보|경보/.test(x[1]) ? ' hi' : '') + '">' + esc(x[1]) + '</span></div>';
-    }).join('') : '<div><span>이달 예보에 해당 작물 항목 없음</span><span class="lv" style="background:#dcefe1;color:#256b3f">—</span></div>';
-    setText('pestNote', PEST ? PEST.issue + ' (' + PEST.period.replace(/2026-|-/g, function(m){ return m === '-' ? '.' : ''; }) + ') 예찰 정보를 그대로 옮긴 것입니다. 방제는 등록 약제와 지역 농업기술센터 안내를 따르세요.' : '');
+    }).join('') : '<div><span>' + (pestOld ? '이달 발생정보 준비 중' : '이달 예보에 해당 작물 항목 없음') + '</span><span class="lv" style="background:#dcefe1;color:#256b3f">—</span></div>';
+    setText('pestNote', pestOld ? '이달 병해충 발생정보를 준비 중입니다. 농촌진흥청 발표 뒤 반영됩니다.' : PEST ? PEST.issue + ' (' + PEST.period.replace(/\d{4}-|-/g, function(m){ return m === '-' ? '.' : ''; }) + ')의 예보 항목 이름을 옮긴 것입니다. 방제는 등록 약제와 지역 농업기술센터 안내를 따르세요.' : '');
 
     /* ── 판단 3장 ── */
     var t0 = days[0] || {}, tomorrow = days[1] || {};
@@ -328,18 +329,18 @@
       setText('v2p', (dew != null && dew >= 8 ? '어제 이슬 맺힌 시간이 ' + dew + '시간으로 긴 편입니다. ' : '') + '포장을 자주 살펴보고, ' + (C.house ? '환기로 습도를 낮추세요.' : '이상 증상이 보이면 지역 농업기술센터에 확인하세요.'));
       setText('v2w', '근거: 농촌진흥청 병해충 발생정보' + (dew != null && dew >= 8 ? ' · 이슬 ' + dew + '시간' : ''));
     } else {
-      setText('v2h', '이달 병해충 예보 해당 없음');
-      setText('v2p', '이번 달 발생정보에 ' + cn + ' 항목이 없습니다. 평소처럼 살펴보세요.');
+      setText('v2h', pestOld ? '이달 병해충 발생정보 준비 중' : '이달 병해충 예보 해당 없음');
+      setText('v2p', pestOld ? '농촌진흥청의 이달 발생정보가 나오면 반영됩니다. 평소처럼 포장을 살펴보세요.' : '이번 달 발생정보에 ' + cn + ' 항목이 없습니다. 평소처럼 살펴보세요.');
       setText('v2w', '근거: 농촌진흥청 병해충 발생정보');
     }
 
     if (b >= 0){
       var bd = days[b];
-      setText('v3h', C.work + ' · ' + md(bd.d) + ' 낮');
-      setText('v3p', '강수확률 ' + bd.pop + '%, 낮 기온이 ' + bd.hi + '℃까지 오릅니다. 오전 10시~오후 2시 사이가 무난합니다.');
+      setText('v3h', '작업하기 좋은 날 · ' + md(bd.d) + ' 낮');
+      setText('v3p', '강수확률 ' + bd.pop + '%, 낮 기온이 ' + bd.hi + '℃까지 오릅니다. ' + C.work + ' 같은 작업은 오전 10시~오후 2시 사이가 무난합니다.');
       setText('v3w', '근거: 기상청 10일 예보');
     } else {
-      setText('v3h', C.work + '는 날씨를 더 보고');
+      setText('v3h', '작업할 날은 날씨를 더 보고');
       setText('v3p', '10일 안에 비가 잦거나 기온이 낮아 작업하기 좋은 날이 뚜렷하지 않습니다.');
       setText('v3w', '근거: 기상청 10일 예보');
     }
