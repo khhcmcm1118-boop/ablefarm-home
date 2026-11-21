@@ -98,11 +98,48 @@
   .ytbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:15px}
 
   /* 한 해 */
-  .yr{display:grid;grid-template-columns:54px 1fr;gap:4px;border-top:1px solid var(--line);padding:11px 4px;font-size:15.5px;cursor:pointer}
-  .yr .m{font-weight:900;color:var(--green)}
-  .yr .s{font-weight:800}
-  .yr .p{color:var(--sub);font-size:14.5px}
-  .yr.cur{background:#f3ead6;border-radius:12px;border-top-color:transparent}
+  /* 한 해 — 세 칸: 월·생육 단계 | 할 일·주의 | 추천 제품 (11-21) */
+  .yhead,.yr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.15fr)}
+  .yhead{font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--sub);padding:0 0 8px;border-bottom:2px solid var(--line)}
+  .yhead div{padding:0 10px}
+  .yr{border-bottom:1px solid var(--line);align-items:stretch}
+  .yr>div{padding:14px 10px}
+  .yr>div+div{border-left:1px dashed var(--line)}
+  .yr.cur{background:#f3ead6;border-radius:14px;border-bottom-color:transparent}
+  .yr .c1,.yr .c2{cursor:pointer}
+  .yr .c1{display:flex;gap:10px;align-items:flex-start}
+  .yr .m{flex:none;width:36px;font-weight:900;color:var(--green);font-size:15px}
+  .yr .s{font-weight:800;font-size:15px;line-height:1.45}
+  .yr .nowtag{display:inline-block;margin-top:6px;font-size:11.5px;font-weight:800;color:#fff;background:var(--green);border-radius:100px;padding:2px 9px}
+  .yr .c2 ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+  .yr .c2 li{font-size:14px;line-height:1.5;padding-left:16px;position:relative}
+  .yr .c2 li::before{content:"";position:absolute;left:3px;top:.6em;width:6px;height:6px;border-radius:50%;background:#9bb79b}
+  .yr .c2 li.w{color:#b45309;font-weight:700}
+  .yr .c2 li.w::before{content:"!";background:none;color:#b45309;font-weight:900;top:0;left:2px;width:auto;height:auto}
+  .yr .none{color:#a3a89c;font-size:13.5px}
+  .yr .c3{display:flex;flex-direction:column;gap:8px}
+  .yp{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;background:#fff;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);min-width:0;transition:transform .2s,box-shadow .2s,border-color .2s}
+  a.yp:hover,a.yp:focus-visible{transform:translateY(-2px);box-shadow:0 10px 22px -14px rgba(22,39,28,.6);border-color:#bcd0b4}
+  /* 제품 사진은 세로로 긴 병 사진 → 세로로 긴 칸에 병 전체가 보이게 */
+  .yp .yph{flex:none;width:40px;height:72px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;padding:4px 0}
+  .yp img{display:block;height:100%;width:auto;max-width:100%;object-fit:contain;animation:ybob 2.8s ease-in-out infinite;transform-origin:50% 90%}
+  .yp:nth-child(2) img{animation-delay:-1.1s}
+  .yp:nth-child(3) img{animation-delay:-2s}
+  a.yp:hover img{animation-duration:1s}
+  @keyframes ybob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-2.5deg)}}
+  @media (prefers-reduced-motion:reduce){.yp img{animation:none}}
+  .yp .t{min-width:0}
+  .yp b{display:block;font-size:14px}
+  .yp small{display:block;font-size:12px;color:var(--sub);line-height:1.35;margin-top:1px}
+  .yp .go{margin-left:auto;color:var(--green);font-weight:800}
+  .ynote{margin-top:14px;font-size:13px;color:var(--sub);line-height:1.7}
+  @media (max-width:760px){
+    .yhead{display:none}
+    .yr{grid-template-columns:1fr;background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:10px}
+    .yr.cur{background:#f3ead6;border-color:#e2d3a8}
+    .yr>div{padding:12px 14px}
+    .yr>div+div{border-left:0;border-top:1px dashed var(--line)}
+  }
 
   .note{background:var(--warn);color:var(--warn-ink);border-radius:16px;padding:14px 16px;font-size:15.5px;margin-top:26px}
   .note b{display:block;margin-bottom:4px}
@@ -183,7 +220,9 @@
 
   <div class="sec">
     <h2 id="yearTitle">한 해 재배력</h2>
+    <div class="yhead"><div>월 · 생육 단계</div><div>할 일 · 주의할 점</div><div>추천 제품 (누르면 제품 설명)</div></div>
     <div id="yearList"></div>
+    <p class="ynote">「!」 표시는 주의할 점입니다. 제품을 누르면 그 제품 설명 페이지로 이동합니다.<br>재배력은 참고용입니다. 지역·기상·품종·토양과 재배 환경에 따라 시기와 처방이 달라지므로, 반드시 담당자와 상담한 뒤 사용하세요. 상담 02-858-6229</p>
   </div>
 
   <div class="note">
@@ -240,6 +279,7 @@ var $ = function(id){ return document.getElementById(id); };
 var today = new Date(), nowM = today.getMonth() + 1;
 var part = today.getDate() <= 10 ? "상순" : today.getDate() <= 20 ? "중순" : "하순";
 var crop = CROPS[0], month = nowM;
+var YWARN = /주의|장해|피해|낙과|발효과|급성위조|혹한|고사|잘록병|일소|침수/; // 한 해 표에서 주황 「!」로 구분할 할 일
 try { var saved = localStorage.getItem("af-cal-crop"); if (saved === "사과·배") saved = "사과"; if (saved && CAL[saved]) crop = saved; } catch(e){}
 var qm = location.search.match(/[?&]c=([^&]+)/);
 if (qm){ var qc = decodeURIComponent(qm[1]); if (qc === "사과·배") qc = "사과"; if (CAL[qc]) crop = qc; }
@@ -292,7 +332,17 @@ function draw(){
 
   $("yearTitle").textContent = crop + " 한 해 재배력" + (CAL_BASIS[crop] ? " · " + CAL_BASIS[crop] + (/기준\)?$/.test(CAL_BASIS[crop]) ? "" : " 기준") : "");
   $("yearList").innerHTML = CAL[crop].map(function(r){
-    return '<div class="yr' + (r.m === month ? ' cur' : '') + '" data-m="' + r.m + '"><div class="m">' + r.m + '월</div><div><div class="s">' + esc(r.s) + '</div>' + (r.p.length ? '<div class="p">' + r.p.map(function(p){ return esc(p[0]); }).join(" · ") + '</div>' : '') + '</div></div>';
+    var ts = r.t || [];
+    var c2 = ts.length ? '<ul>' + ts.map(function(t){ return '<li' + (YWARN.test(t) ? ' class="w"' : '') + '>' + esc(t) + '</li>'; }).join("") + '</ul>' : '<span class="none">—</span>';
+    var c3 = r.p.length ? r.p.map(function(p){
+      var pn = prodOf(p[0]), x = pn && PI[pn];
+      var inner = (x && x.img ? '<span class="yph"><img src="' + esc(x.img) + '" alt="' + esc(pn) + ' 제품 사진" loading="lazy"></span>' : '') +
+        '<span class="t"><b>' + esc(p[0]) + '</b>' + (p[1] ? '<small>' + esc(p[1]) + '</small>' : '') + '</span>';
+      return x && x.slug ? '<a class="yp" href="../products/' + esc(x.slug) + '.html" title="' + esc(pn) + ' 제품 설명 보기">' + inner + '<span class="go" aria-hidden="true">›</span></a>' : '<span class="yp">' + inner + '</span>';
+    }).join("") : '<span class="none">이 달 추천 제품 없음</span>';
+    return '<div class="yr' + (r.m === month ? ' cur' : '') + '">' +
+      '<div class="c1" data-m="' + r.m + '"><span class="m">' + r.m + '월</span><div><div class="s">' + esc(r.s) + '</div>' + (r.m === nowM ? '<span class="nowtag">이번 달</span>' : '') + '</div></div>' +
+      '<div class="c2" data-m="' + r.m + '">' + c2 + '</div><div class="c3">' + c3 + '</div></div>';
   }).join("");
 }
 function vidCard(v){
