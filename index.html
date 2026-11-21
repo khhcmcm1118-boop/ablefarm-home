@@ -1273,19 +1273,38 @@ class Component extends DCLogic {
       if (ip && ip.latitude) r = { name: ip.city || ip.region || '현재 위치', lat: ip.latitude, lon: ip.longitude };
     } catch (e) {}
     if (!r) r = { name: '서울', lat: 37.5665, lon: 126.978 };
+    /* 위치 묻기는 처음 한 번만 (2026-11-21 사용자: 위치 묻는 창이 너무 자주 뜬다)
+       · 처음 온 사람만 휴대폰 위치 허용 창을 띄우고, 물어봤다는 표시와 받은 위치를 이 기기에 저장한다
+       · 다음부터는 저장한 위치로 날씨를 보여주고 다시 묻지 않는다
+       · 이미 「허용」해 둔 기기는 창 없이 조용히 위치만 새로 받는다 */
+    const GEO_KEY = 'af-geo-v1';
+    let geo = {};
+    try { geo = JSON.parse(localStorage.getItem(GEO_KEY) || '{}') || {}; } catch (e) { geo = {}; }
+    const saveGeo = (o) => { try { localStorage.setItem(GEO_KEY, JSON.stringify(o)); } catch (e) {} };
+    if (geo.place && geo.place.lat) r = geo.place;
     this.setState({ place: r }, () => this.loadWeather());
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const { latitude: lat, longitude: lon } = pos.coords;
-        let name = this.state.place.name;
-        try {
-          const g = await (await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`)).json();
-          name = g.city || g.locality || g.principalSubdivision || name;
-        } catch (e) {}
-        this.setState({ place: { name, lat, lon }, wx: null }, () => this.loadWeather());
-      }, () => {}, { timeout: 8000, maximumAge: 600000 });
-    }
+    if (!navigator.geolocation) return;
+    const askGeo = () => navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      let name = this.state.place.name;
+      try {
+        const g = await (await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`)).json();
+        name = g.city || g.locality || g.principalSubdivision || name;
+      } catch (e) {}
+      const place = { name, lat, lon };
+      saveGeo({ asked: true, place });
+      this.setState({ place, wx: null }, () => this.loadWeather());
+    }, () => {}, { timeout: 8000, maximumAge: 600000 });
+
+    if (!geo.asked) { saveGeo({ asked: true }); askGeo(); return; }
+    // 이미 물어본 기기: 허용 상태일 때만(창이 뜨지 않음) 위치를 새로 받는다
+    try {
+      if (navigator.permissions && navigator.permissions.query) {
+        const st = await navigator.permissions.query({ name: 'geolocation' });
+        if (st && st.state === 'granted') askGeo();
+      }
+    } catch (e) {}
   }
 
   async loadWeather() {

@@ -2424,6 +2424,7 @@ let previousCrop = null; // "다른 고민이 있어요" 선택 직전의 작물
 let pendingQuestion = null;
 let pendingConfirmIssue = null; // 긴 질문에서 단어 단위로 추정한 후보 증상 (되묻기용)
 let lastKnownRegion = null;
+let contactRegionWait = 0;     // 「직접 상담」 뒤 지역 기다리는 중: 1 = 처음, 2 = 한 번 다시 물음
 let closingFollowupAsked = false;
 let diseaseStage = 0; // 0: 아직 안내 전, 1: 이번 대화에서 병 관련 답변을 이미 한 번 함
 
@@ -3505,6 +3506,7 @@ function handleUserMessage(raw){
   }
 
   if(msg === "__reset__"){
+    contactRegionWait = 0;
     addBubble("다른 고민이 있어요", 'user');
     previousCrop = currentCrop;
     currentCrop = null;
@@ -3551,6 +3553,7 @@ function handleUserMessage(raw){
         setChips(followUpChips());
       } else {
         addBubble("어느 지역인지 시군명으로 말씀해 주세요.", 'bot');
+        contactRegionWait = 1;
         chipsBox.innerHTML = '';
       }
     });
@@ -3689,6 +3692,30 @@ function handleUserMessage(raw){
   const detectedRegion = detectRegionFromText(msg);
   if(detectedRegion) lastKnownRegion = detectedRegion;
 
+  /* 「직접 상담받고 싶어요」를 누르고 지역을 기다리는 중 (2026-11-21)
+     — 지역 대신 작물 이름 등을 넣으면 증상 흐름으로 빠져 담당자 연결로 못 돌아오던 것을 막는다.
+       지역이면 바로 담당자 안내, 아니면 한 번만 다시 묻고 그다음엔 보통 대화로 넘긴다. */
+  if(contactRegionWait > 0){
+    if(detectedRegion){
+      contactRegionWait = 0;
+      awaitingCropForExamples = false;
+      showTyping(()=>{
+        addStaffCard(detectedRegion);
+        setChips(followUpChips());
+      });
+      return;
+    }
+    if(contactRegionWait === 1){
+      contactRegionWait = 2;
+      showTyping(()=>{
+        addBubble("담당 직원을 연결해 드리려면 지역이 필요해요. 시군 이름만 알려주세요. (예: 청주, 평창, 해남)\n바로 통화하시려면 대표번호 02-858-6229 로 전화 주세요.", 'bot');
+        setChips([{label:"작물 질문으로 돌아가기", value:"__reset__"}]);
+      });
+      return;
+    }
+    contactRegionWait = 0;
+  }
+
   // -4) "어떤 작물 되나요" 류 질문 → 답변 가능한 작물 목록을 바로 안내
   if(isCropListQuestion(msg)){
     showTyping(()=>{
@@ -3822,6 +3849,7 @@ function handleUserMessage(raw){
         setChips(followUpChips());
       } else {
         addBubble("어느 지역인지 시군명으로 말씀해 주세요.", 'bot');
+        contactRegionWait = 1;
         chipsBox.innerHTML = '';
       }
     });
@@ -3858,6 +3886,7 @@ function handleUserMessage(raw){
         setChips(followUpChips());
       } else {
         addBubble("어느 지역인지 시군명으로 말씀해 주세요.", 'bot');
+        contactRegionWait = 1;
         chipsBox.innerHTML = '';
       }
     });
@@ -3886,6 +3915,7 @@ function handleUserMessage(raw){
         setChips(followUpChips());
       } else {
         addBubble("어느 지역인지 시군명으로 말씀해 주세요.", 'bot');
+        contactRegionWait = 1;
         chipsBox.innerHTML = '';
       }
     });
@@ -4011,6 +4041,7 @@ function handleUserMessage(raw){
         setChips(followUpChips());
       } else {
         addBubble("어느 지역인지 시군명으로 말씀해 주세요.", 'bot');
+        contactRegionWait = 1;
         chipsBox.innerHTML = '';
       }
     });
@@ -4981,6 +5012,18 @@ function enterApp(info){
   if(authIsDealer && info && info.notice) addBubble(info.notice, 'bot');
   addBubble("어떤 작물을 키우세요? 작물을 먼저 알려주시거나, 아래 추천 질문을 눌러보세요!", 'bot');
   awaitingCropForExamples = true;
+  /* 텃밭 교실에서 들어온 손님은 첫 화면부터 「직접 상담받고 싶어요」가 보이게 하고,
+     추천 질문도 텃밭 작물로 바꾼다 (2026-11-21 사용자: 휴대폰에서 텃밭→농박사로 들어오면 상담받기 버튼이 없다) */
+  if(GARDEN_CHAR){
+    setChips([
+      { label:"🙋 직접 상담받고 싶어요", value:"__contact__", primary:true },
+      { label:"📷 사진으로 물어보기", value:"__pickphoto__" },
+      { label:"상추 언제 심어요?", value:"상추 언제 심어요?" },
+      { label:"방울토마토 잎이 노래요", value:"방울토마토 잎이 노랗게 변해요" },
+      { label:"고추 모종 언제 심어요?", value:"고추 언제 심어요?" }
+    ]);
+    return;
+  }
   setChips([
     { label:"🌾 에이블팜 제품 보기", value:"에이블팜 제품 알려줘", primary:true },
     { label:"임팩트골드 알아보기", value:"임팩트골드에 대해 알려줘" },
