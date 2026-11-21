@@ -114,6 +114,8 @@ async function shortFcst(r) {
   for (const x of rows) { (by[x.fcstDate] ||= []).push(x); }
   const days = {};
   for (const [d, xs] of Object.entries(by)) {
+    // 마지막 날은 자정 몇 시간치만 오는 일이 있다 → 하루치(시간 예보 12개 이상)가 아니면 중기예보에 맡긴다
+    if (xs.filter((x) => x.category === 'TMP').length < 12) continue;
     const v = (cat) => xs.filter((x) => x.category === cat).map((x) => num(x.fcstValue)).filter((n) => n != null);
     const tmp = v('TMP'), pop = v('POP'), wsd = v('WSD'), reh = v('REH');
     const tmx = v('TMX')[0] ?? (tmp.length ? Math.max(...tmp) : null);
@@ -178,7 +180,7 @@ function warnFor(r, w) {
     // 「경기도(가평), 강원도(태백, …)」 → 시도별 덩어리
     for (const m of area.matchAll(/([가-힣]+?)(?:\(([^)]*)\))?(?:,\s*|$)/g)) {
       const prov = m[1], inner = m[2];
-      if (!prov) continue;
+      if (!prov || prov.includes('바다')) continue; // 바다 구역(앞바다·먼바다)은 육지 지역에 붙이지 않는다
       // 시도 이름이 바뀌어도(전북특별자치도·강원특별자치도 등) 잡히도록 줄임말도 본다
       const provOk = (PROV_ALIAS[r.prov] || [r.prov]).some((a) => prov.startsWith(a));
       if (!provOk) continue;
@@ -187,7 +189,8 @@ function warnFor(r, w) {
     }
     return false;
   };
-  return { now: w.now.filter((x) => hit(x.area)).map((x) => x.name), pre: w.pre.filter((x) => hit(x.area)).map((x) => x.name), tm: w.tm };
+  const land = (x) => !/풍랑|해일/.test(x.name);
+  return { now: w.now.filter((x) => land(x) && hit(x.area)).map((x) => x.name), pre: w.pre.filter((x) => land(x) && hit(x.area)).map((x) => x.name), tm: w.tm };
 }
 
 // ── 농업기상 관측 (가장 가까운 관측지점, 어제) ──

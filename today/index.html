@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오늘 농업현황 — 지역·작물별 기상·물·시세·병해충 | 에이블팜</title>
+<meta name="description" content="기상특보·서리·10일 예보·농업기상 관측·저수율·도매 시세·병해충 발생정보를 지역과 작물별로 한 화면에. 공공데이터포털 자료를 매일 자동 갱신합니다.">
+<link rel="canonical" href="https://www.ablefarm.co.kr/today/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="오늘 농업현황 — 에이블팜">
+<meta property="og:description" content="지역·작물을 고르면 오늘 조심할 일, 살펴볼 일, 작업하기 좋은 날을 정리해 드립니다.">
+<meta property="og:url" content="https://www.ablefarm.co.kr/today/">
+<link rel="icon" href="../assets/logo.png">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  :root{--ink:#16241a;--green:#1E5C1E;--deep:#16271c;--leaf:#4a7c59;--cream:#faf7f0;--card:#fff;--line:#e2ddce;--muted:#6b7565;--gold:#b08a3e;
+        --go:#2f7d4f;--gobg:#e3f2e7;--care:#b45309;--carebg:#fdf1dc;--stop:#b42318;--stopbg:#fde5e2}
+  *{box-sizing:border-box}
+  html,body{overflow-x:clip}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:"Pretendard",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--green)}
+
+  .top{background:#faf7ef;border-bottom:1px solid var(--line)}
+  .top .in{max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .top img{height:42px;display:block}
+  .top nav{margin-left:auto;display:flex;gap:6px 18px;flex-wrap:wrap;font-size:15px;font-weight:600}
+  .top nav a{color:#3d4a3f;text-decoration:none;padding:6px 0}
+  .top nav a.now{color:var(--green);font-weight:800;border-bottom:2px solid var(--green)}
+
+  header{max-width:1180px;margin:0 auto;padding:30px 24px 18px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+  .eyebrow{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--leaf)}
+  h1{margin:6px 0 4px;font-size:34px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:14.5px}
+  .pickers{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .pickers label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  .pickers select{font:inherit;font-size:15px;font-weight:700;padding:10px 34px 10px 14px;border-radius:12px;border:1px solid var(--line);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2316241a' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--ink);appearance:none;-webkit-appearance:none;min-width:150px}
+  .stamp{font-size:12.5px;color:var(--muted);align-self:flex-end;padding-bottom:12px}
+
+  main{max-width:1180px;margin:0 auto;padding:0 24px 60px}
+  .verdicts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .v{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px -22px rgba(22,39,28,.5)}
+  .v .tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;padding:5px 11px;border-radius:100px}
+  .v h2{margin:12px 0 6px;font-size:19px;letter-spacing:-.01em}
+  .v p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+  .v .why{margin-top:12px;font-size:12.5px;color:var(--leaf);font-weight:700}
+  .go{border-top:4px solid var(--go)} .go .tag{background:var(--gobg);color:var(--go)}
+  .care{border-top:4px solid var(--care)} .care .tag{background:var(--carebg);color:var(--care)}
+  .stop{border-top:4px solid var(--stop)} .stop .tag{background:var(--stopbg);color:var(--stop)}
+
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+  .c4{grid-column:span 4}.c8{grid-column:span 8}.c12{grid-column:span 12}
+  .ch{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .ch svg{flex:none}
+  .ch h2{margin:0;font-size:17px;letter-spacing:-.01em}
+  .ch .src{margin-left:auto;font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .big{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .big small{font-size:16px;font-weight:700;color:var(--muted);margin-left:4px}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .kv div{background:#f6f3ea;border-radius:12px;padding:12px}
+  .kv span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .kv b{font-size:18px}
+  .days{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+  .day{text-align:center;border-radius:12px;padding:10px 2px;background:#f6f3ea;font-size:12.5px}
+  .day .d{font-weight:800}
+  .day .wf{font-size:11.5px;color:var(--muted);min-height:15px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+  .day .r{margin:6px auto 4px;width:10px;border-radius:5px;background:#9cc2dd}
+  .day .p{font-size:11.5px;color:#4b7aa0}
+  .day .t{color:var(--muted)}
+  .day.rain{background:#e9f2f8}
+  .day.best{background:var(--gobg);outline:2px solid var(--go)}
+  .tip{margin-top:14px;font-size:13.5px;color:var(--leaf);font-weight:700}
+  .bar{height:12px;border-radius:6px;background:#eee8da;overflow:hidden;margin:10px 0 6px}
+  .bar i{display:block;height:100%;border-radius:6px;transition:width .4s}
+  .rows{display:flex;flex-direction:column;gap:12px}
+  .rowl{display:flex;justify-content:space-between;font-size:14px;gap:10px}
+  .rowl b{font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{font-size:12px;color:var(--muted);text-align:left;font-weight:700;padding:0 0 8px;border-bottom:1px solid var(--line)}
+  td{padding:10px 0;border-bottom:1px solid #f0ece0;font-variant-numeric:tabular-nums}
+  td.n{text-align:right;font-weight:700}
+  tr.mine td{background:#f3f8ef}
+  tr.mine td:first-child{font-weight:800;color:var(--green)}
+  .up{color:#c0392b}.dn{color:#2563eb}.eq{color:var(--muted)}
+  .pest{display:flex;flex-direction:column;gap:10px}
+  .pest div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f6f3ea;border-radius:12px;font-size:14px}
+  .lv{font-size:12px;font-weight:800;padding:4px 10px;border-radius:100px;white-space:nowrap;background:#fdf0c8;color:#8a6410}
+  .lv.hi{background:#fde2d2;color:#9a3412}
+  .note{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .empty{color:var(--muted);font-size:14px;padding:12px 0}
+  .err{max-width:1180px;margin:0 auto 14px;padding:0 24px}
+  .err div{background:#fff4ec;border:1px solid #f3c9a8;border-radius:12px;padding:12px 16px;font-size:14px}
+  footer{max-width:1180px;margin:0 auto;padding:0 24px 40px;font-size:12.5px;color:var(--muted);line-height:1.7}
+  @media (max-width:900px){.c4,.c8{grid-column:span 12}.verdicts{grid-template-columns:1fr}.days{grid-template-columns:repeat(5,minmax(0,1fr))}h1{font-size:27px}}
+  @media (max-width:420px){.top .in,header,main,footer,.err{padding-left:16px;padding-right:16px}.top nav{margin-left:0;width:100%;font-size:14px;gap:4px 14px}
+    .card{padding:18px}.big{font-size:34px}.pickers{width:100%}.pickers label{flex:1}.pickers select{width:100%;min-width:0}.stamp{width:100%;padding:0}}
+</style>
+<script src="/ga.js"></script>
+</head>
+<body>
+<div class="top"><div class="in">
+  <a href="../"><img src="../assets/logo-full.jpg" alt="(주)에이블팜 홈으로"></a>
+  <nav aria-label="주요 메뉴">
+    <a href="../">회사정보</a>
+    <a href="./" class="now" aria-current="page">오늘 농업현황</a>
+    <a href="../#qna">농사문의</a>
+    <a href="../calendar/">재배력</a>
+    <a href="../garden/">텃밭</a>
+    <a href="tel:02-858-6229">구매문의 02-858-6229</a>
+  </nav>
+</div></div>
+
+<header>
+  <div>
+    <div class="eyebrow">AGRI DASHBOARD · 오늘 농업현황</div>
+    <h1>오늘의 농업 현황</h1>
+    <div class="sub">기상·물·시세·병해충을 한 화면에서 — 하루 세 번 자동 갱신</div>
+  </div>
+  <div class="pickers">
+    <label>지역<select id="rg" aria-label="지역 선택"></select></label>
+    <label>작물<select id="cr" aria-label="작물 선택"></select></label>
+    <span class="stamp" id="stamp"></span>
+  </div>
+</header>
+<div class="err" id="err" hidden><div>자료를 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요.</div></div>
+
+<main>
+  <div class="verdicts">
+    <article class="v stop"><span class="tag">● 조심</span><h2 id="v1h">…</h2><p id="v1p"></p><div class="why" id="v1w"></div></article>
+    <article class="v care"><span class="tag">● 살펴보기</span><h2 id="v2h">…</h2><p id="v2p"></p><div class="why" id="v2w"></div></article>
+    <article class="v go"><span class="tag">● 할 만함</span><h2 id="v3h">…</h2><p id="v3p"></p><div class="why" id="v3w"></div></article>
+  </div>
+
+  <div class="grid">
+    <section class="card c4">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><h2>오늘 날씨</h2><span class="src">기상청 단기예보</span></div>
+      <div class="big"><span id="wNow">—</span><small id="wSky"></small></div>
+      <div class="kv"><div><span>최고 / 최저</span><b id="wHL">—</b></div><div><span>강수확률</span><b id="wPop">—</b></div><div><span>바람</span><b id="wWind">—</b></div><div><span>습도</span><b id="wHum">—</b></div></div>
+    </section>
+
+    <section class="card c4">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><path d="M4 20h16M7 20V10M12 20V4M17 20v-7"/></svg><h2>농업기상 관측</h2><span class="src">국립농업과학원</span></div>
+      <div class="rows" id="obs"></div>
+      <div class="note" id="oSt"></div>
+    </section>
+
+    <section class="card c4">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg><h2>저수지 저수율</h2><span class="src">한국농어촌공사</span></div>
+      <div class="big"><span id="rNow">—</span><small id="rUnit">%</small></div>
+      <div class="bar" style="margin-top:14px"><i id="rBar" style="width:0"></i></div>
+      <div class="rowl" style="font-size:13px;color:var(--muted)"><span id="rAvg"></span><span id="rPct"></span></div>
+      <div class="note" id="rNote"></div>
+    </section>
+
+    <section class="card c12">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h2>10일 예보</h2><span class="src">기상청 단기·중기예보</span></div>
+      <div class="days" id="days"></div>
+      <div class="tip" id="tip"></div>
+    </section>
+
+    <section class="card c8">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg><h2>도매 시세 · 서울 중도매</h2><span class="src">aT 일별 도·소매 가격정보</span></div>
+      <table>
+        <thead><tr><th>품목</th><th>단위</th><th style="text-align:right">최근</th><th style="text-align:right">1주 전 대비</th></tr></thead>
+        <tbody id="prices"></tbody>
+      </table>
+      <div class="note" id="pNote">고른 작물이 맨 위에 초록색으로 나옵니다. 상품 등급 기준.</div>
+    </section>
+
+    <section class="card c4">
+      <div class="ch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b08a3e" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><h2>이달 병해충 예보</h2><span class="src">농촌진흥청</span></div>
+      <div class="pest" id="pest"></div>
+      <div class="note" id="pestNote"></div>
+    </section>
+  </div>
+</main>
+<footer>
+  「조심·살펴보기·할 만함」은 공공 자료를 바탕으로 자동으로 만든 일반 안내입니다. 지역·품종·재배 환경에 따라 다르니 처방은 담당자와 상담하세요. 상담 <a href="tel:02-858-6229">02-858-6229</a><br>
+  출처: 기상청 · 농촌진흥청 국립농업과학원 · 한국농어촌공사 · 한국농수산식품유통공사(aT) — 공공데이터포털 · 병해충은 농촌진흥청 「농작물 병해충 발생정보」(농사로)
+</footer>
+
+<script>
+(function(){
+  /* 작물: 시세 강조 품목 · 병해충 키 · 시설작물 여부 · 「할 만함」 작업 이름 */
+  var CROPS = {
+    '딸기':     {price:['딸기'],               house:true,  work:'엽면살포'},
+    '오이':     {price:['오이'],               house:true,  work:'엽면살포'},
+    '토마토':   {price:['토마토'],             house:true,  work:'엽면살포'},
+    '시설 고추':{price:['청양고추'],           house:true,  work:'엽면살포'},
+    '배추·무':  {price:['배추','무'],          house:false, work:'엽면살포'},
+    '마늘·양파':{price:['깐마늘','양파'],      house:false, work:'엽면살포'},
+    '사과·배':  {price:['사과','배 '],         house:false, work:'과원 작업'},
+    '벼·맥류':  {price:['쌀'],                 house:false, work:'논·밭 작업'}
+  };
+  var W = ['일','월','화','수','목','금','토'];
+  var DATA = null, PEST = null;
+
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function won(n){ return n == null ? '—' : n.toLocaleString('ko-KR') + '원'; }
+  function dOf(s){ return new Date(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8)); }
+  function lab(s){ var d = dOf(s); return W[d.getDay()] + ' ' + d.getDate(); }
+  function md(s){ var d = dOf(s); return (d.getMonth()+1) + '월 ' + d.getDate() + '일(' + W[d.getDay()] + ')'; }
+  function chg(p, b){
+    if (p == null || b == null || !b) return '<td class="n eq">—</td>';
+    var c = (p - b) / b * 100;
+    if (Math.abs(c) < 0.05) return '<td class="n eq">—</td>';
+    return c > 0 ? '<td class="n up">▲ ' + c.toFixed(1) + '%</td>' : '<td class="n dn">▼ ' + Math.abs(c).toFixed(1) + '%</td>';
+  }
+  function setText(id, t){ $(id).textContent = t; }
+
+  /* 작업하기 좋은 날: 내일부터, 강수확률 30% 미만 · 전날 60% 미만 · 최저 -3℃ 이상 · 최고 5℃ 이상인 첫날 */
+  function bestDay(days){
+    for (var i = 1; i < days.length; i++){
+      var d = days[i], p = days[i-1];
+      if (d.pop != null && d.pop < 30 && (p.pop == null || p.pop < 60) && d.lo != null && d.lo >= -3 && d.hi != null && d.hi >= 5) return i;
+    }
+    return -1;
+  }
+
+  function render(){
+    if (!DATA) return;
+    var rn = $('rg').value, cn = $('cr').value, R = DATA.regions[rn] || {}, C = CROPS[cn];
+    try { localStorage.setItem('af-today-pick', JSON.stringify([rn, cn])); } catch (e) {}
+
+    /* 오늘 날씨 */
+    var w = R.weather || {};
+    setText('wNow', w.now != null ? w.now : '—'); setText('wSky', '℃ ' + (w.sky || ''));
+    setText('wHL', (w.hi != null ? w.hi + '°' : '—') + ' / ' + (w.lo != null ? w.lo + '°' : '—'));
+    setText('wPop', w.pop != null ? w.pop + '%' : '—');
+    setText('wWind', w.wind != null ? w.wind + ' m/s' : '—');
+    setText('wHum', w.hum != null ? w.hum + '%' : '—');
+
+    /* 농업기상 관측 */
+    var o = R.obs;
+    if (o){
+      var rows = [
+        ['지면 온도', o.ground, '℃', Math.max(0, Math.min(100, (o.ground + 5) * 3)), '#9cc2dd'],
+        ['일사량', o.solar, ' MJ/m²', Math.min(100, (o.solar || 0) * 4), '#e2b553'],
+        ['이슬 맺힌 시간', o.dewH, '시간', Math.min(100, (o.dewH || 0) / 24 * 100), '#7fa07f'],
+        ['토양 수분', o.soil, '%', Math.min(100, o.soil || 0), '#8a9fd0']
+      ].filter(function(x){ return x[1] != null; });
+      $('obs').innerHTML = rows.map(function(x){
+        return '<div><div class="rowl"><span>' + x[0] + '</span><b>' + x[1] + x[2] + '</b></div><div class="bar"><i style="width:' + x[3] + '%;background:' + x[4] + '"></i></div></div>';
+      }).join('');
+      setText('oSt', o.date.slice(5).replace('-', '월 ') + '일 관측 · ' + o.stn + ' 관측소');
+    } else { $('obs').innerHTML = '<div class="empty">가까운 관측소 자료가 아직 없습니다.</div>'; setText('oSt', ''); }
+
+    /* 저수율 */
+    var rs = R.res;
+    if (rs && rs.rate != null){
+      setText('rNow', rs.rate); setText('rUnit', '%');
+      $('rBar').style.width = Math.min(100, rs.rate) + '%';
+      var low = rs.lastYear != null && rs.rate < rs.lastYear * 0.85;
+      $('rBar').style.background = low ? '#c2410c' : 'var(--green)';
+      setText('rAvg', rs.lastYear != null ? '작년 이맘때 ' + rs.lastYear + '%' : '');
+      setText('rPct', rs.lastYear != null ? '작년 대비 ' + Math.round(rs.rate / rs.lastYear * 100) + '%' : '');
+      setText('rNote', rn.split(' · ')[1] + ' 농업용 저수지 ' + rs.n + '곳 평균' + (low ? ' · 작년보다 낮아 물 관리 주의' : ''));
+    } else {
+      setText('rNow', '—'); setText('rUnit', ''); $('rBar').style.width = '0';
+      setText('rAvg', ''); setText('rPct', '');
+      setText('rNote', rs === null ? '이 지역에는 한국농어촌공사 관리 저수지가 없습니다.' : '저수율 자료가 아직 없습니다.');
+    }
+
+    /* 10일 예보 */
+    var days = R.days || [];
+    var b = bestDay(days);
+    $('days').innerHTML = days.map(function(d, i){
+      var cls = 'day' + (d.pop >= 60 ? ' rain' : '') + (i === b ? ' best' : '');
+      var h = d.pop == null ? 4 : Math.max(4, Math.round(d.pop / 100 * 30));
+      return '<div class="' + cls + '"><div class="d">' + (i === 0 ? '오늘' : lab(d.d)) + '</div><div class="wf">' + esc(d.wf || '') + '</div>' +
+        '<div class="r" style="height:' + h + 'px"></div><div class="p">' + (d.pop != null ? d.pop + '%' : '') + '</div>' +
+        '<div class="t">' + (d.hi != null ? d.hi : '—') + '° / ' + (d.lo != null ? d.lo : '—') + '°</div></div>';
+    }).join('') || '<div class="empty">예보 자료가 아직 없습니다.</div>';
+    setText('tip', b >= 0 ? '초록 테두리 = ' + C.work + ' 무난한 날 (' + md(days[b].d) + ') · 막대 = 강수확률' : '막대 = 강수확률 · 10일 안에 작업하기 좋은 날이 뚜렷하지 않습니다.');
+
+    /* 시세: 고른 작물 품목을 맨 위로 */
+    var P = DATA.prices || [];
+    var mine = P.filter(function(p){ return C.price.some(function(k){ return (p.name + ' ').indexOf(k) === 0; }); });
+    var rest = P.filter(function(p){ return mine.indexOf(p) < 0; });
+    var list = mine.concat(rest).slice(0, Math.max(7, mine.length));
+    $('prices').innerHTML = list.map(function(p){
+      return '<tr' + (mine.indexOf(p) >= 0 ? ' class="mine"' : '') + '><td>' + esc(p.name) + '</td><td>' + esc(p.unit) + '</td><td class="n">' + won(p.price) + '</td>' + chg(p.price, p.week) + '</tr>';
+    }).join('') || '<tr><td colspan="4" class="empty">시세 자료가 아직 없습니다.</td></tr>';
+    var pd = P[0] && P[0].day; setText('pNote', '고른 작물이 맨 위에 초록색으로 나옵니다. 상품 등급 기준' + (pd ? ' · ' + md(pd) + ' 발표' : '') + '.');
+
+    /* 병해충 (월간 예보) */
+    var pl = (PEST && PEST.crops && PEST.crops[cn]) || [];
+    $('pest').innerHTML = pl.length ? pl.map(function(x){
+      return '<div><span>' + esc(x[0]) + '</span><span class="lv' + (/주의보|경보/.test(x[1]) ? ' hi' : '') + '">' + esc(x[1]) + '</span></div>';
+    }).join('') : '<div><span>이달 예보에 해당 작물 항목 없음</span><span class="lv" style="background:#dcefe1;color:#256b3f">—</span></div>';
+    setText('pestNote', PEST ? PEST.issue + ' (' + PEST.period.replace(/2026-|-/g, function(m){ return m === '-' ? '.' : ''; }) + ') 예찰 정보를 그대로 옮긴 것입니다. 방제는 등록 약제와 지역 농업기술센터 안내를 따르세요.' : '');
+
+    /* ── 판단 3장 ── */
+    var t0 = days[0] || {}, tomorrow = days[1] || {};
+    var warn = (R.warn && R.warn.now) || [], pre = (R.warn && R.warn.pre) || [];
+    var fr = (R.frost || []).slice().sort(function(a, b){ return b.v - a.v; })[0];
+    var minLo = Math.min(t0.lo != null ? t0.lo : 99, tomorrow.lo != null ? tomorrow.lo : 99);
+    var cold = warn.filter(function(x){ return /한파|대설|강풍|호우|태풍|폭염|건조/.test(x); });
+    if (cold.length){
+      var nm = cold[0];
+      setText('v1h', nm + (cold.length > 1 ? ' 외 ' + (cold.length - 1) + '건' : ''));
+      var tip = /한파/.test(nm) ? (C.house ? '하우스 보온 커튼과 난방기를 점검하세요.' : '월동작물 피복과 관수 시설 동파를 확인하세요.')
+              : /대설/.test(nm) ? (C.house ? '하우스 지붕 눈 쌓임에 대비해 보강·제설 준비를 하세요.' : '시설·지주의 눈 피해에 대비하세요.')
+              : /강풍|태풍/.test(nm) ? (C.house ? '하우스 비닐·끈 고정 상태를 확인하세요.' : '지주·방풍망을 점검하세요.')
+              : /호우/.test(nm) ? '배수로를 미리 정비하세요.'
+              : /폭염/.test(nm) ? '한낮 작업을 피하고 관수·차광을 챙기세요.'
+              : '불 사용과 소각을 조심하세요.';
+      setText('v1p', '오늘 ' + rn.split(' · ')[1] + '에 ' + nm + '가 발효 중입니다. ' + tip);
+      setText('v1w', '근거: 기상청 기상특보');
+    } else if (fr && fr.v >= 50){
+      setText('v1h', '서리 가능성 ' + fr.v + '% (' + md(fr.d) + ')');
+      setText('v1p', (C.house ? '야간 보온을 챙기고 환기창을 일찍 닫으세요.' : '노지 작물은 피복으로 서리를 막아 주세요.') + (pre.length ? ' 예비특보: ' + pre.join(', ') + '.' : ''));
+      setText('v1w', '근거: 기상청 서리발생 가능성 예측');
+    } else if (minLo <= 0){
+      setText('v1h', '새벽 영하 ' + Math.abs(minLo) + '℃');
+      setText('v1p', '특보는 없지만 새벽 기온이 영하입니다. ' + (C.house ? '야간 보온을 챙기세요.' : '물 주기는 낮 시간에 하세요.') + (pre.length ? ' 예비특보: ' + pre.join(', ') + '.' : ''));
+      setText('v1w', '근거: 기상청 단기예보');
+    } else if (pre.length){
+      setText('v1h', '예비특보: ' + pre[0]); setText('v1p', '곧 특보가 내려질 수 있습니다. 예보를 자주 확인하세요.'); setText('v1w', '근거: 기상청 기상특보');
+    } else {
+      setText('v1h', '특별히 조심할 날씨 없음'); setText('v1p', '기상특보가 없고 새벽 기온도 영상권입니다.'); setText('v1w', '근거: 기상청 기상특보·단기예보');
+    }
+
+    var dew = o && o.dewH;
+    if (pl.length){
+      setText('v2h', pl[0][0].replace(/\s*\(.*\)/, '') + ' ' + pl[0][1] + ' 시기');
+      setText('v2p', (dew != null && dew >= 8 ? '어제 이슬 맺힌 시간이 ' + dew + '시간으로 긴 편입니다. ' : '') + '포장을 자주 살펴보고, ' + (C.house ? '환기로 습도를 낮추세요.' : '이상 증상이 보이면 지역 농업기술센터에 확인하세요.'));
+      setText('v2w', '근거: 농촌진흥청 병해충 발생정보' + (dew != null && dew >= 8 ? ' · 이슬 ' + dew + '시간' : ''));
+    } else {
+      setText('v2h', '이달 병해충 예보 해당 없음');
+      setText('v2p', '이번 달 발생정보에 ' + cn + ' 항목이 없습니다. 평소처럼 살펴보세요.');
+      setText('v2w', '근거: 농촌진흥청 병해충 발생정보');
+    }
+
+    if (b >= 0){
+      var bd = days[b];
+      setText('v3h', C.work + ' · ' + md(bd.d) + ' 낮');
+      setText('v3p', '강수확률 ' + bd.pop + '%, 낮 기온이 ' + bd.hi + '℃까지 오릅니다. 오전 10시~오후 2시 사이가 무난합니다.');
+      setText('v3w', '근거: 기상청 10일 예보');
+    } else {
+      setText('v3h', C.work + '는 날씨를 더 보고');
+      setText('v3p', '10일 안에 비가 잦거나 기온이 낮아 작업하기 좋은 날이 뚜렷하지 않습니다.');
+      setText('v3w', '근거: 기상청 10일 예보');
+    }
+  }
+
+  function init(){
+    var names = Object.keys(DATA.regions || {});
+    $('rg').innerHTML = names.map(function(k){ return '<option>' + esc(k) + '</option>'; }).join('');
+    $('cr').innerHTML = Object.keys(CROPS).map(function(k){ return '<option>' + esc(k) + '</option>'; }).join('');
+    try { var s = JSON.parse(localStorage.getItem('af-today-pick') || 'null'); if (s){ if (DATA.regions[s[0]]) $('rg').value = s[0]; if (CROPS[s[1]]) $('cr').value = s[1]; } } catch (e) {}
+    var u = new Date(DATA.updated);
+    setText('stamp', (u.getMonth()+1) + '월 ' + u.getDate() + '일 ' + String(u.getHours()).padStart(2,'0') + ':' + String(u.getMinutes()).padStart(2,'0') + ' 갱신');
+    $('rg').addEventListener('change', render); $('cr').addEventListener('change', render);
+    render();
+  }
+
+  var v = '?v=' + Math.floor(Date.now() / 600000); // 10분마다 새 자료
+  Promise.all([
+    fetch('../data/dashboard.json' + v).then(function(r){ if (!r.ok) throw 0; return r.json(); }),
+    fetch('../data/pest-month.json' + v).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+  ]).then(function(x){ DATA = x[0]; PEST = x[1]; init(); })
+    .catch(function(){ $('err').hidden = false; });
+})();
+</script>
+</body>
+</html>
