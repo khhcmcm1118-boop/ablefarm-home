@@ -35,6 +35,7 @@
   .pickers label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
   .pickers select{font:inherit;font-size:15px;font-weight:700;padding:10px 34px 10px 14px;border-radius:12px;border:1px solid var(--line);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2316241a' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--ink);appearance:none;-webkit-appearance:none;min-width:150px}
   .stamp{font-size:12.5px;color:var(--muted);align-self:flex-end;padding-bottom:12px}
+  .pickers select.pv{min-width:96px}
 
   main{max-width:1180px;margin:0 auto;padding:0 24px 60px}
   .verdicts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
@@ -83,7 +84,32 @@
   tr.mine td:first-child{font-weight:800;color:var(--green)}
   .up{color:#c0392b}.dn{color:#2563eb}.eq{color:var(--muted)}
   .pest{display:flex;flex-direction:column;gap:10px}
-  .pest div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f6f3ea;border-radius:12px;font-size:14px}
+  .pest .prow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f6f3ea;border-radius:12px;font-size:14px;width:100%;border:0;font:inherit;font-size:14px;color:inherit;text-align:left;cursor:pointer}
+  .pest .prow:hover{background:#efe9da}
+  .pest .prow .nm::after{content:" ›";color:var(--muted);font-weight:700}
+  .pest .prow[aria-expanded="true"]{background:#eaf3e4;border-radius:12px 12px 0 0}
+  .pest .prow[aria-expanded="true"] .nm::after{content:" ⌄"}
+  .pest .pinfo{background:#fbfaf5;border:1px solid #e6efdf;border-top:0;border-radius:0 0 12px 12px;padding:12px 14px 14px;font-size:13.5px;line-height:1.65;color:#3d4a3f}
+  .pest .pinfo b{color:var(--ink)}
+  .pest .pinfo ul{margin:4px 0 0;padding-left:18px}
+
+  /* 판단 3장: 자세히 보기 */
+  .v .more{margin-top:12px;font:inherit;font-size:13px;font-weight:800;color:var(--green);background:none;border:0;padding:4px 0;cursor:pointer}
+  .v .det{margin-top:10px;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px;line-height:1.65;color:#3d4a3f}
+  .v .det h4{margin:10px 0 4px;font-size:12px;letter-spacing:.06em;color:var(--muted)}
+  .v .det h4:first-child{margin-top:0}
+  .v .det ul{margin:0;padding-left:18px}
+  .v .det li{margin:2px 0}
+  .v .det table{font-size:13px}
+  .v .det td,.v .det th{padding:6px 0}
+  .v .det a{font-weight:700}
+  .chip{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:100px;margin:2px 4px 2px 0;background:#f6f3ea}
+  .chip.r{background:#fde2d2;color:#9a3412}.chip.y{background:#fdf0c8;color:#8a6410}
+
+  /* 작물 재배력 바로가기 */
+  .callinks{display:flex;gap:6px;flex-wrap:wrap;align-self:flex-end}
+  .callinks a{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:12px;background:var(--deep);color:#fff;text-decoration:none;font-weight:800;font-size:14px;white-space:nowrap}
+  .callinks a:hover{background:var(--green)}
   .lv{font-size:12px;font-weight:800;padding:4px 10px;border-radius:100px;white-space:nowrap;background:#fdf0c8;color:#8a6410}
   .lv.hi{background:#fde2d2;color:#9a3412}
   .note{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6}
@@ -93,7 +119,8 @@
   footer{max-width:1180px;margin:0 auto;padding:0 24px 40px;font-size:12.5px;color:var(--muted);line-height:1.7}
   @media (max-width:900px){.c4,.c8{grid-column:span 12}.verdicts{grid-template-columns:1fr}.days{grid-template-columns:repeat(5,minmax(0,1fr))}h1{font-size:27px}}
   @media (max-width:420px){.top .in,header,main,footer,.err{padding-left:16px;padding-right:16px}.top nav{margin-left:0;width:100%;font-size:14px;gap:4px 14px}
-    .card{padding:18px}.big{font-size:34px}.pickers{width:100%}.pickers label{flex:1}.pickers select{width:100%;min-width:0}.stamp{width:100%;padding:0}}
+    .card{padding:18px}.big{font-size:34px}.pickers{width:100%}.pickers label{flex:1 1 28%}.pickers select,.pickers select.pv{width:100%;min-width:0;padding-right:28px;background-position:right 10px center}.stamp{width:100%;padding:0}
+    .callinks{width:100%}.callinks a{flex:1;justify-content:center}}
 </style>
 <script src="/ga.js"></script>
 </head>
@@ -117,8 +144,10 @@
     <div class="sub">기상·물·시세·병해충을 한 화면에서 — 하루 세 번 자동 갱신</div>
   </div>
   <div class="pickers">
-    <label>지역<select id="rg" aria-label="지역 선택"></select></label>
+    <label>도<select id="pv" aria-label="도 선택" class="pv"></select></label>
+    <label>시·군<select id="rg" aria-label="시·군 선택"></select></label>
     <label>작물<select id="cr" aria-label="작물 선택"></select></label>
+    <span class="callinks" id="calLinks"></span>
     <span class="stamp" id="stamp"></span>
   </div>
 </header>
@@ -126,9 +155,12 @@
 
 <main>
   <div class="verdicts">
-    <article class="v stop"><span class="tag">● 조심</span><h2 id="v1h">…</h2><p id="v1p"></p><div class="why" id="v1w"></div></article>
-    <article class="v care"><span class="tag">● 살펴보기</span><h2 id="v2h">…</h2><p id="v2p"></p><div class="why" id="v2w"></div></article>
-    <article class="v go"><span class="tag">● 할 만함</span><h2 id="v3h">…</h2><p id="v3p"></p><div class="why" id="v3w"></div></article>
+    <article class="v stop"><span class="tag">● 조심</span><h2 id="v1h">…</h2><p id="v1p"></p><div class="why" id="v1w"></div>
+      <button class="more" type="button" aria-expanded="false" aria-controls="d1">자세히 보기 ▾</button><div class="det" id="d1" hidden></div></article>
+    <article class="v care"><span class="tag">● 살펴보기</span><h2 id="v2h">…</h2><p id="v2p"></p><div class="why" id="v2w"></div>
+      <button class="more" type="button" aria-expanded="false" aria-controls="d2">자세히 보기 ▾</button><div class="det" id="d2" hidden></div></article>
+    <article class="v go"><span class="tag">● 할 만함</span><h2 id="v3h">…</h2><p id="v3p"></p><div class="why" id="v3w"></div>
+      <button class="more" type="button" aria-expanded="false" aria-controls="d3">자세히 보기 ▾</button><div class="det" id="d3" hidden></div></article>
   </div>
 
   <div class="grid">
@@ -183,17 +215,27 @@
 (function(){
   /* 작물: 시세 강조 품목 · 병해충 키 · 시설작물 여부 · 「할 만함」 작업 이름 */
   var CROPS = {
-    '딸기':     {price:['딸기'],               house:true,  work:'엽면시비'},
-    '오이':     {price:['오이'],               house:true,  work:'엽면시비'},
-    '토마토':   {price:['토마토'],             house:true,  work:'엽면시비'},
-    '시설 고추':{price:['청양고추'],           house:true,  work:'엽면시비'},
-    '배추·무':  {price:['배추','무'],          house:false, work:'엽면시비'},
-    '마늘·양파':{price:['깐마늘','양파'],      house:false, work:'엽면시비'},
-    '사과·배':  {price:['사과','배 '],         house:false, work:'과원 작업'},
-    '벼·맥류':  {price:['쌀'],                 house:false, work:'논·밭 작업'}
+    '딸기':     {price:['딸기'],          house:true,  work:'엽면시비', cal:['딸기'],
+                 look:['꽃·과실에 잿빛 곰팡이가 피었는지', '잎 앞면의 흰 가루(흰가루병)', '잎 뒷면의 응애·진딧물', '시든 꽃잎과 오래된 아래 잎']},
+    '오이':     {price:['오이'],          house:true,  work:'엽면시비', cal:['오이'],
+                 look:['잎 앞면의 흰 가루', '꽃이 떨어진 과실 끝의 잿빛 곰팡이', '잎 뒷면의 가루이·진딧물']},
+    '토마토':   {price:['토마토'],        house:true,  work:'엽면시비', cal:['토마토'],
+                 look:['윗잎이 노랗게 말리는지(바이러스)', '잎 뒷면의 가루이', '잎 속 굴·과실 구멍(뿔나방)']},
+    '시설 고추':{price:['청양고추'],      house:true,  work:'엽면시비', cal:['고추'],
+                 look:['꽃 속과 새순의 총채벌레', '잎·과실의 둥근 무늬(바이러스)', '잎 뒷면 진딧물']},
+    '배추·무':  {price:['배추','무'],     house:false, work:'엽면시비', cal:['배추','무'],
+                 look:['땅에 닿은 잎자루가 무르는지', '잎 뒷면 회백색 곰팡이(노균병)', '잎 가장자리 V자 황변', '잎을 갉아먹은 흔적']},
+    '마늘·양파':{price:['깐마늘','양파'], house:false, work:'엽면시비', cal:['마늘·양파'],
+                 look:['잎 끝이 누렇게 마르는지', '멀칭 비닐이 들뜨거나 물이 고인 곳', '서릿발로 들뜬 포기']},
+    '사과·배':  {price:['사과','배 '],    house:false, work:'과원 작업', cal:['사과','배'],
+                 look:['가지의 궤양(움푹 갈라진 상처)', '나무에 남은 병든 과실', '전정 도구 소독 여부']},
+    '벼·맥류':  {price:['쌀'],            house:false, work:'논·밭 작업', cal:['벼','밀'],
+                 look:['맥류 종자 소독을 했는지', '논·밭 배수로 정비', '볏짚·잔재 처리']}
   };
   var W = ['일','월','화','수','목','금','토'];
-  var DATA = null, PEST = null;
+  var DATA = null, PEST = null, PINFO = null;
+  // 재배력 주소: 홈페이지에서는 ../calendar/, 시안(내 컴퓨터)에서는 실제 홈페이지로
+  var CAL = /ablefarm\.co\.kr$/.test(location.hostname) ? '../calendar/' : 'https://www.ablefarm.co.kr/calendar/';
 
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -287,9 +329,16 @@
     /* 병해충 (월간 예보) */
     var pestOld = PEST && PEST.period && PEST.period.slice(-10).replace(/-/g, '') < (DATA.base || '').replace(/-/g, ''); // 발표 기간이 지나면 쓰지 않는다
     var pl = (!pestOld && PEST && PEST.crops && PEST.crops[cn]) || [];
-    $('pest').innerHTML = pl.length ? pl.map(function(x){
-      return '<div><span>' + esc(x[0]) + '</span><span class="lv' + (/주의보|경보/.test(x[1]) ? ' hi' : '') + '">' + esc(x[1]) + '</span></div>';
-    }).join('') : '<div><span>' + (pestOld ? '이달 발생정보 준비 중' : '이달 예보에 해당 작물 항목 없음') + '</span><span class="lv" style="background:#dcefe1;color:#256b3f">—</span></div>';
+    var PI = (PINFO && PINFO.items) || {};
+    $('pest').innerHTML = pl.length ? pl.map(function(x, i){
+      var inf = PI[x[0]];
+      var body = inf
+        ? '<div><b>어떤 병해충</b> ' + esc(inf.what) + '</div><div style="margin-top:6px"><b>잘 생기는 때</b> ' + esc(inf.when) + '</div>' +
+          '<div style="margin-top:6px"><b>챙길 일</b><ul>' + inf.check.map(function(c){ return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>'
+        : '<div>자세한 설명을 준비 중입니다. <a href="' + esc((PEST && PEST.url) || 'https://www.nongsaro.go.kr/') + '" target="_blank" rel="noopener">농사로 발생정보 보기</a></div>';
+      return '<div><button type="button" class="prow" aria-expanded="false" aria-controls="pi' + i + '"><span class="nm">' + esc(x[0]) + '</span><span class="lv' + (/주의보|경보/.test(x[1]) ? ' hi' : '') + '">' + esc(x[1]) + '</span></button>' +
+        '<div class="pinfo" id="pi' + i + '" hidden>' + body + '</div></div>';
+    }).join('') : '<div class="prow" style="cursor:default"><span>' + (pestOld ? '이달 발생정보 준비 중' : '이달 예보에 해당 작물 항목 없음') + '</span><span class="lv" style="background:#dcefe1;color:#256b3f">—</span></div>';
     setText('pestNote', pestOld ? '이달 병해충 발생정보를 준비 중입니다. 농촌진흥청 발표 뒤 반영됩니다.' : PEST ? PEST.issue + ' (' + PEST.period.replace(/\d{4}-|-/g, function(m){ return m === '-' ? '.' : ''; }) + ')의 예보 항목 이름을 옮긴 것입니다. 방제는 등록 약제와 지역 농업기술센터 안내를 따르세요.' : '');
 
     /* ── 판단 3장 ── */
@@ -344,24 +393,109 @@
       setText('v3p', '10일 안에 비가 잦거나 기온이 낮아 작업하기 좋은 날이 뚜렷하지 않습니다.');
       setText('v3w', '근거: 기상청 10일 예보');
     }
+
+    /* ── 자세히 보기 ── */
+    function li(a){ return '<ul>' + a.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
+    // ① 조심
+    var frMap = {}; (R.frost || []).forEach(function(f){ frMap[f.d] = f.v; });
+    var h1 = '<h4>지금 내려진 특보</h4>' + (warn.length || pre.length
+        ? warn.map(function(x){ return '<span class="chip r">' + esc(x) + '</span>'; }).join('') + pre.map(function(x){ return '<span class="chip y">예비 ' + esc(x) + '</span>'; }).join('')
+        : '<div>이 지역에 내려진 특보가 없습니다.</div>');
+    h1 += '<h4>앞으로 3일 새벽 기온 · 서리 가능성</h4><table><tbody>' + days.slice(0, 4).map(function(d, i){
+      var f = frMap[d.d];
+      return '<tr><td>' + (i === 0 ? '오늘' : md(d.d)) + '</td><td class="n">최저 ' + (d.lo != null ? d.lo + '℃' : '—') + '</td><td class="n' + (f >= 50 ? ' up' : '') + '">' + (f != null ? '서리 ' + f + '%' : '') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+    h1 += '<h4>확인할 일</h4>' + li(C.house
+      ? ['보온 커튼·다겹 보온재가 틈 없이 닫히는지', '난방기 연료와 작동 상태', '해 지기 전에 환기창 닫기', '수막·관수 배관이 얼지 않게 물 빼기']
+      : ['부직포·비닐 피복이 들뜨지 않았는지', '관수 시설 물 빼기(동파 방지)', '서리 오기 전 거둘 것은 미리 수확', '물 주기는 낮 기온이 오른 뒤']);
+    $('d1').innerHTML = h1;
+
+    // ② 살펴보기
+    var h2 = '<h4>이달 ' + esc(cn) + ' 병해충 예보</h4>' + (pl.length
+        ? pl.map(function(x){ return '<span class="chip' + (/주의보|경보/.test(x[1]) ? ' r' : ' y') + '">' + esc(x[0]) + ' · ' + esc(x[1]) + '</span>'; }).join('') + '<div style="margin-top:4px;font-size:12.5px;color:var(--muted)">아래 병해충 칸에서 이름을 누르면 챙길 일이 나옵니다.</div>'
+        : '<div>' + (pestOld ? '이달 발생정보 준비 중입니다.' : '이달 예보에 해당 항목이 없습니다.') + '</div>');
+    if (o){
+      var damp = (o.dewH != null && o.dewH >= 8) || (o.hum != null && o.hum >= 85);
+      h2 += '<h4>어제 관측 (' + esc(o.stn) + ')</h4>' + li([
+        '이슬 맺힌 시간 ' + (o.dewH != null ? o.dewH + '시간' : '—'),
+        '평균 습도 ' + (o.hum != null ? o.hum + '%' : '—'),
+        '지면 온도 ' + (o.ground != null ? o.ground + '℃' : '—')
+      ]) + '<div style="margin-top:4px">' + (damp ? '잎이 오래 젖어 있던 날입니다. <b>곰팡이병이 퍼지기 쉬운 조건</b>이니 환기·통풍을 챙기세요.' : '잎이 오래 젖지는 않았습니다. 곰팡이병이 크게 번질 조건은 아닙니다.') + '</div>';
+    }
+    h2 += '<h4>포장에서 볼 곳</h4>' + li(C.look.map(esc));
+    if (PEST && PEST.url) h2 += '<div style="margin-top:8px"><a href="' + esc(PEST.url) + '" target="_blank" rel="noopener">농사로 「병해충 발생정보」 원문 보기 ↗</a></div>';
+    $('d2').innerHTML = h2;
+
+    // ③ 할 만함
+    var h3 = '';
+    if (b >= 0){
+      var bd2 = days[b];
+      h3 += '<h4>' + md(bd2.d) + '을 고른 이유</h4>' + li([
+        '강수확률 ' + bd2.pop + '%' + (days[b-1] && days[b-1].pop != null ? ' (전날 ' + days[b-1].pop + '%)' : ''),
+        '낮 최고 ' + bd2.hi + '℃ · 새벽 최저 ' + bd2.lo + '℃',
+        bd2.wf ? '하늘 ' + esc(bd2.wf) : ''
+      ].filter(Boolean));
+      var next = [];
+      for (var i = b + 1; i < days.length && next.length < 2; i++){
+        var d = days[i], p = days[i-1];
+        if (d.pop != null && d.pop < 30 && (p.pop == null || p.pop < 60) && d.lo != null && d.lo >= -3 && d.hi != null && d.hi >= 5) next.push(md(d.d) + ' (비 ' + d.pop + '%, ' + d.hi + '℃)');
+      }
+      h3 += '<h4>그다음 좋은 날</h4>' + (next.length ? li(next) : '<div>10일 안에 더 없습니다.</div>');
+    }
+    var bad = days.slice(1).filter(function(d){ return (d.pop != null && d.pop >= 60) || (d.lo != null && d.lo < -3); }).slice(0, 4)
+      .map(function(d){ return md(d.d) + ' — ' + [d.pop >= 60 ? '비 ' + d.pop + '%' : '', d.lo < -3 ? '새벽 ' + d.lo + '℃' : ''].filter(Boolean).join(', '); });
+    h3 += '<h4>피할 날</h4>' + (bad.length ? li(bad) : '<div>뚜렷하게 피할 날은 없습니다.</div>');
+    h3 += '<h4>작업 팁</h4>' + li(['잎이 마른 오전 10시~오후 2시 사이에', '작업 뒤 반나절 안에 비 소식이 없는지 한 번 더 확인', '바람이 강한 날(초속 4m 이상)은 피하기']);
+    $('d3').innerHTML = h3;
+
+    /* 작물 재배력 바로가기 */
+    $('calLinks').innerHTML = C.cal.map(function(k){
+      return '<a href="' + CAL + '?c=' + encodeURIComponent(k) + '"><span aria-hidden="true">📅</span>' + esc(k) + ' 재배력</a>';
+    }).join('');
   }
 
   function init(){
+    // 지역 이름 = 「경기 · 이천시」 → 도 칸과 시·군 칸으로 나눠 고른다
     var names = Object.keys(DATA.regions || {});
-    $('rg').innerHTML = names.map(function(k){ return '<option>' + esc(k) + '</option>'; }).join('');
+    var provs = []; names.forEach(function(k){ var p = k.split(' · ')[0]; if (provs.indexOf(p) < 0) provs.push(p); });
+    $('pv').innerHTML = provs.map(function(p){ return '<option>' + esc(p) + '</option>'; }).join('');
+    function fillCities(keep){
+      var p = $('pv').value;
+      $('rg').innerHTML = names.filter(function(k){ return k.split(' · ')[0] === p; })
+        .map(function(k){ return '<option value="' + esc(k) + '">' + esc(k.split(' · ')[1] || k) + '</option>'; }).join('');
+      if (keep && DATA.regions[keep] && keep.split(' · ')[0] === p) $('rg').value = keep;
+    }
     $('cr').innerHTML = Object.keys(CROPS).map(function(k){ return '<option>' + esc(k) + '</option>'; }).join('');
-    try { var s = JSON.parse(localStorage.getItem('af-today-pick') || 'null'); if (s){ if (DATA.regions[s[0]]) $('rg').value = s[0]; if (CROPS[s[1]]) $('cr').value = s[1]; } } catch (e) {}
+    var start = DATA.regions['경기 · 이천시'] ? '경기 · 이천시' : names[0];
+    try { var s = JSON.parse(localStorage.getItem('af-today-pick') || 'null'); if (s){ if (DATA.regions[s[0]]) start = s[0]; if (CROPS[s[1]]) $('cr').value = s[1]; } } catch (e) {}
+    $('pv').value = start.split(' · ')[0]; fillCities(start);
     var u = new Date(DATA.updated);
-    setText('stamp', (u.getMonth()+1) + '월 ' + u.getDate() + '일 ' + String(u.getHours()).padStart(2,'0') + ':' + String(u.getMinutes()).padStart(2,'0') + ' 갱신');
+    setText('stamp', (u.getMonth()+1) + '월 ' + u.getDate() + '일 ' + String(u.getHours()).padStart(2,'0') + ':' + String(u.getMinutes()).padStart(2,'0') + ' 갱신 · 전국 ' + names.length + '개 시·군');
+    $('pv').addEventListener('change', function(){ fillCities(); render(); });
     $('rg').addEventListener('change', render); $('cr').addEventListener('change', render);
+    // 자세히 보기 열고 닫기
+    document.querySelectorAll('.v .more').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var d = $(btn.getAttribute('aria-controls')), open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', open ? 'false' : 'true'); d.hidden = open;
+        btn.textContent = open ? '자세히 보기 ▾' : '접기 ▴';
+      });
+    });
+    // 병해충 이름 누르기
+    $('pest').addEventListener('click', function(e){
+      var btn = e.target.closest('.prow[aria-controls]'); if (!btn) return;
+      var d = $(btn.getAttribute('aria-controls')), open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true'); d.hidden = open;
+    });
     render();
   }
 
   var v = '?v=' + Math.floor(Date.now() / 600000); // 10분마다 새 자료
   Promise.all([
     fetch('../data/dashboard.json' + v).then(function(r){ if (!r.ok) throw 0; return r.json(); }),
-    fetch('../data/pest-month.json' + v).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
-  ]).then(function(x){ DATA = x[0]; PEST = x[1]; init(); })
+    fetch('../data/pest-month.json' + v).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+    fetch('../data/pest-info.json' + v).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+  ]).then(function(x){ DATA = x[0]; PEST = x[1]; PINFO = x[2]; init(); })
     .catch(function(){ $('err').hidden = false; });
 })();
 </script>
