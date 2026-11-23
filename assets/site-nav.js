@@ -19,7 +19,7 @@
     ['희석 계산기', R + 'calc/', '물에 몇 배로 타나요']
   ];
   var ITEMS = [
-    ['today', '오늘 농업현황', R + 'today/'],
+    ['today', '오늘 농업현황', R + 'today/', '농업현황'], // 네 번째 = 휴대폰에서 줄여 쓰는 이름
     ['qna', '농사문의', R + '#qna'],
     ['calendar', '재배력', R + 'calendar/'],
     ['garden', '텃밭', R + 'garden/'],
@@ -47,12 +47,17 @@
     '.afn-menu a:hover{background:#f1ede2}.afn-menu b{display:block;font-size:14.5px}.afn-menu small{display:block;font-size:12px;color:#6b7565;font-weight:500;margin-top:2px}',
     /* 휴대폰: 한 줄 — 로고 + 옆으로 밀리는 메뉴 */
     '@media (max-width:1024px){.afn-in{gap:24px;padding:12px 20px}.afn-links{gap:18px;font-size:14.5px}}',
-    '@media (max-width:760px){.afn-in{gap:12px;padding:8px 0 8px 14px}.afn-logo img{height:34px}.afn-cta{display:none}',
-    '.afn-links{gap:18px;font-size:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-right:16px;mask-image:linear-gradient(90deg,#000 88%,transparent)}',
+    '.afn-s{display:none}',
+    /* 휴대폰: 메뉴 6개가 한 줄에 다 보이게 — 글자·간격을 줄이고 「오늘 농업현황」은 「농업현황」으로 (2026-11-23)
+       (전에는 폭이 넘쳐 페이지에 따라 「회사정보」나 「텃밭·구매문의」가 화면 밖으로 밀렸다) */
+    '@media (max-width:760px){.afn-in{gap:8px;padding:8px 8px 8px 10px}.afn-logo img{height:30px}.afn-cta{display:none}',
+    '.afn-l{display:none}.afn-s{display:inline}.afn-info>button i{font-size:8px}',
+    /* 375px 이상이면 다 들어간다. 그보다 좁은 휴대폰에서만 옆으로 밀어 볼 수 있게 남겨 둔다 */
+    '.afn-links{gap:11px;font-size:13.5px;letter-spacing:-.02em;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}',
     '.afn-links::-webkit-scrollbar{display:none}',
     /* 「회사정보」를 펼치면 오른쪽 흐림 효과(mask)가 펼친 목록까지 잘라 안 보였다 → 펼쳤을 때는 흐림을 끈다 (2026-11-23) */
     '.afn-links.afn-open{mask-image:none;-webkit-mask-image:none}',
-    '.afn-menu{position:fixed;top:56px;left:12px;right:12px;min-width:0}}'
+    '.afn-menu{position:fixed;top:52px;left:12px;right:12px;min-width:0}}'
   ].join('');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -64,7 +69,8 @@
       '<div class="afn-links">' +
         '<span class="afn-info"><button type="button" aria-expanded="false"' + (now === 'info' ? ' class="on"' : '') + '>회사정보<i>▼</i></button>' +
           '<div class="afn-menu">' + INFO.map(function (x) { return '<a href="' + x[1] + '"><b>' + esc(x[0]) + '</b><small>' + esc(x[2]) + '</small></a>'; }).join('') + '</div></span>' +
-        ITEMS.map(function (x) { return '<a href="' + x[2] + '"' + (x[0] === now ? ' class="on" aria-current="page"' : '') + '>' + esc(x[1]) + '</a>'; }).join('') +
+        ITEMS.map(function (x) { return '<a href="' + x[2] + '"' + (x[0] === now ? ' class="on" aria-current="page"' : '') + (x[3] ? ' aria-label="' + esc(x[1]) + '"' : '') + '>' +
+          (x[3] ? '<span class="afn-l">' + esc(x[1]) + '</span><span class="afn-s">' + esc(x[3]) + '</span>' : esc(x[1])) + '</a>'; }).join('') +
       '</div>' +
       '<a class="afn-cta" href="' + R + '#qna">문의하기 →</a>' +
     '</div>';
@@ -92,6 +98,6 @@
   new MutationObserver(function () { linksBox.classList.toggle('afn-open', info.classList.contains('open')); }).observe(info, { attributes: true, attributeFilter: ['class'] });
   // 휴대폰에서도 메뉴는 늘 맨 앞 「회사정보」부터 보이게 둔다 (2026-11-23 사용자: 휴대폰에서 회사정보 메뉴가 안 보인다)
   // — 전에는 지금 페이지 메뉴(예: 텃밭) 쪽으로 저절로 밀어서 「회사정보」가 왼쪽 밖으로 숨었다.
-  //   오른쪽 끝이 흐려져 있어 손가락으로 밀면 나머지 메뉴가 나온다.
+  //   11-23 오후부터는 휴대폰(375px 이상)에서 메뉴 6개가 한 줄에 다 들어가 밀 필요가 없다.
   var box = nav.querySelector('.afn-links'); if (box) box.scrollLeft = 0;
 })();
