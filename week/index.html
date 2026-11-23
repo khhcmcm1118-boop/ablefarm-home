@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이번 주 농사 할 일 (11월 23일~29일) — 작물별 꼭 할 일 | 에이블팜</title>
+<meta name="description" content="작물을 고르면 이번 주에 할 일, 조심할 날씨, 병해충 주의를 한 장으로 보여 드립니다. 농촌진흥청 주간농사정보 기준.">
+<link rel="canonical" href="https://www.ablefarm.co.kr/week/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="이번 주 농사 꼭 할 일 (11월 23일~29일)">
+<meta property="og:description" content="작물을 고르면 이번 주 할 일만. 농촌진흥청 주간농사정보 기준.">
+<meta property="og:url" content="https://www.ablefarm.co.kr/week/">
+<link rel="icon" href="../assets/logo.png">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+:root { --forest:#16271c; --leaf:#4a7c59; --lime:#a9d18a; --pale:#e9efdd; --ink:#16241a; --body:#54604f; --mut:#6b7465; --line:#dcd8c7; --bg:#faf7ef; --sand:#eee9db; --alert:#f9e4dd; --alert-ink:#5e2413; --warn:#fff3cf; --warn-ink:#5a4300; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+html, body { margin: 0; padding: 0; background: var(--bg); }
+body { font-family: 'Pretendard', 'Noto Sans CJK KR', 'Malgun Gothic', sans-serif; color: var(--ink); font-size: 17px; line-height: 1.65; word-break: keep-all; }
+a { color: var(--leaf); font-weight: 700; }
+.draft { background: #b3261e; color: #fff; text-align: center; font-size: 13.5px; font-weight: 700; padding: 6px 12px; }
+.top { background: var(--forest); position: sticky; top: 0; z-index: 5; }
+.top .in { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; }
+.top img { height: 34px; width: auto; background: #fff; border-radius: 8px; padding: 3px 6px; display: block; }
+.top nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.top nav a { color: #fff; text-decoration: none; font-size: 14px; padding: 7px 11px; border-radius: 10px; background: rgba(255,255,255,.12); }
+.top nav a.bot { background: var(--lime); color: var(--forest); }
+main { max-width: 860px; margin: 0 auto; padding: 0 16px 40px; }
+.kick { font-size: 14px; font-weight: 700; color: var(--leaf); margin: 24px 0 0; }
+h1 { font-size: 32px; line-height: 1.25; margin: 4px 0 0; font-weight: 800; letter-spacing: -0.5px; }
+.meta { font-size: 13.5px; color: var(--mut); margin: 10px 0 0; }
+.weeknav { display: flex; gap: 8px; margin: 14px 0 0; flex-wrap: wrap; }
+.weeknav span, .weeknav a { font-size: 14px; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); background: #fff; color: var(--mut); text-decoration: none; font-weight: 600; }
+.weeknav .now { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+.alerts { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin: 18px 0 0; }
+.al { border-radius: 14px; padding: 14px 15px; min-width: 0; }
+.al b { display: block; font-size: 13.5px; margin-bottom: 4px; }
+.al p { margin: 0; font-size: 15.5px; line-height: 1.5; }
+.al.w { background: var(--pale); }
+.al.d { background: var(--warn); color: var(--warn-ink); }
+.al.p { background: var(--alert); color: var(--alert-ink); }
+
+.pick { margin: 26px 0 0; }
+.pick h2 { font-size: 20px; margin: 0 0 4px; }
+.pick p { margin: 0 0 10px; font-size: 14.5px; color: var(--mut); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { appearance: none; font: inherit; font-size: 15.5px; font-weight: 600; padding: 9px 16px; border-radius: 100px; background: #fff; border: 1px solid var(--line); color: var(--ink); cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+
+.progress { display: flex; align-items: center; gap: 12px; margin: 18px 0 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; }
+.progress .bar { flex: 1; height: 10px; background: var(--sand); border-radius: 10px; overflow: hidden; }
+.progress .bar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
+.progress span { font-size: 14.5px; font-weight: 700; white-space: nowrap; }
+
+section.crop { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin: 16px 0 0; }
+section.crop[hidden] { display: none; }
+.ch { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 0 0 8px; }
+.ch h2 { font-size: 22px; margin: 0; font-weight: 800; letter-spacing: -.02em; }
+.ch .tag { font-size: 12.5px; font-weight: 700; padding: 3px 9px; border-radius: 100px; background: var(--alert); color: var(--alert-ink); }
+.ch .tag.ok { background: var(--pale); color: var(--leaf); }
+.todo { list-style: none; margin: 0; padding: 0; }
+.todo li { border-top: 1px dashed var(--line); }
+.todo li:first-child { border-top: 0; }
+.todo label { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; cursor: pointer; }
+.todo input { width: 22px; height: 22px; margin-top: 2px; flex: none; accent-color: var(--leaf); }
+.todo .t { min-width: 0; }
+.todo .t b { display: block; font-size: 17px; }
+.todo .t small { display: block; font-size: 14.5px; color: var(--body); line-height: 1.55; margin-top: 2px; }
+.todo input:checked + .t b { text-decoration: line-through; color: var(--mut); }
+.why { margin: 10px 0 0; font-size: 14px; color: var(--mut); }
+.why a { font-size: 14px; }
+.prod { margin: 12px 0 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 15px; }
+.prod b { color: var(--forest); }
+.prod small { display: block; font-size: 12.5px; color: var(--mut); margin-top: 4px; }
+
+.cta { background: var(--forest); color: #eaf1e2; border-radius: 16px; padding: 20px; margin: 26px 0 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; }
+.cta h2 { color: #fff; font-size: 20px; margin: 0 0 4px; }
+.cta p { margin: 0; font-size: 15px; }
+.cta .btns { display: flex; flex-direction: column; gap: 8px; }
+.cta a { display: block; text-align: center; text-decoration: none; padding: 11px 18px; border-radius: 11px; background: var(--lime); color: var(--forest); font-weight: 800; font-size: 15px; }
+.cta a.sub { background: rgba(255,255,255,.14); color: #fff; }
+.src { font-size: 13px; color: var(--mut); margin: 22px 0 0; line-height: 1.6; }
+.note { background: var(--warn); color: var(--warn-ink); border-radius: 12px; padding: 12px 14px; font-size: 14px; margin: 22px 0 0; }
+.note b { display: block; margin-bottom: 2px; }
+footer { max-width: 860px; margin: 0 auto; padding: 18px 16px 40px; font-size: 13px; color: var(--mut); border-top: 1px solid var(--line); }
+@media (max-width: 640px) {
+  h1 { font-size: 27px; }
+  .alerts { grid-template-columns: minmax(0,1fr); }
+  .cta { grid-template-columns: minmax(0,1fr); }
+  .top img { height: 30px; }
+}
+</style>
+<script src="/ga.js"></script>
+</head>
+<body>
+<script src="/assets/site-nav.js" data-now="week"></script>
+<main>
+<p class="kick">이번 주 농사</p>
+<h1>11월 23일(월) ~ 29일(일)<br>이번 주 꼭 할 일</h1>
+<p class="meta">에이블팜 재배 안내 · 2026년 11월 23일 · 농촌진흥청 주간농사정보 기준</p>
+<div class="alerts">
+  <div class="al w"><b>☀ 이번 주 날씨</b><p>기온은 평년(4.4~6.0℃)보다 <b style="display:inline">높고</b>, 비는 평년(4.3~9.0㎜)보다 많을 전망입니다.</p></div>
+  <div class="al d"><b>💧 물 사정</b><p>전국 저수율이 평년의 74% 수준입니다. 겨울 관수용 물을 미리 확보하세요.</p></div>
+  <div class="al p"><b>❄ 이번 주 주의</b><p>따뜻하다가 갑자기 추워지는 날에 대비하세요. 하우스 보온, 노지 작물 부직포를 준비해 두세요.</p></div>
+</div>
+
+<div class="pick">
+  <h2>내 작물만 보기</h2>
+  <p>짓는 작물을 누르면 그 작물의 할 일만 남습니다. 고른 작물은 다음에 들어와도 기억합니다.</p>
+  <div class="chips" id="chips">
+    <button type="button" data-c="all" aria-pressed="true">전체</button>
+    <button type="button" data-c="rice" aria-pressed="false">벼</button>
+    <button type="button" data-c="barley" aria-pressed="false">보리·밀</button>
+    <button type="button" data-c="garlic" aria-pressed="false">마늘·양파</button>
+    <button type="button" data-c="house" aria-pressed="false">시설채소</button>
+    <button type="button" data-c="berry" aria-pressed="false">딸기</button>
+    <button type="button" data-c="fruit" aria-pressed="false">사과·배·단감</button>
+    <button type="button" data-c="cabbage" aria-pressed="false">배추·무</button>
+  </div>
+</div>
+
+<div class="progress"><span>이번 주 한 일</span><div class="bar"><i id="bar"></i></div><span id="cnt">0 / 0</span></div>
+
+<section class="crop" data-c="garlic">
+  <div class="ch"><h2>🧄 마늘·양파</h2><span class="tag">이번 주가 마지막</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="g1"><span class="t"><b>한지형 마늘 심기 마무리</b><small>한지형(중부·산간) 마늘은 11월 하순이 심는 때입니다. 이번 주 안에 끝내세요.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="g2"><span class="t"><b>양파 아주심기 끝난 밭 서릿발 대비</b><small>뿌리가 들뜨지 않게 심은 뒤 흙을 눌러 주고, 물이 고이지 않게 배수로를 정비합니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="g3"><span class="t"><b>멀칭 전 밑거름 확인</b><small>비닐을 덮고 나면 거름을 넣기 어렵습니다. 덮기 전에 넣을 것을 모두 넣었는지 확인하세요.</small></span></label></li>
+  </ul>
+  <div class="prod"><b>에이블팜 제품 쓰는 때</b> — 임팩트과립: 심은 뒤 멀칭 전에 뿌립니다(6kg 1봉 300평, 8kg 1봉 500평). 임팩트골드: 물 2,000L에 5L 1병을 타서 관주합니다.
+    <small>사용량은 제품 표시 기준. 자세한 사용법은 판매점이나 상담봇에 물어보세요.</small></div>
+  <p class="why">더 알아보기: <a href="../guide/garlic-planting.html">마늘 심기</a> · <a href="../guide/onion-frost-heave.html">양파 서릿발</a></p>
+</section>
+
+<section class="crop" data-c="house">
+  <div class="ch"><h2>🏠 시설채소</h2><span class="tag">병해충 초기 대응</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="h1"><span class="t"><b>보온·가온 장비 점검</b><small>보온 커튼, 난방기, 온도 경보기가 제대로 작동하는지 갑자기 추워지기 전에 확인합니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="h2"><span class="t"><b>흰가루병·총채벌레·가루이 살펴보기</b><small>문을 닫아 두는 철이라 잘 생깁니다. 처음 보일 때 바로 방제해야 번지지 않습니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="h3"><span class="t"><b>낮 환기로 습도 낮추기</b><small>따뜻한 낮에 짧게 환기해 하우스 안 습도를 낮춥니다.</small></span></label></li>
+  </ul>
+  <p class="why">더 알아보기: <a href="../guide/greenhouse-winter.html">하우스 겨울 관리</a></p>
+</section>
+
+<section class="crop" data-c="berry">
+  <div class="ch"><h2>🍓 딸기</h2><span class="tag">수정벌 넣는 때</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="b1"><span class="t"><b>수정벌 넣기</b><small>첫 꽃송이가 10% 넘게 피었을 때 넣습니다. 200평(660㎡)에 꿀벌 7,500~10,000마리, 벌통 안은 30℃ 안팎으로 맞춥니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="b2"><span class="t"><b>잎 5~6장 남기기</b><small>꽃이 필 때는 포기당 잎을 5~6장으로 관리합니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="b3"><span class="t"><b>밤 온도 대비 보온 정비</b><small>갑자기 추워지면 기형과가 생기기 쉽습니다. 보온 시설을 미리 손봅니다.</small></span></label></li>
+  </ul>
+  <p class="why">더 알아보기: <a href="../guide/strawberry-night-temp.html">딸기 밤 온도</a> · <a href="../guide/strawberry-malformed.html">기형과</a></p>
+</section>
+
+<section class="crop" data-c="fruit">
+  <div class="ch"><h2>🍎 사과·배·단감</h2><span class="tag ok">수확 마무리·저장</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="f1"><span class="t"><b>만생종 사과 수확 마무리</b><small>저장하면서 맛이 변하는 것을 생각해 늦지 않게 땁니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="f2"><span class="t"><b>저장고는 미리 식혀 두고 넣기</b><small>넣기 1~2일 전에 목표 온도까지 내립니다. 쌓는 양은 저장고의 70~80%, 습도는 90% 안팎으로 맞춥니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="f3"><span class="t"><b>단감 출하 전 색 확인</b><small>생과로 낼 것과 저장할 것을 색도계로 나눠 땁니다.</small></span></label></li>
+  </ul>
+  <p class="why">더 알아보기: <a href="../guide/winter-fruit-set.html">겨울 과원 관리</a></p>
+</section>
+
+<section class="crop" data-c="cabbage">
+  <div class="ch"><h2>🥬 배추·무</h2><span class="tag">언 피해 전 수확</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="c1"><span class="t"><b>중부·북부는 얼기 전에 수확</b><small>영하로 떨어지는 예보가 있으면 그 전에 거둡니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="c2"><span class="t"><b>남부는 부직포·비닐로 덮기</b><small>밭에 더 둘 것은 추위가 올 때 덮을 수 있게 준비해 둡니다.</small></span></label></li>
+  </ul>
+  <p class="why">더 알아보기: <a href="../guide/kimjang-frost.html">김장 채소 언 피해</a></p>
+</section>
+
+<section class="crop" data-c="barley">
+  <div class="ch"><h2>🌾 보리·밀</h2><span class="tag ok">월동 준비</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="w1"><span class="t"><b>배수로 정비</b><small>비가 많을 전망이라 물이 고이면 습해, 얼면 언 피해가 납니다. 고랑과 배수로를 다시 손봅니다.</small></span></label></li>
+  </ul>
+  <p class="why">더 알아보기: <a href="../guide/barley-wheat-winter.html">보리·밀 월동</a></p>
+</section>
+
+<section class="crop" data-c="rice">
+  <div class="ch"><h2>🌱 벼</h2><span class="tag ok">내년 준비</span></div>
+  <ul class="todo">
+    <li><label><input type="checkbox" data-k="r1"><span class="t"><b>논 흙 떠서 농업기술센터에 맡기기</b><small>수확 직후에 흙을 떠 가면 무료로 시비처방서를 받을 수 있습니다. 내년 거름 양을 정하는 기준이 됩니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="r2"><span class="t"><b>저장 벼 상태 확인</b><small>수분 15%, 온도 10~15℃, 습도 70~80%를 유지합니다.</small></span></label></li>
+    <li><label><input type="checkbox" data-k="r3"><span class="t"><b>농기계 정비 후 보관</b><small>안팎을 점검하고 배터리를 분리해 창고에 넣습니다.</small></span></label></li>
+  </ul>
+</section>
+
+<div class="cta">
+  <div><h2>내 작물 소식, 휴대폰으로 받아 보세요</h2><p>짓는 작물을 남겨 주시면 철 따라 할 일과 날씨 주의를 알려 드립니다.</p></div>
+  <div class="btns"><a href="../season/2026-11.html#signup">알림 받기</a><a class="sub" href="../crop-advisor.html?from=week">사진으로 물어보기</a></div>
+</div>
+
+<p class="src">출처: 농촌진흥청 「주간농사정보」(농사로, 공공누리 제1유형) 내용을 바탕으로 에이블팜이 다시 정리했습니다. 날씨 전망: 기상청 1개월 전망(10월 15일 발표), 저수율: 한국농어촌공사(10월 26일 기준). 지역과 밭 사정에 따라 다를 수 있으니 가까운 농업기술센터나 판매점과 상의하세요.</p>
+
+</main>
+
+<footer>(주)에이블팜 · 사용 상담 02-858-6229</footer>
+
+<script>
+(function(){
+  var KEY='af-week-2026-11-23', CK='af-week-crop';
+  var st={}; try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('.todo input'));
+  var secs=[].slice.call(document.querySelectorAll('section.crop'));
+  var btns=[].slice.call(document.querySelectorAll('#chips button'));
+  function count(){
+    var vis=boxes.filter(function(b){ return !b.closest('section').hidden; });
+    var done=vis.filter(function(b){ return b.checked; }).length;
+    document.getElementById('cnt').textContent=done+' / '+vis.length;
+    document.getElementById('bar').style.width=(vis.length? done/vis.length*100:0)+'%';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!st[b.dataset.k];
+    b.addEventListener('change',function(){ st[b.dataset.k]=b.checked; try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} count(); });
+  });
+  function pick(c){
+    btns.forEach(function(x){ x.setAttribute('aria-pressed', x.dataset.c===c?'true':'false'); });
+    secs.forEach(function(s){ s.hidden = !(c==='all' || s.dataset.c===c); });
+    try{ localStorage.setItem(CK,c); }catch(e){}
+    count();
+  }
+  btns.forEach(function(x){ x.addEventListener('click',function(){ pick(x.dataset.c); }); });
+  var saved='all'; try{ saved=localStorage.getItem(CK)||'all'; }catch(e){}
+  pick(saved);
+})();
+</script>
+</body>
+</html>
