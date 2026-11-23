@@ -50,6 +50,8 @@
     '@media (max-width:760px){.afn-in{gap:12px;padding:8px 0 8px 14px}.afn-logo img{height:34px}.afn-cta{display:none}',
     '.afn-links{gap:18px;font-size:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-right:16px;mask-image:linear-gradient(90deg,#000 88%,transparent)}',
     '.afn-links::-webkit-scrollbar{display:none}',
+    /* 「회사정보」를 펼치면 오른쪽 흐림 효과(mask)가 펼친 목록까지 잘라 안 보였다 → 펼쳤을 때는 흐림을 끈다 (2026-11-23) */
+    '.afn-links.afn-open{mask-image:none;-webkit-mask-image:none}',
     '.afn-menu{position:fixed;top:56px;left:12px;right:12px;min-width:0}}'
   ].join('');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -85,7 +87,11 @@
   var info = nav.querySelector('.afn-info'), btn = info.querySelector('button');
   btn.addEventListener('click', function (e) { e.stopPropagation(); var o = info.classList.toggle('open'); btn.setAttribute('aria-expanded', o ? 'true' : 'false'); });
   document.addEventListener('click', function (e) { if (!info.contains(e.target)) { info.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
-  // 휴대폰에서 지금 페이지 메뉴가 화면 밖에 있을 때만 살짝 밀어 보여 준다
-  var on = nav.querySelector('.afn-links > a.on');
-  if (on) { var box = nav.querySelector('.afn-links'); var right = on.offsetLeft - box.offsetLeft + on.offsetWidth; if (right > box.clientWidth - 24) box.scrollLeft = right - box.clientWidth + 40; }
+  // 펼침 상태를 메뉴 줄에도 표시해 휴대폰 흐림 효과를 끈다(위 CSS .afn-open)
+  var linksBox = info.parentElement;
+  new MutationObserver(function () { linksBox.classList.toggle('afn-open', info.classList.contains('open')); }).observe(info, { attributes: true, attributeFilter: ['class'] });
+  // 휴대폰에서도 메뉴는 늘 맨 앞 「회사정보」부터 보이게 둔다 (2026-11-23 사용자: 휴대폰에서 회사정보 메뉴가 안 보인다)
+  // — 전에는 지금 페이지 메뉴(예: 텃밭) 쪽으로 저절로 밀어서 「회사정보」가 왼쪽 밖으로 숨었다.
+  //   오른쪽 끝이 흐려져 있어 손가락으로 밀면 나머지 메뉴가 나온다.
+  var box = nav.querySelector('.afn-links'); if (box) box.scrollLeft = 0;
 })();
