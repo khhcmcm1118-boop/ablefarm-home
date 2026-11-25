@@ -76,6 +76,7 @@ const PRICES = [
   { label: '청양고추',     ctgry: '200', item: '242', vrty: '03' },
   { label: '사과 (후지)',  ctgry: '400', item: '411', vrty: '05' },
   { label: '배 (신고)',    ctgry: '400', item: '412', vrty: '01' },
+  { label: '감귤',         ctgry: '400', item: '415', prefer: '노지' }, // 품종 코드 대신 이름에 「노지」가 든 것을 고른다(없으면 첫 품종)
 ];
 
 // ── 시간 (한국 시간) ──
@@ -304,7 +305,9 @@ async function prices() {
       const q = [`pageNo=1`, `numOfRows=200`, `returnType=JSON`, `cond[exmn_ymd::GTE]=${from}`, `cond[exmn_ymd::LTE]=${today}`,
         `cond[se_cd::EQ]=02`, `cond[sgg_cd::EQ]=1101`, `cond[ctgry_cd::EQ]=${w.ctgry}`, `cond[item_cd::EQ]=${w.item}`];
       if (w.vrty) q.push(`cond[vrty_cd::EQ]=${w.vrty}`);
-      const rows = items(await get('https://apis.data.go.kr/B552845/perDay/price?' + q.join('&')));
+      const all = items(await get('https://apis.data.go.kr/B552845/perDay/price?' + q.join('&')));
+      const pick = w.prefer ? all.filter((r) => String(r.vrty_nm || '').includes(w.prefer)) : [];
+      const rows = pick.length ? pick : all;
       const grades = [...new Set(rows.map((r) => r.grd_nm))];
       const grade = grades.includes('상품') ? '상품' : grades[0];
       const g = rows.filter((r) => r.grd_nm === grade && num(r.exmn_dd_prc)).sort((a, b) => String(b.exmn_ymd).localeCompare(String(a.exmn_ymd)));
@@ -312,7 +315,7 @@ async function prices() {
       const same = g.filter((r) => r.vrty_cd === g[0].vrty_cd);
       const days = [...new Set(same.map((r) => r.exmn_ymd))];
       const at = (d) => num(same.find((r) => r.exmn_ymd === d)?.exmn_dd_prc);
-      out.push({ name: w.label, unit: `${same[0].unit_sz || ''}${same[0].unit || ''}`, day: same[0].exmn_ymd,
+      out.push({ name: w.prefer && same[0].vrty_nm ? w.label + ' (' + same[0].vrty_nm + ')' : w.label, unit: `${same[0].unit_sz || ''}${same[0].unit || ''}`, day: same[0].exmn_ymd,
         price: at(days[0]), prev: days[1] ? at(days[1]) : null, week: days[5] ? at(days[5]) : (days.length > 1 ? at(days[days.length - 1]) : null) });
     } catch (e) { console.warn('· 시세 실패: ' + w.label + ' — ' + e.message); }
     await sleep(120);
