@@ -1182,8 +1182,8 @@ class Component extends DCLogic {
         onClick: () => this.setState({ qaCrop: key, qaShow: 6, qaOpen: null }),
       };
     };
-    // 재배력(calendar/?c=작물)으로 잇기 — calendar/cal-data.js 의 CAL 작물 이름과 같아야 열린다 (2026-11-17 기준 목록)
-    const CAL_KEYS = '벼 고추 마늘·양파 배추 사과·배 포도 오이 토마토 수박 참외 딸기 가지 메론 복숭아 단감 아로니아 밤 콩 밀 대파 쪽파 부추 시금치 상추 갓 깻잎 열무 얼갈이배추 청경채 미나리 쑥갓 아욱 근대 무 당근 감자 고구마 생강 우엉 연근 도라지 더덕 호박 배 대추 사과'.split(' ');
+    // 재배력(calendar/?c=작물)으로 잇기 — calendar/cal-data.js 의 CAL 작물 이름과 같아야 열린다 (2026-11-25 기준 목록, 감귤 추가)
+    const CAL_KEYS = '벼 고추 마늘·양파 배추 사과·배 포도 오이 토마토 수박 참외 딸기 가지 메론 복숭아 단감 감귤 아로니아 밤 콩 밀 대파 쪽파 부추 시금치 상추 갓 깻잎 열무 얼갈이배추 청경채 미나리 쑥갓 아욱 근대 무 당근 감자 고구마 생강 우엉 연근 도라지 더덕 호박 배 대추 사과'.split(' ');
     const calKey = (c) => (CAL_KEYS.includes(c) ? c : (c === '마늘' || c === '양파') ? '마늘·양파' : '');
     const calOf = (x) => [...new Set(cropsOf(x).map(calKey).filter(Boolean))]
       .map((k) => ({ t: k + ' 재배력 보기', u: 'calendar/?c=' + encodeURIComponent(k) }));
