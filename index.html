@@ -217,16 +217,16 @@
   <div class="af-sec" style="padding:60px 40px;background:#faf7ef">
     <!-- 이달의 농사 띠 — 매월 이 블록과 아래 링크의 달만 바꾼다 -->
     <div style="background:#16271c;color:#eaf1e2;border-radius:18px;padding:28px 30px;margin-bottom:44px">
-      <div style="font-size:13.5px;font-weight:700;color:#a9d18a;margin-bottom:8px">2026년 11월호 · {{ seasonQaLabel }}</div>
-      <h2 style="margin:0 0 18px;font-weight:800;font-size:28px;letter-spacing:-.02em;color:#fff">11월, 지금 놓치면 안 되는 일</h2>
+      <div style="font-size:13.5px;font-weight:700;color:#a9d18a;margin-bottom:8px">2026년 12월호 · {{ seasonQaLabel }}</div>
+      <h2 style="margin:0 0 18px;font-weight:800;font-size:28px;letter-spacing:-.02em;color:#fff">12월, 지금 놓치면 안 되는 일</h2>
       <div class="af-3col" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px">
-        <a href="season/2026-11.html#onion" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">양파</b>중만생종은 11월 상순까지 아주심기</a>
-        <a href="season/2026-11.html#apple" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">사과</b>부사 등 만생종은 11월 상순까지 수확</a>
-        <a href="season/2026-11.html#strawberry" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">딸기</b>개화 초기 수정벌 투입, 14~25℃ 유지</a>
+        <a href="season/2026-12.html#onion" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">마늘</b>한지형 마늘은 12월 중순까지 비닐 덮기</a>
+        <a href="season/2026-12.html#house" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">시설채소</b>폭설 대비 끈 당기기, 난방기 화재 점검</a>
+        <a href="season/2026-12.html#fruit" style="display:block;text-decoration:none;background:rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;color:#eaf1e2;font-size:15px;line-height:1.55"><b style="display:block;color:#a9d18a;font-size:13.5px;margin-bottom:3px">과수</b>원줄기 1m까지 두꺼운 부직포·볏짚으로 감싸기</a>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:10px">
-        <a href="season/2026-11.html" style="padding:12px 22px;background:#a9d18a;color:#16271c;border-radius:11px;font-weight:800;font-size:14.5px;text-decoration:none;white-space:nowrap">내 작물 보기 →</a>
-        <a href="season/2026-11.html#signup" style="padding:12px 22px;border:1.5px solid #a9d18a;color:#c7e3a8;border-radius:11px;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap">알림 받기</a>
+        <a href="season/2026-12.html" style="padding:12px 22px;background:#a9d18a;color:#16271c;border-radius:11px;font-weight:800;font-size:14.5px;text-decoration:none;white-space:nowrap">내 작물 보기 →</a>
+        <a href="season/2026-12.html#signup" style="padding:12px 22px;border:1.5px solid #a9d18a;color:#c7e3a8;border-radius:11px;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap">알림 받기</a>
         <span class="af-btn" onClick="{{ goQna }}" style="padding:12px 22px;border:1.5px solid #a9d18a;color:#c7e3a8;border-radius:11px;font-weight:700;font-size:14.5px;white-space:nowrap">농사 Q&amp;A</span>
       </div>
     </div>
@@ -1461,16 +1461,6 @@ class Component extends DCLogic {
   }
 
   static HILITE = [
-    { name: '임팩트원', headline: '개화·수정·다수확,\n한 병으로 잡는 생식생장',
-      video: 'assets/video/impact-one.mp4', poster: 'assets/products/p17.jpg',
-      quote: '"출수기에 한 번 더 쳐주면 등숙이 확실히 다릅니다."',
-      stats: [['7-4-1.0', '보증성분 P-K-Mg'], ['4종복합', '붕소·아연·망간 배합'], ['1,000배', '엽면살포 기준']],
-      steps: [['STEP 1', '엽면살포 1,000배 희석'], ['STEP 2', '벼 유수형성기·출수개화기 등 생육 단계별 살포'], ['STEP 3', '관주 시 1,000㎡당 1~1.5ℓ']] },
-    { name: '임팩트과립', headline: '흙을 바꾸면\n뿌리가 달라집니다',
-      video: 'assets/video/impact-granule.mp4', poster: 'assets/products/p16.jpg',
-      quote: '"밑거름으로 한 번 넣으니 뿌리가 확실히 잡혔어요."',
-      stats: [['공시-2-3-792', '유기농업자재 공시'], ['입단구조', '다공질 베이직슬래그'], ['2·6·8kg', '과립형 포장']],
-      steps: [['STEP 1', '정식·파종 전 밑거름으로 토양 전면 살포'], ['STEP 2', '경운으로 흙과 고르게 섞기'], ['STEP 3', '생육 중 추비로 추가 시용']] },
     { name: '임팩트골드', headline: '토양개량과 생육을\n동시에 잡는 유기농업자재',
       video: 'assets/video/winter-house.mp4', poster: 'assets/products/p15.jpg', fit: 'contain', start: 42, hold: 18,
       quote: '"염류 낀 하우스에 관주하고 수세가 올라왔습니다."',
@@ -1481,11 +1471,21 @@ class Component extends DCLogic {
       quote: '모종이 약하면 한 해 농사가 흔들립니다.',
       stats: [['1,000배', '물 20ℓ당 20㎖'], ['800배', '스트레스 심할 때'], ['500㎖', '액제 포장']],
       steps: [['STEP 1', '육묘기·정식 초기에 엽면살포'], ['STEP 2', '겨울에는 맑은 날 오전에 살포'], ['STEP 3', '저녁 전에 잎이 마르게 관리']] },
-    { name: '속딴딴', headline: '물러짐 없이,\n끝까지 단단하게',
-      video: 'assets/video/sokddanddan.mp4', poster: 'assets/products/p03.jpg',
-      quote: '"수확 후 저장성이 좋아져 상품률이 올랐습니다."',
-      stats: [['Ca·B', '질산태 칼슘·붕소'], ['세포벽', '펙틴산 결합 강화'], ['500㎖', '액제 포장']],
-      steps: [['STEP 1', '엽채·과채류에 엽면살포'], ['STEP 2', '비대기부터 7~10일 간격 반복'], ['STEP 3', '수확 전까지 조직·저장성 관리']] },
+    { name: '하이슈거', headline: '겨울 딸기 수확기,\n당도·착색 관리',
+      video: 'assets/video/hisugar.mp4', poster: 'assets/products/p22.jpg', fit: 'contain', hold: 20,
+      quote: '열매가 굵어지고 색이 들 때, 수확 30~50일 전부터 챙깁니다.',
+      stats: [['500~1,000배', '물 20ℓ당 40~20㎖'], ['비대·착색기', '수확 30~50일 전부터'], ['500㎖', '액제 포장']],
+      steps: [['STEP 1', '수확 30~50일 전부터 엽면살포'], ['STEP 2', '500~1,000배로 희석'], ['STEP 3', '비대기·착색기에 반복 살포']] },
+    { name: '유니NK칼', headline: '겨울 하우스 웃거름,\n흡수 빠른 질산태 칼슘',
+      video: 'assets/video/uninkcal.mp4', poster: 'assets/products/p09.jpg', fit: 'contain', hold: 20,
+      quote: '웃거름 전용 — 밑거름은 퇴비·복합비료로 주세요.',
+      stats: [['15-0-15', '질소-인산-칼리 %'], ['CaO 17%', '수용성 칼슘'], ['10kg', '수용성 입제']],
+      steps: [['STEP 1', '관주는 10a당 3~5kg을 물 1톤 이상에 녹여 5~7일 간격'], ['STEP 2', '딸기 개화·수확기, 시설 토마토 1화방 착과 후 관주'], ['STEP 3', '인산·황산염 비료와 한 통에 섞지 않기']] },
+    { name: '임팩트과립', headline: '흙을 바꾸면\n뿌리가 달라집니다',
+      video: 'assets/video/impact-granule.mp4', poster: 'assets/products/p16.jpg',
+      quote: '"밑거름으로 한 번 넣으니 뿌리가 확실히 잡혔어요."',
+      stats: [['공시-2-3-792', '유기농업자재 공시'], ['입단구조', '다공질 베이직슬래그'], ['2·6·8kg', '과립형 포장']],
+      steps: [['STEP 1', '정식·파종 전 밑거름으로 토양 전면 살포'], ['STEP 2', '경운으로 흙과 고르게 섞기'], ['STEP 3', '생육 중 추비로 추가 시용']] },
   ];
 
   static onScreen(el) {
