@@ -2,7 +2,7 @@
  * 에이블팜 공통 맨 위 메뉴 (2026-11-21)
  * 어느 페이지든 <body> 바로 뒤에 한 줄만 넣으면 홈페이지와 같은 메뉴가 맨 위에 붙어 있게 된다.
  *   <script src="/assets/site-nav.js" data-now="today"></script>
- * data-now: 지금 페이지 = info · today · week · qna · calendar · garden · buy (해당 메뉴를 굵게)
+ * data-now: 지금 페이지 = info · today · week · qna · calendar · garden · buy · jiwon (해당 메뉴를 굵게)
  * 메뉴 순서·이름을 바꾸려면 아래 ITEMS 만 고치면 모든 페이지가 같이 바뀐다.
  * 홈페이지(index.html)의 메뉴도 같은 순서로 맞춰 둔다.
  */
@@ -42,6 +42,10 @@
     '.afn-links>a:hover,.afn-info>button:hover{color:#1E5C1E}',
     '.afn-links .on{color:#1E5C1E;font-weight:800;box-shadow:inset 0 -2px 0 #1E5C1E}',
     '.afn-info{position:relative}',
+    /* 「지원사업·행사」 — 구매문의 오른쪽에 조금 떨어뜨린 별도 칸 (2026-11-25 사용자 지시) */
+    '.afn-links>a.afn-sup{margin-left:14px;padding:7px 15px;border:1px solid #cfd9c6;border-radius:100px;background:#eef4ea;color:#1E5C1E;position:relative}',
+    '.afn-links>a.afn-sup::before{content:"";position:absolute;left:-21px;top:50%;width:1px;height:18px;margin-top:-9px;background:#d4cfbd}',
+    '.afn-links>a.afn-sup.on{box-shadow:none;background:#1E5C1E;color:#fff;border-color:#1E5C1E}',
     /* 벤처인증기업 배지 (2026-11-25 사용자 지시, 메달 = 사용자가 준 확인서 메달 그림) — 문의하기 왼쪽 */
     '.afn-vb{margin-left:auto;flex:none;display:flex;align-items:center;gap:8px;text-decoration:none}',
     '.afn-vb img{height:44px;width:auto;display:block;filter:drop-shadow(0 2px 3px rgba(120,84,10,.3))}',
@@ -69,6 +73,11 @@
     '.afn-links::-webkit-scrollbar{display:none}',
     /* 「회사정보」를 펼치면 오른쪽 흐림 효과(mask)가 펼친 목록까지 잘라 안 보였다 → 펼쳤을 때는 흐림을 끈다 (2026-11-23) */
     '.afn-links.afn-open{mask-image:none;-webkit-mask-image:none}',
+    /* 휴대폰은 메뉴 줄이 꽉 차서 「지원사업·행사」를 메뉴 아래 얇은 띠로 따로 보여 준다 */
+    '.afn-links>a.afn-sup{display:none}.afn-sup2{display:flex}}',
+    '.afn-sup2{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 12px;background:#eef4ea;border-top:1px solid #dfe8d8;color:#1E5C1E;font-size:13px;font-weight:800;text-decoration:none;letter-spacing:-.01em}',
+    '.afn-sup2.on{background:#1E5C1E;color:#fff}',
+    '@media (max-width:760px){.afn-sup2{display:flex}',
     '.afn-menu{position:fixed;top:52px;left:12px;right:12px;min-width:0}}'
   ].join('');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -89,10 +98,12 @@
         dd('info', '회사정보', '', INFO, ['info']) +
         dd('today', '오늘 농업현황', '농업현황', TODAY, ['today', 'week']) +
         ITEMS.map(function (x) { return '<a href="' + x[2] + '"' + (x[0] === now ? ' class="on" aria-current="page"' : '') + '>' + esc(x[1]) + '</a>'; }).join('') +
+        '<a class="afn-sup' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/"><span class="afn-l">지원사업·행사</span><span class="afn-s">지원·행사</span></a>' +
       '</div>' +
       '<span class="afn-vb" title="벤처기업확인 · 유효기간 2026.11.24 ~ 2029.11.23"><img src="' + R + 'assets/venture-medal.png" alt="벤처기업확인 메달"><b>벤처인증기업</b></span>' +
       '<a class="afn-cta" href="' + R + '#qna">문의하기 →</a>' +
-    '</div>';
+    '</div>' +
+    '<a class="afn-sup2' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/">🌱 농업 지원사업·행사 모아보기 →</a>';
   document.body.insertBefore(nav, document.body.firstChild);
   // 메뉴가 화면 맨 위에 고정되므로, 그 높이만큼 빈칸을 두어 본문이 가려지지 않게 한다
   var spacer = document.createElement('div'); spacer.className = 'afn-space';
