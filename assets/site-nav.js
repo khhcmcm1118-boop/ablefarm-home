@@ -42,7 +42,13 @@
     '.afn-links>a:hover,.afn-info>button:hover{color:#1E5C1E}',
     '.afn-links .on{color:#1E5C1E;font-weight:800;box-shadow:inset 0 -2px 0 #1E5C1E}',
     '.afn-info{position:relative}',
-    '.afn-cta{margin-left:auto;flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px;text-decoration:none}',
+    /* 벤처인증기업 배지 (2026-11-25 사용자 지시, 메달 = 사용자가 준 확인서 메달 그림) — 문의하기 왼쪽 */
+    '.afn-vb{margin-left:auto;flex:none;display:flex;align-items:center;gap:8px;text-decoration:none}',
+    '.afn-vb img{height:44px;width:auto;display:block;filter:drop-shadow(0 2px 3px rgba(120,84,10,.3))}',
+    '.afn-vb b{font-size:14.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;background:linear-gradient(180deg,#a7791c,#6f4b0c);-webkit-background-clip:text;background-clip:text;color:transparent}',
+    '@media (max-width:1180px){.afn-vb b{display:none}}',
+    '.afn-vb+.afn-cta{margin-left:-26px}@media (max-width:1024px){.afn-vb+.afn-cta{margin-left:-10px}}',
+    '.afn-cta{margin-left:0;flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px;text-decoration:none}',
     '.afn-cta:hover{background:#1E5C1E}',
     '.afn-info>button i{font-style:normal;font-size:10px;transition:transform .2s}',
     '.afn-info.open>button i{transform:rotate(180deg)}',
@@ -56,7 +62,7 @@
     '.afn-s{display:none}',
     /* 휴대폰: 메뉴 6개가 한 줄에 다 보이게 — 글자·간격을 줄이고 「오늘 농업현황」은 「농업현황」으로 (2026-11-23)
        (전에는 폭이 넘쳐 페이지에 따라 「회사정보」나 「텃밭·구매문의」가 화면 밖으로 밀렸다) */
-    '@media (max-width:760px){.afn-in{gap:8px;padding:8px 8px 8px 10px}.afn-logo img{height:30px}.afn-cta{display:none}',
+    '@media (max-width:760px){.afn-in{gap:8px;padding:8px 8px 8px 10px}.afn-logo img{height:30px}.afn-cta{display:none}.afn-vb{display:none}',
     '.afn-l{display:none}.afn-s{display:inline}.afn-info>button{gap:2px}.afn-info>button i{font-size:8px}',
     /* 375px 이상이면 다 들어간다. 그보다 좁은 휴대폰에서만 옆으로 밀어 볼 수 있게 남겨 둔다 */
     '.afn-links{gap:10px;font-size:13.5px;letter-spacing:-.03em;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}',
@@ -84,6 +90,7 @@
         dd('today', '오늘 농업현황', '농업현황', TODAY, ['today', 'week']) +
         ITEMS.map(function (x) { return '<a href="' + x[2] + '"' + (x[0] === now ? ' class="on" aria-current="page"' : '') + '>' + esc(x[1]) + '</a>'; }).join('') +
       '</div>' +
+      '<span class="afn-vb" title="벤처기업확인 · 유효기간 2026.11.24 ~ 2029.11.23"><img src="' + R + 'assets/venture-medal.png" alt="벤처기업확인 메달"><b>벤처인증기업</b></span>' +
       '<a class="afn-cta" href="' + R + '#qna">문의하기 →</a>' +
     '</div>';
   document.body.insertBefore(nav, document.body.firstChild);
