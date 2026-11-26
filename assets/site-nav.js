@@ -52,14 +52,14 @@
     '.afn-vb b{font-size:14.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;background:linear-gradient(180deg,#a7791c,#6f4b0c);-webkit-background-clip:text;background-clip:text;color:transparent}',
     '@media (max-width:1180px){.afn-vb b{display:none}}',
     '.afn-vb+.afn-cta{margin-left:-26px}@media (max-width:1024px){.afn-vb+.afn-cta{margin-left:-10px}}',
-    /* ISO 인증기업 배지 (2026-11-26 사용자 지시, 로고 = 한국기업인증원 인증서의 ISO 인증 마크) — 벤처 배지 오른쪽.
+    /* ISO 인증기업 배지 (2026-11-26 사용자 지시, 로고 = 인증서의 IAF 마크(11-26 사용자 지시로 ISO 도장에서 변경)) — 벤처 배지 오른쪽.
        두 배지는 누르면 인증서 창(.afn-cert)이 열린다. ※ 「afc」 같은 광고 이름은 광고 차단기가 숨기므로 쓰지 않는다 (11-26) */
     'button.afn-vb{background:none;border:0;padding:0;font:inherit;cursor:pointer}',
     '.afn-vb:hover b{filter:brightness(1.25)}',
-    '.afn-vb.afn-iso{margin-left:-26px}.afn-iso img{height:40px}',
+    '.afn-vb.afn-iso{margin-left:-26px}.afn-iso img{height:36px;filter:drop-shadow(0 1px 2px rgba(20,50,90,.25))}',
     '@media (max-width:1024px){.afn-vb.afn-iso{margin-left:-10px}}',
     /* 태블릿 폭(761~960px)은 메뉴가 넘쳐 「문의하기」가 잘린다 → 숨김 (농사문의 메뉴로 같은 곳에 갈 수 있다) */
-    '@media (max-width:960px){.afn-cta{display:none}.afn-in{gap:18px}.afn-links{gap:15px}}',
+    '@media (max-width:960px){.afn-cta{display:none}.afn-in{gap:18px}.afn-links{gap:15px}.afn-iso img{height:28px}}',
     '.afn-cta{margin-left:0;flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px;text-decoration:none}',
     '.afn-cta:hover{background:#1E5C1E}',
     '.afn-info>button i{font-style:normal;font-size:10px;transition:transform .2s}',
@@ -109,7 +109,7 @@
         '<a class="afn-sup' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/"><span class="afn-l">지원사업·행사</span><span class="afn-s">지원·행사</span></a>' +
       '</div>' +
       '<button type="button" class="afn-vb" data-cert="venture" title="벤처기업확인서 보기 · 유효기간 2026.11.24 ~ 2029.11.23"><img src="' + R + 'assets/venture-medal.png" alt="벤처기업확인 메달"><b>벤처인증기업</b></button>' +
-      '<button type="button" class="afn-vb afn-iso" data-cert="iso" title="ISO 9001·14001·45001 인증서 보기 · 한국기업인증원"><img src="' + R + 'assets/iso-seal.png" alt="ISO 인증 마크"><b>ISO 인증기업</b></button>' +
+      '<button type="button" class="afn-vb afn-iso" data-cert="iso" title="ISO 9001·14001·45001 인증서 보기 · 한국기업인증원"><img src="' + R + 'assets/iaf-mark.png" alt="IAF 국제인정협력기구 상호인정 마크"><b>ISO 인증기업</b></button>' +
       '<a class="afn-cta" href="' + R + '#qna">문의하기 →</a>' +
     '</div>' +
     '<a class="afn-sup2' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/">🌱 농업 지원사업·행사 모아보기 →</a>';
