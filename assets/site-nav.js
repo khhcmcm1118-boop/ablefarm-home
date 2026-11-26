@@ -52,6 +52,14 @@
     '.afn-vb b{font-size:14.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;background:linear-gradient(180deg,#a7791c,#6f4b0c);-webkit-background-clip:text;background-clip:text;color:transparent}',
     '@media (max-width:1180px){.afn-vb b{display:none}}',
     '.afn-vb+.afn-cta{margin-left:-26px}@media (max-width:1024px){.afn-vb+.afn-cta{margin-left:-10px}}',
+    /* ISO 인증기업 배지 (2026-11-26 사용자 지시, 로고 = 한국기업인증원 인증서의 ISO 인증 마크) — 벤처 배지 오른쪽.
+       두 배지는 누르면 인증서 창(.afc)이 열린다 */
+    'button.afn-vb{background:none;border:0;padding:0;font:inherit;cursor:pointer}',
+    '.afn-vb:hover b{filter:brightness(1.25)}',
+    '.afn-vb.afn-iso{margin-left:-26px}.afn-iso img{height:40px}',
+    '@media (max-width:1024px){.afn-vb.afn-iso{margin-left:-10px}}',
+    /* 태블릿 폭(761~960px)은 메뉴가 넘쳐 「문의하기」가 잘린다 → 숨김 (농사문의 메뉴로 같은 곳에 갈 수 있다) */
+    '@media (max-width:960px){.afn-cta{display:none}.afn-in{gap:18px}.afn-links{gap:15px}}',
     '.afn-cta{margin-left:0;flex:none;white-space:nowrap;padding:11px 22px;background:#16271c;color:#fff;border-radius:100px;font-weight:700;font-size:13.5px;text-decoration:none}',
     '.afn-cta:hover{background:#1E5C1E}',
     '.afn-info>button i{font-style:normal;font-size:10px;transition:transform .2s}',
@@ -100,7 +108,8 @@
         ITEMS.map(function (x) { return '<a href="' + x[2] + '"' + (x[0] === now ? ' class="on" aria-current="page"' : '') + '>' + esc(x[1]) + '</a>'; }).join('') +
         '<a class="afn-sup' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/"><span class="afn-l">지원사업·행사</span><span class="afn-s">지원·행사</span></a>' +
       '</div>' +
-      '<span class="afn-vb" title="벤처기업확인 · 유효기간 2026.11.24 ~ 2029.11.23"><img src="' + R + 'assets/venture-medal.png" alt="벤처기업확인 메달"><b>벤처인증기업</b></span>' +
+      '<button type="button" class="afn-vb" data-cert="venture" title="벤처기업확인서 보기 · 유효기간 2026.11.24 ~ 2029.11.23"><img src="' + R + 'assets/venture-medal.png" alt="벤처기업확인 메달"><b>벤처인증기업</b></button>' +
+      '<button type="button" class="afn-vb afn-iso" data-cert="iso" title="ISO 9001·14001·45001 인증서 보기 · 한국기업인증원"><img src="' + R + 'assets/iso-seal.png" alt="ISO 인증 마크"><b>ISO 인증기업</b></button>' +
       '<a class="afn-cta" href="' + R + '#qna">문의하기 →</a>' +
     '</div>' +
     '<a class="afn-sup2' + (now === 'jiwon' ? ' on" aria-current="page' : '') + '" href="' + R + 'jiwon/">🌱 농업 지원사업·행사 모아보기 →</a>';
@@ -138,4 +147,58 @@
   // — 전에는 지금 페이지 메뉴(예: 텃밭) 쪽으로 저절로 밀어서 「회사정보」가 왼쪽 밖으로 숨었다.
   //   11-23 오후부터는 휴대폰(375px 이상)에서 메뉴 6개가 한 줄에 다 들어가 밀 필요가 없다.
   var box = nav.querySelector('.afn-links'); if (box) box.scrollLeft = 0;
+
+  // ── 인증서 보기 창 (2026-11-26) ──────────────────────────────
+  // data-cert="venture" 또는 "iso" 가 붙은 것을 누르면 열린다 (맨 위 메뉴 배지, 홈페이지 휴대폰 첫 화면 배지 공통)
+  var CERTS = {
+    venture: { t: '벤처기업확인서', s: '혁신성장유형 · 유효기간 2026.11.24 ~ 2029.11.23 · 벤처기업확인기관',
+      tabs: [['벤처기업확인서', [['', 'venture.jpg']]]] },
+    iso: { t: 'ISO 경영시스템 인증서', s: '한국기업인증원(KOCI) · 유효기간 2026.11.24 ~ 2029.11.23 · 인증범위: 비료 및 유기농업자재의 개발, 제조(OEM), 유통·판매 및 농작물 기술지원 서비스',
+      tabs: [['ISO 9001 품질', [['국문', 'iso9001-ko.jpg'], ['영문', 'iso9001-en.jpg']]],
+             ['ISO 14001 환경', [['국문', 'iso14001-ko.jpg'], ['영문', 'iso14001-en.jpg']]],
+             ['ISO 45001 안전보건', [['국문', 'iso45001-ko.jpg'], ['영문', 'iso45001-en.jpg']]]] }
+  };
+  var ccss = [
+    '.afc{position:fixed;inset:0;z-index:200;background:rgba(10,20,14,.72);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;font-family:"Pretendard",system-ui,-apple-system,"Malgun Gothic",sans-serif}',
+    '.afc.open{display:flex}',
+    '.afc *{box-sizing:border-box}',
+    '.afc-box{position:relative;width:100%;max-width:760px;background:#fffdf8;border-radius:20px;padding:20px 20px 18px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6)}',
+    '.afc-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:0;background:#f1ede2;font-size:20px;cursor:pointer;color:#16241a}',
+    '.afc h2{margin:0 44px 4px 0;font-size:20px;color:#16241a;letter-spacing:-.01em}',
+    '.afc p{margin:0 0 12px;font-size:13px;line-height:1.55;color:#6b7565}',
+    '.afc-tabs,.afc-lang{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}',
+    '.afc-tabs button,.afc-lang button{font:inherit;font-size:14px;font-weight:700;border:1px solid #dcd8c7;background:#fff;color:#4c554a;padding:7px 14px;border-radius:100px;cursor:pointer}',
+    '.afc-tabs button.on{background:#16271c;border-color:#16271c;color:#fff}',
+    '.afc-lang button{font-size:12.5px;padding:5px 11px}.afc-lang button.on{background:#eef4ea;border-color:#1E5C1E;color:#1E5C1E}',
+    '.afc-img{display:block;width:100%;height:auto;border:1px solid #e2ddcb;border-radius:8px;background:#fff}',
+    '.afc-big{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:#1E5C1E;text-decoration:none}',
+    '@media (max-width:760px){.afc{padding:12px 8px}.afc-box{padding:16px 12px 14px;border-radius:16px}.afc h2{font-size:17px}}'
+  ].join('');
+  var cst = document.createElement('style'); cst.textContent = ccss; document.head.appendChild(cst);
+  var cw = document.createElement('div'); cw.className = 'afc'; cw.setAttribute('role', 'dialog'); cw.setAttribute('aria-modal', 'true');
+  cw.innerHTML = '<div class="afc-box"><button type="button" class="afc-x" aria-label="닫기">✕</button><h2></h2><p></p><div class="afc-tabs"></div><div class="afc-lang"></div>' +
+    '<img class="afc-img" alt=""><a class="afc-big" target="_blank" rel="noopener">원본 크기로 보기 ↗</a></div>';
+  document.body.appendChild(cw);
+  var cur = null, ti = 0, li = 0, lastFocus = null;
+  function drawCert() {
+    var c = CERTS[cur], tab = c.tabs[ti], pg = tab[1][li], src = R + 'assets/cert/' + pg[1];
+    cw.querySelector('h2').textContent = c.t; cw.querySelector('p').textContent = c.s;
+    cw.querySelector('.afc-tabs').innerHTML = c.tabs.length > 1 ? c.tabs.map(function (x, i) { return '<button type="button" data-t="' + i + '"' + (i === ti ? ' class="on"' : '') + '>' + esc(x[0]) + '</button>'; }).join('') : '';
+    cw.querySelector('.afc-lang').innerHTML = tab[1].length > 1 ? tab[1].map(function (x, i) { return '<button type="button" data-l="' + i + '"' + (i === li ? ' class="on"' : '') + '>' + esc(x[0]) + '</button>'; }).join('') : '';
+    var im = cw.querySelector('.afc-img'); im.style.aspectRatio = cur === 'venture' ? '1240/1680' : '1240/1754'; im.src = src; // 그림이 오기 전에도 자리를 잡아 둔다 im.alt = '(주)에이블팜 ' + tab[0] + (pg[0] ? ' ' + pg[0] : '') + ' 인증서';
+    cw.querySelector('.afc-big').href = src;
+  }
+  function openCert(k) { if (!CERTS[k]) return; cur = k; ti = 0; li = 0; lastFocus = document.activeElement; drawCert(); closeAll(); cw.classList.add('open'); cw.scrollTop = 0; document.documentElement.style.overflow = 'hidden'; cw.querySelector('.afc-x').focus(); }
+  function closeCert() { cw.classList.remove('open'); document.documentElement.style.overflow = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  cw.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (e.target === cw || (b && b.classList.contains('afc-x'))) return closeCert();
+    if (b && b.hasAttribute('data-t')) { ti = +b.getAttribute('data-t'); li = 0; drawCert(); }
+    else if (b && b.hasAttribute('data-l')) { li = +b.getAttribute('data-l'); drawCert(); }
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && cw.classList.contains('open')) closeCert(); });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-cert]');
+    if (t && !cw.contains(t)) { e.preventDefault(); openCert(t.getAttribute('data-cert')); }
+  });
 })();
